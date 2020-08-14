@@ -156,7 +156,7 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleAggregateBuilder<TEntity, TAggregate> Min<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
         IGraphQLSingleAggregateBuilder<TEntity, TAggregate> Nodes();
-        IGraphQLSingleQueryBuilder<TEntity> End();
+        IGraphQLSingleNodeBuilder<TEntity> End();
 
         IGraphQLSingleChildAggregateBuilder<TEntity, TAggregate, TChildAggregate> Aggregate<TChildAggregate>();
     }
@@ -178,7 +178,7 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleAggregateBuilder<TRoot, TEntity, TAggregate> Min<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
         IGraphQLSingleAggregateBuilder<TRoot, TEntity, TAggregate> Nodes();
-        IGraphQLSingleAggregateBuilder<TRoot, TEntity> End();
+        IGraphQLSingleNodeBuilder<TRoot, TEntity> End();
 
         IGraphQLSingleChildAggregateBuilder<TRoot, TEntity, TAggregate, TChildAggregate> Aggregate<TChildAggregate>();
     }
@@ -264,9 +264,7 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Min<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
         IGraphQLSingleChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Nodes();
-        IGraphQLSingleChildAggregateBuilder<TRoot, TEntity, TParent> End();
-
-        IGraphQLSingleChildAggregateBuilder<TRoot, TEntity, TAggregate, TChildAggregate> Aggregate<TChildAggregate>();
+        IGraphQLSingleAggregateBuilder<TRoot, TEntity, TParent> End();
     }
 
     public interface IGraphQLMultiChildAggregateBuilder<TRoot, TParent, TAggregate> : IGraphQLMultiQueryBuilder<TRoot>
@@ -287,8 +285,6 @@ namespace FluentGraphQL.Builder.Abstractions
 
         IGraphQLMultiChildAggregateBuilder<TRoot, TParent, TAggregate> Nodes();
         IGraphQLMultiAggregateBuilder<TRoot, TParent> End();
-
-        IGraphQLMultiChildAggregateBuilder<TRoot, TAggregate, TChildAggregate> Aggregate<TChildAggregate>();
     }
 
     public interface IGraphQLMultiChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> : IGraphQLMultiQueryBuilder<TRoot>
@@ -309,7 +305,5 @@ namespace FluentGraphQL.Builder.Abstractions
 
         IGraphQLMultiChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Nodes();
         IGraphQLMultiAggregateBuilder<TRoot, TEntity, TParent> End();
-
-        IGraphQLMultiChildAggregateBuilder<TRoot, TEntity, TAggregate, TChildAggregate> Aggregate<TChildAggregate>();
     }
 }

@@ -23,22 +23,43 @@ namespace FluentGraphQL.Builder.Constructs
 {
     public class GraphQLAggregateContainer<TEntity> : IGraphQLAggregateContainer<TEntity>
     {
+        private readonly IGraphQLExpressionConverter _graphQLExpressionConverter;
+
         public ICollection<TEntity> Nodes { get; set; }
         public IGraphQLAggregate Aggregate { get; set; }
 
+        public GraphQLAggregateContainer(IGraphQLExpressionConverter graphQLExpressionConverter)
+        {
+            _graphQLExpressionConverter = graphQLExpressionConverter;
+        }
+
         public int Count()
         {
-            throw new NotImplementedException();
+            return Aggregate.Count;
         }
 
         public TKey Avg<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            throw new NotImplementedException();
+            var statement = _graphQLExpressionConverter.Convert(keySelector);
+            return (TKey)Aggregate.Avg.PropertyValues[statement.Value.ToString()];
+        }
+
+        public TKey Sum<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        {
+            var statement = _graphQLExpressionConverter.Convert(keySelector);
+            return (TKey)Aggregate.Sum.PropertyValues[statement.Value.ToString()];
+        }
+
+        public TKey Min<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        {
+            var statement = _graphQLExpressionConverter.Convert(keySelector);
+            return (TKey)Aggregate.Min.PropertyValues[statement.Value.ToString()];
         }
 
         public TKey Max<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            throw new NotImplementedException();
+            var statement = _graphQLExpressionConverter.Convert(keySelector);
+            return (TKey) Aggregate.Max.PropertyValues[statement.Value.ToString()];
         }
     }
 }

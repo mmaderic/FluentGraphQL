@@ -30,7 +30,9 @@ namespace FluentGraphQL.Builder.Abstractions
         ICollection<TEntity> Nodes { get; set; }
 
         int Count();
-        TKey Max<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         TKey Avg<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        TKey Sum<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        TKey Min<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        TKey Max<TKey>(Expression<Func<TEntity, TKey>> keySelector);
     }
 }

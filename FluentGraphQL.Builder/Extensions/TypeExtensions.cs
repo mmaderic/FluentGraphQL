@@ -14,7 +14,9 @@
     copies or substantial portions of the Software.
 */
 
+using FluentGraphQL.Abstractions.Builder;
 using System;
+using System.Linq;
 
 namespace FluentGraphQL.Builder.Extensions
 {
@@ -25,8 +27,13 @@ namespace FluentGraphQL.Builder.Extensions
             if (type.IsInterface)
                 return type;
 
+            var interfaces = type.GetInterfaces().Where(x => x.IsGenericType);
+            var fragmentInterface = interfaces.FirstOrDefault(x => x.GetGenericTypeDefinition().Equals(typeof(IGraphQLFragment<>)));
+            if (!(fragmentInterface is null))
+                return fragmentInterface.GenericTypeArguments.First();
+
             if (type.BaseType.Equals(typeof(object)))
-                return type;
+                return type;            
 
             type = type.BaseType;
             while (!type.BaseType.Equals(typeof(object)))

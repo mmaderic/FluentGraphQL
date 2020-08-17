@@ -31,5 +31,10 @@ namespace FluentGraphQL.Builder.Atoms
         {
             return graphQLStringFactory.Construct(this);
         }
+
+        public override string ToString()
+        {
+            return ValueLiteral;
+        }
     }
 }

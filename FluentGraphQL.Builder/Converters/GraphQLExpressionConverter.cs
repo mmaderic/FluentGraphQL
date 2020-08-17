@@ -396,8 +396,7 @@ namespace FluentGraphQL.Builder.Converters
                 throw new InvalidOperationException();
 
             var direction = _graphQLValueFactory.Construct(orderByDirection);
-            var propertyValue = EvaluateExpression(arguments.First()).Value as GraphQLPropertyValue;
-            var propertyName = propertyValue.ValueLiteral;
+            var propertyName = EvaluateExpression(arguments.First()).Value.ToString();
 
             var directionObjectValue = new GraphQLObjectValue(new GraphQLValueStatement(propertyName, direction));
             var methodStatement = new GraphQLValueStatement(methodName, directionObjectValue);           

@@ -16,6 +16,7 @@
 
 using FluentGraphQL.Builder.Constants;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -28,7 +29,7 @@ namespace FluentGraphQL.Builder.Extensions
         private static readonly IEnumerable<string> _supportedMethodCalls;
         private static readonly IEnumerable<string> _extensionMethodCalls;
         private static readonly IEnumerable<string> _aggregateMethodCalls;
-        private static readonly Dictionary<string, Type> _verifiedMethodCallsCache;
+        private static readonly ConcurrentDictionary<string, Type> _verifiedMethodCallsCache;
 
         static StringExtensions()
         {            
@@ -40,7 +41,7 @@ namespace FluentGraphQL.Builder.Extensions
             _extensionMethodCalls = extensionInfos.Select(x => x.GetRawConstantValue() as string).ToArray();
             _aggregateMethodCalls = aggregateInfos.Select(x => x.GetRawConstantValue() as string).ToArray();
              
-            _verifiedMethodCallsCache = new Dictionary<string, Type>();
+            _verifiedMethodCallsCache = new ConcurrentDictionary<string, Type>();
         }
 
         public static string ToSnakeCaseExtended(this string @string)
@@ -79,16 +80,16 @@ namespace FluentGraphQL.Builder.Extensions
             if (_supportedMethodCalls.Any(x => x.Equals(methodName)))            
                 type = typeof(Constant.SupportedMethodCalls);            
 
-            if (_extensionMethodCalls.Any(x => x.Equals(methodName)))            
+            else if (_extensionMethodCalls.Any(x => x.Equals(methodName)))            
                 type = typeof(Constant.ExtensionMethodCalls);                      
 
-            if (_aggregateMethodCalls.Any(x => x.Equals(methodName)))            
+            else if (_aggregateMethodCalls.Any(x => x.Equals(methodName)))            
                 type = typeof(Constant.AggregateMethodCalls);
 
-            if (type is null)
+            else if (type is null)
                 throw new NotImplementedException(methodName);
 
-            _verifiedMethodCallsCache.Add(methodName, type);
+            _verifiedMethodCallsCache.TryAdd(methodName, type);
             return type;
         }
     }    

@@ -20,7 +20,8 @@ namespace FluentGraphQL.Builder.Constants
     {
         public static class SupportedMethodCalls
         {
-            public const string Any = "Any";         
+            public const string Any = "Any";
+            public new const string Equals = "Equals";
         }
     }
 }

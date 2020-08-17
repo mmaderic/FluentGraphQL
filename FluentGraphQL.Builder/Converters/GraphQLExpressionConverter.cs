@@ -91,6 +91,9 @@ namespace FluentGraphQL.Builder.Converters
             if (expression is MemberExpression memberExpression)
                 return new GraphQLValueStatement(null, new GraphQLPropertyValue(memberExpression.Member.Name));
 
+            if (expression is ConstantExpression constantExpression)
+                return new GraphQLValueStatement(null, _graphQLValueFactory.Construct(constantExpression.Value));
+
             throw new NotImplementedException();
         }
 
@@ -218,30 +221,30 @@ namespace FluentGraphQL.Builder.Converters
 
         private IGraphQLValueStatement EvaluateMethodCallExpression(MethodCallExpression methodCallExpression)
         {
-            var potentialMemberExpression = methodCallExpression.Arguments[0] is UnaryExpression unaryExpression
-                ? unaryExpression.Operand
-                : methodCallExpression.Arguments[0];
-
-            if (!(potentialMemberExpression is MemberExpression memberExpression))
-                throw new NotImplementedException();
-
             var methodName = methodCallExpression.Method.Name;
             var category = methodName.EvaluateMethodCallCategory();
 
             if (category.Equals(typeof(Constant.SupportedMethodCalls)))
-                return EvaluateSupportedMethodCallExpression(methodName, memberExpression, methodCallExpression);
+                return EvaluateSupportedMethodCallExpression(methodName, methodCallExpression);
 
             if (category.Equals(typeof(Constant.ExtensionMethodCalls)))
-                return EvaluateExtensionMethodCallExpression(methodName, memberExpression, methodCallExpression);
+                return EvaluateExtensionMethodCallExpression(methodName, methodCallExpression);
 
             throw new NotImplementedException(methodName);
         } 
 
-        private IGraphQLValueStatement EvaluateSupportedMethodCallExpression(string methodName, MemberExpression memberExpression, MethodCallExpression methodCallExpression)
+        private IGraphQLValueStatement EvaluateSupportedMethodCallExpression(string methodName, MethodCallExpression methodCallExpression)
         {
             if (methodName.Equals(Constant.SupportedMethodCalls.Any))
             {
-                if(methodCallExpression.Arguments.Count == 1)
+                var potentialMemberExpression = methodCallExpression.Arguments[0] is UnaryExpression unaryExpression
+                    ? unaryExpression.Operand
+                    : methodCallExpression.Arguments[0];
+
+                if (!(potentialMemberExpression is MemberExpression memberExpression))
+                    throw new NotImplementedException();
+
+                if (methodCallExpression.Arguments.Count == 1)
                     return EvaluateMemberExpression(memberExpression, null);
 
                 var genericExpressionType = methodCallExpression.Arguments[1].GetType().GetGenericTypeDefinition().BaseType;
@@ -254,11 +257,33 @@ namespace FluentGraphQL.Builder.Converters
                 return EvaluateMemberExpression(memberExpression, expressionValue);
             }
 
+            if (methodName.Equals(Constant.SupportedMethodCalls.Equals))
+            {
+                if (!(methodCallExpression.Object is MemberExpression memberExpression))
+                    throw new InvalidOperationException();
+
+                var expressionValue = Expression.Lambda(methodCallExpression.Arguments[0]).Compile().DynamicInvoke();
+                var operatorValue = new { _eq = expressionValue };
+                var operatorGraphQLValue = _graphQLValueFactory.Construct(operatorValue);
+
+                return EvaluateMemberExpression(memberExpression, operatorGraphQLValue);
+            }
+
             throw new NotImplementedException(methodName);
         }
 
-        private IGraphQLValueStatement EvaluateExtensionMethodCallExpression(string methodName, MemberExpression memberExpression, MethodCallExpression methodCallExpression)
+        private IGraphQLValueStatement EvaluateExtensionMethodCallExpression(string methodName, MethodCallExpression methodCallExpression)
         {
+            var potentialMemberExpression = methodCallExpression.Arguments[0] is UnaryExpression unaryExpression
+                    ? unaryExpression.Operand
+                    : methodCallExpression.Arguments[0];
+
+            if (!(potentialMemberExpression is MemberExpression memberExpression))
+                throw new NotImplementedException();
+
+            if (methodCallExpression.Arguments.Count == 1)
+                return EvaluateMemberExpression(memberExpression, null);
+
             object invokeValue() 
             {
                 var expression = methodCallExpression.Arguments[1];

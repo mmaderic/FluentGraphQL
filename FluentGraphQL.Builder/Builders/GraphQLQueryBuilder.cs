@@ -75,6 +75,7 @@ namespace FluentGraphQL.Builder.Builders
             var expressionStatement = _graphQLExpressionConverter.Convert(expressionPredicate);
             var expressionStatementObject = new GraphQLObjectValue(expressionStatement);
             var whereStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.Where, expressionStatementObject);
+
             _graphQLSelectNode.HeaderNode.Statements.Add(whereStatement);
 
             return this;
@@ -491,9 +492,14 @@ namespace FluentGraphQL.Builder.Builders
             return (IGraphQLSingleQuery<TRoot>)_graphQLQuery;
         }
 
-        IGraphQLSingleNodeBuilder<TRoot> IGraphQLMultiNodeBuilder<TRoot>.Single(Expression<Func<TRoot, bool>> expressionPredicate)
+        IGraphQLSingleNodeBuilder<TRoot> IGraphQLMultiQueryBuilder<TRoot>.Single(Expression<Func<TRoot, bool>> expressionPredicate)
         {
-            return Where(expressionPredicate);
+            if (expressionPredicate is null)
+                return this;
+            
+            Node<TRoot>().Where(expressionPredicate);
+
+            return this;            
         }
     }
 }

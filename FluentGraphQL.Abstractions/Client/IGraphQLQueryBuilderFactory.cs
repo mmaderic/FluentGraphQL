@@ -20,6 +20,7 @@ namespace FluentGraphQL.Client.Abstractions
 {
     public interface IGraphQLQueryBuilderFactory
     {
-        IGraphQLRootNodeBuilder<TEntity> Construct<TEntity>();
+        IGraphQLRootNodeBuilder<TEntity> Construct<TEntity>()
+            where TEntity : IGraphQLEntity;
     }
 }

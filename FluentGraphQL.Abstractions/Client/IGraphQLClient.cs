@@ -22,7 +22,9 @@ namespace FluentGraphQL.Client.Abstractions
 {
     public interface IGraphQLClient
     {
-        IGraphQLRootNodeBuilder<TEntity> QueryBuilder<TEntity>();
+        IGraphQLRootNodeBuilder<TEntity> QueryBuilder<TEntity>()
+            where TEntity : IGraphQLEntity;
+
         Task<TEntity> ExecuteAsync<TEntity>(IGraphQLSingleQuery<TEntity> graphQLQuery);
         Task<List<TEntity>> ExecuteAsync<TEntity>(IGraphQLQuery<TEntity> graphQLQuery);
     }

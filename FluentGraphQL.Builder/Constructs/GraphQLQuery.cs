@@ -46,7 +46,8 @@ namespace FluentGraphQL.Builder.Constructs
     }
 
     public class GraphQLQuery<TEntity> : GraphQLQuery, IGraphQLQuery<TEntity>, IGraphQLSingleQuery<TEntity>
-    {        
+        where TEntity : IGraphQLEntity
+    {
         public GraphQLQuery(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode) 
             : base(graphQLHeaderNode, graphQLSelectNode) 
         { }       

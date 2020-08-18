@@ -18,7 +18,7 @@ using FluentGraphQL.Builder.Abstractions;
 
 namespace FluentGraphQL.Abstractions.Builder
 {
-    public interface IGraphQLFragment<TEntity>
+    public interface IGraphQLFragment<TEntity> : IGraphQLEntity
         where TEntity : IGraphQLEntity
     {
     }

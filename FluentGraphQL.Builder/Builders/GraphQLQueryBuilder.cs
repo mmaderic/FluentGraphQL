@@ -513,7 +513,13 @@ namespace FluentGraphQL.Builder.Builders
             {
                 if (statement.Value is IGraphQLCollectionValue collectionValue)
                 {
-                    foreach(var item in collectionValue.CollectionItems)
+                    if (!(statement.PropertyName is null))
+                    {
+                        selectNode = (IGraphQLSelectNode)selectNode.Get(statement.PropertyName);
+                        selectNode.IsActive = true;
+                    }
+
+                    foreach (var item in collectionValue.CollectionItems)
                     {
                         var objectValue = (IGraphQLObjectValue) item;
                         ReadStatement(objectValue.PropertyValues.First(), selectNode);
@@ -521,9 +527,9 @@ namespace FluentGraphQL.Builder.Builders
                 }
                 else if (statement.Value is IGraphQLObjectValue objectValue)
                 {
-                    var property = (IGraphQLSelectNode) selectNode.Get(statement.PropertyName);
-                    property.IsActive = true;
-                    ReadStatement(objectValue.PropertyValues.First(), property);
+                    selectNode = (IGraphQLSelectNode) selectNode.Get(statement.PropertyName);
+                    selectNode.IsActive = true;
+                    ReadStatement(objectValue.PropertyValues.First(), selectNode);
                 }
                 else
                     selectNode.Get(statement.PropertyName).Activate();

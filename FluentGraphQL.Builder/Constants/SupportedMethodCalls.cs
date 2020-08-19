@@ -22,6 +22,7 @@ namespace FluentGraphQL.Builder.Constants
         {
             public const string Any = "Any";
             public new const string Equals = "Equals";
+            public const string Select = "Select";
         }
     }
 }

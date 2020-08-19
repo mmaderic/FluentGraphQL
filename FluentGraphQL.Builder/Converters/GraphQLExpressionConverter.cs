@@ -85,8 +85,8 @@ namespace FluentGraphQL.Builder.Converters
             if (expression is MethodCallExpression methodCallExpression)
                return EvaluateMethodCallExpression(methodCallExpression);
 
-            if (expression is LambdaExpression lambdaExpression && lambdaExpression.Body is MemberExpression lambdaMemberExpression)
-                return EvaluateMemberExpression(lambdaMemberExpression, null);
+            if (expression is LambdaExpression lambdaExpression)
+                return EvaluateExpression(lambdaExpression.Body);
 
             if (expression is MemberExpression memberExpression)
                 return EvaluateMemberExpression(memberExpression, null);         
@@ -270,6 +270,15 @@ namespace FluentGraphQL.Builder.Converters
                 var operatorGraphQLValue = _graphQLValueFactory.Construct(operatorValue);
 
                 return EvaluateMemberExpression(memberExpression, operatorGraphQLValue);
+            }
+
+            if (methodName.Equals(Constant.SupportedMethodCalls.Select))
+            {
+                var expressionTarget = EvaluateExpression(methodCallExpression.Arguments[0]);
+                var selectExpression = EvaluateExpression(methodCallExpression.Arguments[1]);
+                selectExpression.PropertyName = expressionTarget.PropertyName;
+
+                return selectExpression;
             }
 
             throw new NotImplementedException(methodName);

@@ -43,35 +43,20 @@ namespace FluentGraphQL.Builder.Nodes
             AggregateContainerNodes = aggregateContainerNodes;
             IsCollectionNode = isCollectionNode;
             EntityType = entityType;
-            IsActive = active;
 
-            if (IsActive == false)
-                DeactivateAll();  
-        }
-
-        public void ActivateAll()
-        {
-            IsActive = true;
-            Parallel.ForEach(PropertyStatements, (item) => { item.IsActive = true; });
-            Parallel.ForEach(ChildSelectNodes, (item) => { item.ActivateAll(); });
-        }
-
-        public void DeactivateAll()
-        {
-            IsActive = false;
-            Parallel.ForEach(PropertyStatements, (item) => { item.IsActive = false; });
-            Parallel.ForEach(ChildSelectNodes, (item) => { item.DeactivateAll(); });
-        }
+            if (!active)
+                Deactivate();
+            else IsActive = true;
+        }  
 
         public void ActivateNode<TNode>()
         {
-            var node = GetChildNode<TNode>();
-            node.ActivateAll();
+            GetChildNode<TNode>().Activate();
         }
 
         public void ActivateProperty(string propertyName)
         {
-            PropertyStatements.First(x => x.PropertyName.Equals(propertyName)).IsActive = true;
+            PropertyStatements.First(x => x.PropertyName.Equals(propertyName)).Activate();
         }
 
         public virtual IGraphQLSelectNode GetChildNode<TEntity>()
@@ -100,12 +85,35 @@ namespace FluentGraphQL.Builder.Nodes
             return ChildSelectNodes.Select(x => x.GetChildNode(name)).FirstOrDefault(x => !(x is null));
         }
 
+        public IGraphQLSelectStatement Get(string statementName)
+        {
+            var property = PropertyStatements.FirstOrDefault(x => x.PropertyName.Equals(statementName));
+            if (!(property is null))
+                return property;
+
+            return ChildSelectNodes.FirstOrDefault(x => x.HeaderNode.Title.Equals(statementName));
+        }
+
         public bool HasAggregateContainer()
         {
             if (AggregateContainerNodes.Any(x => x.IsActive))
                 return true;
 
             return ChildSelectNodes.Any(x => x.HasAggregateContainer());
+        }
+
+        public void Activate()
+        {
+            IsActive = true;
+            Parallel.ForEach(PropertyStatements, (item) => { item.Activate(); });
+            Parallel.ForEach(ChildSelectNodes, (item) => { item.Activate(); });
+        }
+
+        public void Deactivate()
+        {
+            IsActive = false;
+            Parallel.ForEach(PropertyStatements, (item) => { item.Deactivate(); });
+            Parallel.ForEach(ChildSelectNodes, (item) => { item.Deactivate(); });
         }
     }
 }

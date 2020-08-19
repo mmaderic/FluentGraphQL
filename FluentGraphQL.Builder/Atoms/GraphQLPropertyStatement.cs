@@ -32,5 +32,15 @@ namespace FluentGraphQL.Builder.Atoms
         {
             return graphQLStringFactory.Construct(this);
         }
+
+        public void Activate()
+        {
+            IsActive = true;
+        }
+
+        public void Deactivate()
+        {
+            IsActive = false;
+        }
     }
 }

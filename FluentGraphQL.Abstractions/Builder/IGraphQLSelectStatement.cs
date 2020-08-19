@@ -16,9 +16,9 @@
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLPropertyStatement : IGraphQLStatement, IGraphQLSelectStatement
+    public interface IGraphQLSelectStatement
     {
-        string PropertyName { get; set; }
-        bool IsActive { get; set; }
+        void Activate();
+        void Deactivate();
     }
 }

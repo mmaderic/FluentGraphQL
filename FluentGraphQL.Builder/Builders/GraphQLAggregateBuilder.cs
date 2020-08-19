@@ -264,9 +264,9 @@ namespace FluentGraphQL.Builder.Builders
         protected GraphQLAggregateBuilder<TRoot, TEntity, TAggregate> Nodes()
         {
             if (_graphQLAggregateNodes is null)
-                _graphQLAggregateNodes = _graphQLSelectNode.ChildSelectNodes.First(x => x.HeaderNode.Title.Equals(Constant.GraphQLKeyords.Nodes));            
-            
-            _graphQLAggregateNodes.ActivateAll();
+                _graphQLAggregateNodes = _graphQLSelectNode.ChildSelectNodes.First(x => x.HeaderNode.Title.Equals(Constant.GraphQLKeyords.Nodes));
+
+            _graphQLAggregateNodes.Activate();
             return this;
         }
 

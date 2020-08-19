@@ -49,6 +49,24 @@ namespace FluentGraphQL.Builder.Factories
             return namingStrategy.Invoke(result);
         }
 
+        public string Construct(IGraphQLMultipleQuery graphQLMultipleQuery)
+        {
+            var builder = new StringBuilder();
+
+            builder.AppendLine("query {");
+            foreach(var query in graphQLMultipleQuery)
+            {
+                var selectNodeString = query.SelectNode.ToString(this);
+                builder.Append(selectNodeString);
+            }
+            builder.Append("}");
+
+            var result = builder.ToString();
+            var namingStrategy = GetNamingStrategyFunction();
+
+            return namingStrategy.Invoke(result);
+        }
+
         public virtual string Construct(IGraphQLHeaderNode graphQLHeaderNode)
         {
             var builder = new StringBuilder();
@@ -193,6 +211,6 @@ namespace FluentGraphQL.Builder.Factories
                 default:
                     throw new NotImplementedException();
             };
-        }
+        } 
     }
 }

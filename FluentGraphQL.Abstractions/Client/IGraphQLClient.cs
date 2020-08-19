@@ -28,7 +28,19 @@ namespace FluentGraphQL.Client.Abstractions
         Task<TEntity> ExecuteAsync<TEntity>(IGraphQLSingleQuery<TEntity> graphQLQuery);
         Task<TResult> ExecuteAsync<TEntity, TResult>(IGraphQLSingleSelectedQuery<TEntity, TResult> graphQLQuery);
 
-        Task<List<TEntity>> ExecuteAsync<TEntity>(IGraphQLQuery<TEntity> graphQLQuery);
-        Task<List<TResult>> ExecuteAsync<TEntity, TResult>(IGraphQLSelectedQuery<TEntity, TResult> graphQLQuery);
+        Task<List<TEntity>> ExecuteAsync<TEntity>(IGraphQLStandardQuery<TEntity> graphQLQuery);
+        Task<List<TResult>> ExecuteAsync<TEntity, TResult>(IGraphQLStandardSelectedQuery<TEntity, TResult> graphQLQuery);
+
+        Task<IGraphQLMultipleQueryResponse<TResponseA, TResponseB>> 
+            ExecuteAsync<TResponseA, TResponseB>(IGraphQLMultipleQuery<TResponseA, TResponseB> graphQLMultipleQuery);
+
+        Task<IGraphQLMultipleQueryResponse<TResponseA, TResponseB, TResponseC>> 
+            ExecuteAsync<TResponseA, TResponseB, TResponseC>(IGraphQLMultipleQuery<TResponseA, TResponseB, TResponseC> graphQLMultipleQuery);
+
+        Task<IGraphQLMultipleQueryResponse<TResponseA, TResponseB, TResponseC, TResponseD>>
+            ExecuteAsync<TResponseA, TResponseB, TResponseC, TResponseD>(IGraphQLMultipleQuery<TResponseA, TResponseB, TResponseC, TResponseD> graphQLMultipleQuery);
+
+        Task<IGraphQLMultipleQueryResponse<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>>
+            ExecuteAsync<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(IGraphQLMultipleQuery<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> graphQLMultipleQuery);
     }
 }

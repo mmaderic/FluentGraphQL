@@ -15,11 +15,12 @@
 */
 
 using System;
+using System.Collections.Generic;
 
 namespace FluentGraphQL.Builder.Abstractions
 {
     public interface IGraphQLSelectNodeFactory
     {
-        IGraphQLSelectNode Construct(Type type, int hierarchyLevel, Type parentType = null, bool isCollectionNode = false, string explicitNodeName = null);
+        IGraphQLSelectNode Construct(Type type, int hierarchyLevel, List<Type> parentTypes = null, bool isCollectionNode = false, string explicitNodeName = null);
     }
 }

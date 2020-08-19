@@ -36,8 +36,11 @@ namespace FluentGraphQL.Builder.Factories
             public IEnumerable<IGraphQLSelectNode> NestedAggregateContainers { get; set; }           
         }
 
-        public virtual IGraphQLSelectNode Construct(Type type, int hierarchyLevel, Type parentType = null, bool isCollectionNode = false, string explicitNodeName = null)
+        public virtual IGraphQLSelectNode Construct(Type type, int hierarchyLevel, List<Type> parentTypes = null, bool isCollectionNode = false, string explicitNodeName = null)
         {
+            if (parentTypes is null)
+                parentTypes = new List<Type>();
+
             var nodeName = explicitNodeName is null
                 ? type.Root().Name
                 : explicitNodeName;
@@ -51,13 +54,13 @@ namespace FluentGraphQL.Builder.Factories
             var headerNode = new GraphQLHeaderNode(nodeName, hierarchyLevel);
 
             var container = !type.Equals(typeof(IGraphQLAggregateClause))
-                ? BuildNestedStatementsContainer(properties, type, parentType, hierarchyLevel, isAggregateContainer)
+                ? BuildNestedStatementsContainer(properties, type, parentTypes, hierarchyLevel, isAggregateContainer)
                 : null;
 
             return BuildSelectNode(headerNode, container, entityType, isCollectionNode, !isAggregateContainer);
         }
 
-        private StatementContainer BuildNestedStatementsContainer(IEnumerable<PropertyInfo> properties, Type type, Type parentType, int hierarchyLevel, bool isAggregateContainer)
+        private StatementContainer BuildNestedStatementsContainer(IEnumerable<PropertyInfo> properties, Type type, List<Type> parentTypes, int hierarchyLevel, bool isAggregateContainer)
         {
             var simpleProperties = properties.Where(x => IsSimpleProperty(x)).ToArray();
             var complexProperties = properties.Except(simpleProperties).ToArray();
@@ -65,23 +68,24 @@ namespace FluentGraphQL.Builder.Factories
             var AggregateContainerProperties = complexProperties.Except(CollectionProperties).Where(x => IsAggregateContainerProperty(x)).ToArray();
             var ObjectProperties = complexProperties.Except(CollectionProperties.Union(AggregateContainerProperties)).ToArray();
 
-            var parentTypeArgument = isAggregateContainer ? parentType : type;
+            var parentTypeArgument = isAggregateContainer ? parentTypes.Last() : type;
+            parentTypes.Add(parentTypeArgument);
 
             var container = new StatementContainer();
             Parallel.Invoke(
                 () => container.PropertyStatements = ConstructPropertyStatements(simpleProperties),
-                () => container.NestedObjectStatements = ConstructNestedObjectSelectNodes(ObjectProperties, hierarchyLevel, parentTypeArgument, parentType),
-                () => container.NestedCollectionStatements = ConstructNestedCollectionSelectNodes(CollectionProperties, hierarchyLevel, parentTypeArgument, parentType),
-                () => container.NestedAggregateContainers = ConstructAggregateContainerSelectNodes(AggregateContainerProperties, hierarchyLevel, parentTypeArgument, parentType)
+                () => container.NestedObjectStatements = ConstructNestedObjectSelectNodes(ObjectProperties, hierarchyLevel, parentTypes),
+                () => container.NestedCollectionStatements = ConstructNestedCollectionSelectNodes(CollectionProperties, hierarchyLevel, parentTypes),
+                () => container.NestedAggregateContainers = ConstructAggregateContainerSelectNodes(AggregateContainerProperties, hierarchyLevel, parentTypes)
             );
 
             return container;
         }
 
         private IEnumerable<IGraphQLSelectNode> ConstructNestedObjectSelectNodes(
-            IEnumerable<PropertyInfo> propertyInfos, int hierarchyLevel, Type type, Type parentType)
+            IEnumerable<PropertyInfo> propertyInfos, int hierarchyLevel, List<Type> parentTypes)
         {
-            return propertyInfos.Where(x => !x.PropertyType.Equals(parentType))
+            return propertyInfos.Where(x => !parentTypes.Contains(x.PropertyType))
                 .Select(x => 
                 {
                     var useExplicitName = 
@@ -89,15 +93,15 @@ namespace FluentGraphQL.Builder.Factories
                         x.PropertyType.Equals(typeof(IGraphQLAggregateClause));
 
                     var explicitName = useExplicitName ? x.Name : null;
-                    return Construct(x.PropertyType, hierarchyLevel + 1, type, false, explicitName);
+                    return Construct(x.PropertyType, hierarchyLevel + 1, parentTypes, false, explicitName);
                 }).ToArray();
         }
 
         private IEnumerable<IGraphQLSelectNode> ConstructNestedCollectionSelectNodes(
-            IEnumerable<PropertyInfo> propertyInfos, int hierarchyLevel, Type type, Type parentType)
+            IEnumerable<PropertyInfo> propertyInfos, int hierarchyLevel, List<Type> parentTypes)
         {
-            return propertyInfos.Where(x => !x.PropertyType.GetGenericArguments().First().Equals(parentType))
-                .Select(x => Construct(x.PropertyType.GetGenericArguments().First(), hierarchyLevel + 1, type, true, x.Name)).ToArray();
+            return propertyInfos.Where(x => !parentTypes.Contains(x.PropertyType.GetGenericArguments().First()))
+                .Select(x => Construct(x.PropertyType.GetGenericArguments().First(), hierarchyLevel + 1, parentTypes, true, x.Name)).ToArray();
         }
 
         private IEnumerable<IGraphQLPropertyStatement> ConstructPropertyStatements(IEnumerable<PropertyInfo> propertyInfos)
@@ -106,10 +110,10 @@ namespace FluentGraphQL.Builder.Factories
         }
 
         private IEnumerable<IGraphQLSelectNode> ConstructAggregateContainerSelectNodes(
-            IEnumerable<PropertyInfo> propertyInfos, int hierarchyLevel, Type type, Type parentType)
+            IEnumerable<PropertyInfo> propertyInfos, int hierarchyLevel, List<Type> parentTypes)
         {
-            return propertyInfos.Where(x => !x.PropertyType.Equals(parentType))
-                .Select(x => Construct(x.PropertyType, hierarchyLevel + 1, type, false, x.Name)).ToArray();
+            return propertyInfos.Where(x => !parentTypes.Contains(x.PropertyType))
+                .Select(x => Construct(x.PropertyType, hierarchyLevel + 1, parentTypes, false, x.Name)).ToArray();
         }
 
         private bool IsSimpleProperty(PropertyInfo propertyInfo)

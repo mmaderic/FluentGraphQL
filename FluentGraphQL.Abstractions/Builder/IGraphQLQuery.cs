@@ -14,6 +14,8 @@
     copies or substantial portions of the Software.
 */
 
+using System;
+
 namespace FluentGraphQL.Builder.Abstractions
 {
     public interface IGraphQLQuery : IGraphQLConstruct
@@ -22,6 +24,8 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSelectNode SelectNode { get; set; }
 
         IGraphQLSelectNode GetSelectNode<TNode>();
+        IGraphQLSelectStatement Get(string statementName);
+
         bool HasAggregateContainer();
     }
 
@@ -31,5 +35,20 @@ namespace FluentGraphQL.Builder.Abstractions
 
     public interface IGraphQLSingleQuery<TEntity> : IGraphQLQuery
     {
+    }
+
+    public interface IGraphQLSelectedQueryBase<TEntity, TResult>
+    {
+        Func<TEntity, TResult> Selector { get; }        
+    }
+
+    public interface IGraphQLSelectedQuery<TEntity, TResult> : IGraphQLQuery<TEntity>, IGraphQLSelectedQueryBase<TEntity, TResult>
+    {
+        IGraphQLQuery<TEntity> Cast();
+    }
+
+    public interface IGraphQLSingleSelectedQuery<TEntity, TResult> : IGraphQLSingleQuery<TEntity>, IGraphQLSelectedQueryBase<TEntity, TResult>
+    {
+        IGraphQLSingleQuery<TEntity> Cast();
     }
 }

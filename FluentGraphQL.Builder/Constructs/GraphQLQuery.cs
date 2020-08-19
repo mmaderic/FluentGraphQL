@@ -15,6 +15,7 @@
 */
 
 using FluentGraphQL.Builder.Abstractions;
+using System;
 
 namespace FluentGraphQL.Builder.Constructs
 {
@@ -43,6 +44,14 @@ namespace FluentGraphQL.Builder.Constructs
         {
             return SelectNode.HasAggregateContainer();
         }
+
+        public IGraphQLSelectStatement Get(string statementName)
+        {
+            if (HeaderNode.Title.Equals(statementName))
+                return SelectNode;
+
+            return SelectNode.Get(statementName);
+        }
     }
 
     public class GraphQLQuery<TEntity> : GraphQLQuery, IGraphQLQuery<TEntity>, IGraphQLSingleQuery<TEntity>
@@ -51,5 +60,26 @@ namespace FluentGraphQL.Builder.Constructs
         public GraphQLQuery(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode) 
             : base(graphQLHeaderNode, graphQLSelectNode) 
         { }       
+    }
+
+    public class GraphQLSelectedQuery<TEntity, TResult> : GraphQLQuery, IGraphQLSelectedQuery<TEntity, TResult>, IGraphQLSingleSelectedQuery<TEntity, TResult>
+    {
+        public Func<TEntity, TResult> Selector { get; }
+
+        public GraphQLSelectedQuery(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode, Func<TEntity, TResult> selector) 
+            : base(graphQLHeaderNode, graphQLSelectNode)
+        {
+            Selector = selector;
+        }
+
+        IGraphQLQuery<TEntity> IGraphQLSelectedQuery<TEntity, TResult>.Cast()
+        {
+            return this;
+        }
+
+        IGraphQLSingleQuery<TEntity> IGraphQLSingleSelectedQuery<TEntity, TResult>.Cast()
+        {
+            return this;
+        }
     }
 }

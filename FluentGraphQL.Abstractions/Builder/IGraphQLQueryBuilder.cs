@@ -29,9 +29,13 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleQuery<TEntity> Build();
     }
 
-    public interface IGraphQLMultiQueryBuilder<TEntity> : IGraphQLQueryBuilder
+    public interface IGraphQLMultiQueryBuilderBase<TEntity> : IGraphQLQueryBuilder
     {
         IGraphQLQuery<TEntity> Build();
+    }
+
+    public interface IGraphQLMultiQueryBuilder<TEntity> : IGraphQLMultiQueryBuilderBase<TEntity>
+    {
         IGraphQLSingleNodeBuilder<TEntity> Single(Expression<Func<TEntity, bool>> expressionPredicate = null);
     }
 
@@ -54,6 +58,7 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleOrderedNodeBuilder<TEntity> OrderByNullsFirst<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         IGraphQLSingleOrderedNodeBuilder<TEntity> OrderByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         IGraphQLSingleAggregateBuilder<TEntity, TAggregate> Aggregate<TAggregate>();
+        IGraphQLSingleSelectedQuery<TEntity, TResult> Select<TResult>(Expression<Func<TEntity, TResult>> selector);
     }
 
     public interface IGraphQLSingleNodeBuilder<TRoot, TNode> : IGraphQLMultiNodeBuilderBase<TRoot>
@@ -65,6 +70,7 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleOrderedNodeBuilder<TRoot, TNode> OrderByNullsFirst<TKey>(Expression<Func<TNode, TKey>> keySelector);
         IGraphQLSingleOrderedNodeBuilder<TRoot, TNode> OrderByDescendingNullsLast<TKey>(Expression<Func<TNode, TKey>> keySelector);
         IGraphQLSingleAggregateBuilder<TRoot, TNode, TAggregate> Aggregate<TAggregate>();
+        IGraphQLSingleSelectedQuery<TRoot, TResult> Select<TResult>(Expression<Func<TRoot, TResult>> selector);
     }
 
     public interface IGraphQLMultiNodeBuilder<TEntity> : IGraphQLMultiNodeBuilderBase<TEntity>
@@ -76,6 +82,8 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLMultiOrderedNodeBuilder<TEntity> OrderByNullsFirst<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         IGraphQLMultiOrderedNodeBuilder<TEntity> OrderByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         IGraphQLMultiAggregateBuilder<TEntity, TAggregate> Aggregate<TAggregate>();
+
+        IGraphQLSelectedQuery<TEntity, TResult> Select<TResult>(Expression<Func<TEntity, TResult>> selector);
     }
 
     public interface IGraphQLMultiNodeBuilder<TRoot, TNode> : IGraphQLMultiNodeBuilderBase<TRoot>
@@ -87,6 +95,7 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLMultiOrderedNodeBuilder<TRoot, TNode> OrderByNullsFirst<TKey>(Expression<Func<TNode, TKey>> keySelector);
         IGraphQLMultiOrderedNodeBuilder<TRoot, TNode> OrderByDescendingNullsLast<TKey>(Expression<Func<TNode, TKey>> keySelector);
         IGraphQLMultiAggregateBuilder<TRoot, TNode, TAggregate> Aggregate<TAggregate>();
+        IGraphQLSelectedQuery<TRoot, TResult> Select<TResult>(Expression<Func<TRoot, TResult>> selector);
     }
 
     public interface IGraphQLRootNodeBuilder<TEntity> : IGraphQLMultiNodeBuilder<TEntity>

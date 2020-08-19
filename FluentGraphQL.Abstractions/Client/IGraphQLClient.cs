@@ -26,6 +26,9 @@ namespace FluentGraphQL.Client.Abstractions
             where TEntity : IGraphQLEntity;
 
         Task<TEntity> ExecuteAsync<TEntity>(IGraphQLSingleQuery<TEntity> graphQLQuery);
+        Task<TResult> ExecuteAsync<TEntity, TResult>(IGraphQLSingleSelectedQuery<TEntity, TResult> graphQLQuery);
+
         Task<List<TEntity>> ExecuteAsync<TEntity>(IGraphQLQuery<TEntity> graphQLQuery);
+        Task<List<TResult>> ExecuteAsync<TEntity, TResult>(IGraphQLSelectedQuery<TEntity, TResult> graphQLQuery);
     }
 }

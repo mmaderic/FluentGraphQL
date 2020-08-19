@@ -86,13 +86,16 @@ namespace FluentGraphQL.Builder.Converters
                return EvaluateMethodCallExpression(methodCallExpression);
 
             if (expression is LambdaExpression lambdaExpression && lambdaExpression.Body is MemberExpression lambdaMemberExpression)
-                return new GraphQLValueStatement(null, new GraphQLPropertyValue(lambdaMemberExpression.Member.Name));
+                return EvaluateMemberExpression(lambdaMemberExpression, null);
 
             if (expression is MemberExpression memberExpression)
-                return new GraphQLValueStatement(null, new GraphQLPropertyValue(memberExpression.Member.Name));
+                return EvaluateMemberExpression(memberExpression, null);         
 
             if (expression is ConstantExpression constantExpression)
                 return new GraphQLValueStatement(null, _graphQLValueFactory.Construct(constantExpression.Value));
+
+            if (expression is NewExpression newExpression)
+                return EvaluateNewExpression(newExpression);  
 
             throw new NotImplementedException();
         }
@@ -416,6 +419,14 @@ namespace FluentGraphQL.Builder.Converters
             }
 
             return valueStatement;
-        }        
+        }  
+        
+        private IGraphQLValueStatement EvaluateNewExpression(NewExpression newExpression)
+        {
+            var arguments = newExpression.Arguments.Select(x => EvaluateExpression(x)).ToArray();
+            var objectValues = arguments.Select(x => new GraphQLObjectValue(x)).ToArray();
+
+            return new GraphQLValueStatement(null, new GraphQLCollectionValue(objectValues));           
+        }
     }
 }

@@ -22,30 +22,81 @@ namespace FluentGraphQL.Builder.Constructs
 {
     public abstract class GraphQLMultipleQuery : IGraphQLMultipleQuery
     {
+        public static GraphQLMultipleQuery<List<TResponseA>, List<TResponseB>> Construct<TResponseA, TResponseB>(
+            IGraphQLStandardQuery<TResponseA> queryA, IGraphQLStandardQuery<TResponseB> queryB)
+        {
+            return new GraphQLMultipleQuery<List<TResponseA>, List<TResponseB>>(queryA, queryB);
+        }
+
+        public static GraphQLMultipleQuery<List<TResponseA>, TResponseB> Construct<TResponseA, TResponseB>(
+            IGraphQLStandardQuery<TResponseA> queryA, IGraphQLSingleQuery<TResponseB> queryB)
+        {
+            return new GraphQLMultipleQuery<List<TResponseA>,TResponseB>(queryA, queryB);
+        }
+
+        public static GraphQLMultipleQuery<TResponseA, List<TResponseB>> Construct<TResponseA, TResponseB>(
+            IGraphQLSingleQuery<TResponseA> queryA, IGraphQLStandardQuery<TResponseB> queryB)
+        {
+            return new GraphQLMultipleQuery<TResponseA, List<TResponseB>>(queryA, queryB);
+        }
+
         public static GraphQLMultipleQuery<TResponseA, TResponseB> Construct<TResponseA, TResponseB>(
-            IGraphQLQuery<TResponseA> queryA, IGraphQLQuery<TResponseB> queryB)
+            IGraphQLSingleQuery<TResponseA> queryA, IGraphQLSingleQuery<TResponseB> queryB)
         {
             return new GraphQLMultipleQuery<TResponseA, TResponseB>(queryA, queryB);
         }
 
+        /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+        public static GraphQLMultipleQuery<List<TResponseA>, List<TResponseB>, List<TResponseC>> Construct<TResponseA, TResponseB, TResponseC>(
+            IGraphQLStandardQuery<TResponseA> queryA, IGraphQLStandardQuery<TResponseB> queryB, IGraphQLStandardQuery<TResponseC> queryC)
+        {
+            return new GraphQLMultipleQuery<List<TResponseA>, List<TResponseB>, List<TResponseC>>(queryA, queryB, queryC);
+        }
+
+        public static GraphQLMultipleQuery<List<TResponseA>, List<TResponseB>, TResponseC> Construct<TResponseA, TResponseB, TResponseC>(
+            IGraphQLStandardQuery<TResponseA> queryA, IGraphQLStandardQuery<TResponseB> queryB, IGraphQLSingleQuery<TResponseC> queryC)
+        {
+            return new GraphQLMultipleQuery<List<TResponseA>, List<TResponseB>, TResponseC>(queryA, queryB, queryC);
+        }
+
+        public static GraphQLMultipleQuery<List<TResponseA>, TResponseB, List<TResponseC>> Construct<TResponseA, TResponseB, TResponseC>(
+            IGraphQLStandardQuery<TResponseA> queryA, IGraphQLSingleQuery<TResponseB> queryB, IGraphQLStandardQuery<TResponseC> queryC)
+        {
+            return new GraphQLMultipleQuery<List<TResponseA>, TResponseB, List<TResponseC>>(queryA, queryB, queryC);
+        }
+
+        public static GraphQLMultipleQuery<TResponseA, List<TResponseB>, List<TResponseC>> Construct<TResponseA, TResponseB, TResponseC>(
+            IGraphQLSingleQuery<TResponseA> queryA, IGraphQLStandardQuery<TResponseB> queryB, IGraphQLStandardQuery<TResponseC> queryC)
+        {
+            return new GraphQLMultipleQuery<TResponseA, List<TResponseB>, List<TResponseC>>(queryA, queryB, queryC);
+        }
+
+        public static GraphQLMultipleQuery<List<TResponseA>, TResponseB, TResponseC> Construct<TResponseA, TResponseB, TResponseC>(
+            IGraphQLStandardQuery<TResponseA> queryA, IGraphQLSingleQuery<TResponseB> queryB, IGraphQLSingleQuery<TResponseC> queryC)
+        {
+            return new GraphQLMultipleQuery<List<TResponseA>, TResponseB, TResponseC>(queryA, queryB, queryC);
+        }
+
+        public static GraphQLMultipleQuery<TResponseA, TResponseB, List<TResponseC>> Construct<TResponseA, TResponseB, TResponseC>(
+            IGraphQLSingleQuery<TResponseA> queryA, IGraphQLSingleQuery<TResponseB> queryB, IGraphQLStandardQuery<TResponseC> queryC)
+        {
+            return new GraphQLMultipleQuery<TResponseA, TResponseB, List<TResponseC>>(queryA, queryB, queryC);
+        }
+
+        public static GraphQLMultipleQuery<TResponseA, List<TResponseB>, TResponseC> Construct<TResponseA, TResponseB, TResponseC>(
+            IGraphQLSingleQuery<TResponseA> queryA, IGraphQLStandardQuery<TResponseB> queryB, IGraphQLSingleQuery<TResponseC> queryC)
+        {
+            return new GraphQLMultipleQuery<TResponseA, List<TResponseB>, TResponseC>(queryA, queryB, queryC);
+        }
+
         public static GraphQLMultipleQuery<TResponseA, TResponseB, TResponseC> Construct<TResponseA, TResponseB, TResponseC>(
-            IGraphQLQuery<TResponseA> queryA, IGraphQLQuery<TResponseB> queryB, IGraphQLQuery<TResponseC> queryC)
+            IGraphQLSingleQuery<TResponseA> queryA, IGraphQLSingleQuery<TResponseB> queryB, IGraphQLSingleQuery<TResponseC> queryC)
         {
             return new GraphQLMultipleQuery<TResponseA, TResponseB, TResponseC>(queryA, queryB, queryC);
         }
 
-        public static GraphQLMultipleQuery<TResponseA, TResponseB> Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-            IGraphQLQuery<TResponseA> queryA, IGraphQLQuery<TResponseB> queryB, IGraphQLQuery<TResponseC> queryC, IGraphQLQuery<TResponseD> queryD)
-        {
-            return new GraphQLMultipleQuery<TResponseA, TResponseB, TResponseC, TResponseD>(queryA, queryB, queryC, queryD);
-        }
-
-        public static GraphQLMultipleQuery<TResponseA, TResponseB> Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-            IGraphQLQuery<TResponseA> queryA, IGraphQLQuery<TResponseB> queryB, IGraphQLQuery<TResponseC> queryC, IGraphQLQuery<TResponseD> queryD,
-            IGraphQLQuery<TResponseE> queryE)
-        {
-            return new GraphQLMultipleQuery<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(queryA, queryB, queryC, queryD, queryE);
-        }
+        /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/        
 
         public abstract IEnumerator<IGraphQLQuery> GetEnumerator();
 
@@ -63,10 +114,10 @@ namespace FluentGraphQL.Builder.Constructs
     public class GraphQLMultipleQuery<TResponseA, TResponseB> : GraphQLMultipleQuery, 
         IGraphQLMultipleQuery<TResponseA, TResponseB>
     {
-        public IGraphQLQuery<TResponseA> QueryA { get; set; }
-        public IGraphQLQuery<TResponseB> QueryB { get; set; }
+        public IGraphQLQuery QueryA { get; set; }
+        public IGraphQLQuery QueryB { get; set; }
 
-        public GraphQLMultipleQuery(IGraphQLQuery<TResponseA> queryA, IGraphQLQuery<TResponseB> queryB)
+        public GraphQLMultipleQuery(IGraphQLQuery queryA, IGraphQLQuery queryB)
         {
             QueryA = queryA;
             QueryB = queryB;
@@ -82,9 +133,9 @@ namespace FluentGraphQL.Builder.Constructs
     public class GraphQLMultipleQuery<TResponseA, TResponseB, TResponseC> : GraphQLMultipleQuery<TResponseA, TResponseB>, 
         IGraphQLMultipleQuery<TResponseA, TResponseB, TResponseC>
     {
-        public IGraphQLQuery<TResponseC> QueryC { get; set; }
+        public IGraphQLQuery QueryC { get; set; }
 
-        public GraphQLMultipleQuery(IGraphQLQuery<TResponseA> queryA, IGraphQLQuery<TResponseB> queryB, IGraphQLQuery<TResponseC> queryC) 
+        public GraphQLMultipleQuery(IGraphQLQuery queryA, IGraphQLQuery queryB, IGraphQLQuery queryC) 
             : base(queryA, queryB)
         {
             QueryC = queryC;
@@ -101,7 +152,7 @@ namespace FluentGraphQL.Builder.Constructs
     public class GraphQLMultipleQuery<TResponseA, TResponseB, TResponseC, TResponseD> : GraphQLMultipleQuery<TResponseA, TResponseB, TResponseC>,
         IGraphQLMultipleQuery<TResponseA, TResponseB, TResponseC, TResponseD>
     {
-        public IGraphQLQuery<TResponseD> QueryD { get; set; }
+        public IGraphQLQuery QueryD { get; set; }
 
         public GraphQLMultipleQuery(
             IGraphQLQuery<TResponseA> queryA, IGraphQLQuery<TResponseB> queryB, IGraphQLQuery<TResponseC> queryC, IGraphQLQuery<TResponseD> queryD)
@@ -122,7 +173,7 @@ namespace FluentGraphQL.Builder.Constructs
     public class GraphQLMultipleQuery<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> : GraphQLMultipleQuery<TResponseA, TResponseB, TResponseC, TResponseD>,
         IGraphQLMultipleQuery<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>
     {     
-        public IGraphQLQuery<TResponseE> QueryE { get; set; }
+        public IGraphQLQuery QueryE { get; set; }
 
         public GraphQLMultipleQuery(
             IGraphQLQuery<TResponseA> queryA, IGraphQLQuery<TResponseB> queryB, IGraphQLQuery<TResponseC> queryC, IGraphQLQuery<TResponseD> queryD,

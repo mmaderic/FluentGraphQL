@@ -24,22 +24,22 @@ namespace FluentGraphQL.Builder.Abstractions
 
     public interface IGraphQLMultipleQuery<TResponseA, TResponseB> : IGraphQLMultipleQuery
     {
-        IGraphQLQuery<TResponseA> QueryA { get; set; }
-        IGraphQLQuery<TResponseB> QueryB { get; set; }
+        IGraphQLQuery QueryA { get; set; }
+        IGraphQLQuery QueryB { get; set; }
     }
 
     public interface IGraphQLMultipleQuery<TResponseA, TResponseB, TResponseC> : IGraphQLMultipleQuery<TResponseA, TResponseB>
     {
-        IGraphQLQuery<TResponseC> QueryC { get; set; }
+        IGraphQLQuery QueryC { get; set; }
     }
 
     public interface IGraphQLMultipleQuery<TResponseA, TResponseB, TResponseC, TResponseD> : IGraphQLMultipleQuery<TResponseA, TResponseB, TResponseC>
     {
-        IGraphQLQuery<TResponseD> QueryD { get; set; }
+        IGraphQLQuery QueryD { get; set; }
     }
 
     public interface IGraphQLMultipleQuery<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> : IGraphQLMultipleQuery<TResponseA, TResponseB, TResponseC, TResponseD>
     {
-        IGraphQLQuery<TResponseE> QueryE { get; set; }
+        IGraphQLQuery QueryE { get; set; }
     }
 }

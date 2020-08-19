@@ -39,5 +39,10 @@ namespace FluentGraphQL.Builder.Constructs
         {
             return this;
         }
+
+        object IGraphQLSelectedQuery.InvokeSelector(object @object)
+        {
+            return Selector.Invoke((TEntity)@object);
+        }
     }
 }

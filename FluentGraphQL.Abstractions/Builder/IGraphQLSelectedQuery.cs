@@ -18,7 +18,12 @@ using System;
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLSelectedQuery<TEntity, TResult>
+    public interface IGraphQLSelectedQuery
+    {
+        object InvokeSelector(object @object);
+    }
+
+    public interface IGraphQLSelectedQuery<TEntity, TResult> : IGraphQLSelectedQuery
     {
         Func<TEntity, TResult> Selector { get; }
     }

@@ -30,9 +30,11 @@ namespace FluentGraphQL.Builder.Builders
     public class GraphQLQueryBuilder<TRoot, TEntity> :
         IGraphQLRootNodeBuilder<TRoot>,
         IGraphQLSingleNodeBuilder<TRoot>, IGraphQLSingleNodeBuilder<TRoot, TEntity>,
-        IGraphQLMultiNodeBuilder<TRoot>, IGraphQLMultiNodeBuilder<TRoot, TEntity>,
+        IGraphQLStandardNodeBuilder<TRoot>, IGraphQLStandardNodeBuilder<TRoot, TEntity>,
         IGraphQLSingleOrderedNodeBuilder<TRoot>, IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>,
-        IGraphQLMultiOrderedNodeBuilder<TRoot>, IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity>
+        IGraphQLStandardOrderedNodeBuilder<TRoot>, IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>
+        where TRoot : IGraphQLEntity
+        where TEntity : IGraphQLEntity
     {
         protected readonly IGraphQLQuery _graphQLQuery;
         protected readonly IGraphQLSelectNode _graphQLSelectNode;
@@ -92,12 +94,12 @@ namespace FluentGraphQL.Builder.Builders
             return Where(expressionPredicate);
         }
 
-        IGraphQLMultiNodeBuilder<TRoot> IGraphQLMultiNodeBuilder<TRoot>.Where(Expression<Func<TRoot, bool>> expressionPredicate)
+        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.Where(Expression<Func<TRoot, bool>> expressionPredicate)
         {
             return Where(expressionPredicate);
         }
 
-        IGraphQLMultiNodeBuilder<TRoot, TEntity> IGraphQLMultiNodeBuilder<TRoot, TEntity>.Where(Expression<Func<TEntity, bool>> expressionPredicate)
+        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.Where(Expression<Func<TEntity, bool>> expressionPredicate)
         {
             return Where(expressionPredicate);
         }
@@ -123,12 +125,12 @@ namespace FluentGraphQL.Builder.Builders
             return Limit(number, offset);
         }
 
-        IGraphQLMultiNodeBuilder<TRoot> IGraphQLMultiNodeBuilder<TRoot>.Limit(int number, int offset)
+        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.Limit(int number, int offset)
         {
             return Limit(number, offset);
         }
 
-        IGraphQLMultiNodeBuilder<TRoot, TEntity> IGraphQLMultiNodeBuilder<TRoot, TEntity>.Limit(int number, int offset)
+        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.Limit(int number, int offset)
         {
             return Limit(number, offset);
         }
@@ -143,12 +145,12 @@ namespace FluentGraphQL.Builder.Builders
             return Limit(number, offset);
         }
 
-        IGraphQLMultiNodeBuilder<TRoot> IGraphQLMultiOrderedNodeBuilder<TRoot>.Limit(int number, int offset)
+        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.Limit(int number, int offset)
         {
             return Limit(number, offset);
         }
 
-        IGraphQLMultiNodeBuilder<TRoot, TEntity> IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity>.Limit(int number, int offset)
+        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.Limit(int number, int offset)
         {
             return Limit(number, offset);
         }
@@ -188,12 +190,12 @@ namespace FluentGraphQL.Builder.Builders
             return ResolveOrderByStatement(keySelector, OrderByDirection.Asc);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot> IGraphQLMultiNodeBuilder<TRoot>.OrderBy<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.OrderBy<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
             return ResolveOrderByStatement(keySelector, OrderByDirection.Asc);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity> IGraphQLMultiNodeBuilder<TRoot, TEntity>.OrderBy<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.OrderBy<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
             return ResolveOrderByStatement(keySelector, OrderByDirection.Asc);
         }
@@ -208,12 +210,12 @@ namespace FluentGraphQL.Builder.Builders
             return ResolveOrderByStatement(keySelector, OrderByDirection.Desc);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot> IGraphQLMultiNodeBuilder<TRoot>.OrderByDescending<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.OrderByDescending<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
             return ResolveOrderByStatement(keySelector, OrderByDirection.Desc);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity> IGraphQLMultiNodeBuilder<TRoot, TEntity>.OrderByDescending<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.OrderByDescending<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
             return ResolveOrderByStatement(keySelector, OrderByDirection.Desc);
         }
@@ -228,12 +230,12 @@ namespace FluentGraphQL.Builder.Builders
             return ResolveOrderByStatement(keySelector, OrderByDirection.DescNullsLast);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot> IGraphQLMultiNodeBuilder<TRoot>.OrderByDescendingNullsLast<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.OrderByDescendingNullsLast<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
             return ResolveOrderByStatement(keySelector, OrderByDirection.DescNullsLast);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity> IGraphQLMultiNodeBuilder<TRoot, TEntity>.OrderByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.OrderByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
             return ResolveOrderByStatement(keySelector, OrderByDirection.DescNullsLast);
         }
@@ -248,12 +250,12 @@ namespace FluentGraphQL.Builder.Builders
             return ResolveOrderByStatement(keySelector, OrderByDirection.AscNullsFirst);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot> IGraphQLMultiNodeBuilder<TRoot>.OrderByNullsFirst<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.OrderByNullsFirst<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
             return ResolveOrderByStatement(keySelector, OrderByDirection.AscNullsFirst);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity> IGraphQLMultiNodeBuilder<TRoot, TEntity>.OrderByNullsFirst<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.OrderByNullsFirst<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
             return ResolveOrderByStatement(keySelector, OrderByDirection.AscNullsFirst);
         }
@@ -280,12 +282,12 @@ namespace FluentGraphQL.Builder.Builders
             return DistinctOn(keySelector);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot> IGraphQLMultiOrderedNodeBuilder<TRoot>.DistinctOn<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.DistinctOn<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
             return DistinctOn(keySelector);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity> IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity>.DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
             return DistinctOn(keySelector);
         }
@@ -300,14 +302,14 @@ namespace FluentGraphQL.Builder.Builders
             return ((IGraphQLSingleNodeBuilder<TRoot, TEntity>)this).OrderBy(keySelector);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot> IGraphQLMultiOrderedNodeBuilder<TRoot>.ThenBy<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.ThenBy<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
-            return ((IGraphQLMultiNodeBuilder<TRoot>)this).OrderBy(keySelector);
+            return ((IGraphQLStandardNodeBuilder<TRoot>)this).OrderBy(keySelector);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity> IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity>.ThenBy<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.ThenBy<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            return ((IGraphQLMultiNodeBuilder<TRoot, TEntity>)this).OrderBy(keySelector);
+            return ((IGraphQLStandardNodeBuilder<TRoot, TEntity>)this).OrderBy(keySelector);
         }
 
         IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.ThenByDescending<TKey>(Expression<Func<TRoot, TKey>> keySelector)
@@ -320,14 +322,14 @@ namespace FluentGraphQL.Builder.Builders
             return ((IGraphQLSingleNodeBuilder<TRoot, TEntity>)this).OrderByDescending(keySelector);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot> IGraphQLMultiOrderedNodeBuilder<TRoot>.ThenByDescending<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.ThenByDescending<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
-            return ((IGraphQLMultiNodeBuilder<TRoot>)this).OrderByDescending(keySelector);
+            return ((IGraphQLStandardNodeBuilder<TRoot>)this).OrderByDescending(keySelector);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity> IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity>.ThenByDescending<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.ThenByDescending<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            return ((IGraphQLMultiNodeBuilder<TRoot, TEntity>)this).OrderByDescending(keySelector);
+            return ((IGraphQLStandardNodeBuilder<TRoot, TEntity>)this).OrderByDescending(keySelector);
         }
 
         IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.ThenByNullsFirst<TKey>(Expression<Func<TRoot, TKey>> keySelector)
@@ -340,14 +342,14 @@ namespace FluentGraphQL.Builder.Builders
             return ((IGraphQLSingleNodeBuilder<TRoot, TEntity>)this).OrderByNullsFirst(keySelector);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot> IGraphQLMultiOrderedNodeBuilder<TRoot>.ThenByNullsFirst<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.ThenByNullsFirst<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
-            return ((IGraphQLMultiNodeBuilder<TRoot>)this).OrderByNullsFirst(keySelector);
+            return ((IGraphQLStandardNodeBuilder<TRoot>)this).OrderByNullsFirst(keySelector);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity> IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity>.ThenByNullsFirst<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.ThenByNullsFirst<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            return ((IGraphQLMultiNodeBuilder<TRoot, TEntity>)this).OrderByNullsFirst(keySelector);
+            return ((IGraphQLStandardNodeBuilder<TRoot, TEntity>)this).OrderByNullsFirst(keySelector);
         }
 
         IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.OrderByDescendingNullsLast<TKey>(Expression<Func<TRoot, TKey>> keySelector)
@@ -355,14 +357,14 @@ namespace FluentGraphQL.Builder.Builders
             return ((IGraphQLSingleNodeBuilder<TRoot>)this).OrderByDescendingNullsLast(keySelector);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot> IGraphQLMultiOrderedNodeBuilder<TRoot>.OrderByDescendingNullsLast<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.OrderByDescendingNullsLast<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
-            return ((IGraphQLMultiNodeBuilder<TRoot>)this).OrderByDescendingNullsLast(keySelector);
+            return ((IGraphQLStandardNodeBuilder<TRoot>)this).OrderByDescendingNullsLast(keySelector);
         }
 
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity> IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity>.OrderByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.OrderByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            return ((IGraphQLMultiNodeBuilder<TRoot, TEntity>)this).OrderByDescendingNullsLast(keySelector);
+            return ((IGraphQLStandardNodeBuilder<TRoot, TEntity>)this).OrderByDescendingNullsLast(keySelector);
         }
 
         IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.OrderByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector)
@@ -371,6 +373,7 @@ namespace FluentGraphQL.Builder.Builders
         }
 
         private GraphQLAggregateBuilder<TRoot, TEntity, TAggregate> Aggregate<TAggregate>()
+            where TAggregate : IGraphQLEntity
         {
             if (_aggregateBuilders is null)
                 _aggregateBuilders = new Dictionary<RuntimeTypeHandle, IGraphQLQueryBuilder>();
@@ -413,12 +416,12 @@ namespace FluentGraphQL.Builder.Builders
             return Aggregate<TAggregate>();
         }
 
-        IGraphQLMultiAggregateBuilder<TRoot, TAggregate> IGraphQLMultiNodeBuilder<TRoot>.Aggregate<TAggregate>()
+        IGraphQLStandardAggregateBuilder<TRoot, TAggregate> IGraphQLStandardNodeBuilder<TRoot>.Aggregate<TAggregate>()
         {
             return Aggregate<TAggregate>();
         }
 
-        IGraphQLMultiAggregateBuilder<TRoot, TEntity, TAggregate> IGraphQLMultiNodeBuilder<TRoot, TEntity>.Aggregate<TAggregate>()
+        IGraphQLStandardAggregateBuilder<TRoot, TEntity, TAggregate> IGraphQLStandardNodeBuilder<TRoot, TEntity>.Aggregate<TAggregate>()
         {
             return Aggregate<TAggregate>();
         }
@@ -428,12 +431,12 @@ namespace FluentGraphQL.Builder.Builders
             return Aggregate<TAggregate>();
         }
 
-        IGraphQLMultiAggregateBuilder<TRoot, TAggregate> IGraphQLMultiOrderedNodeBuilder<TRoot>.Aggregate<TAggregate>()
+        IGraphQLStandardAggregateBuilder<TRoot, TAggregate> IGraphQLStandardOrderedNodeBuilder<TRoot>.Aggregate<TAggregate>()
         {
             return Aggregate<TAggregate>();
         }
 
-        IGraphQLMultiAggregateBuilder<TRoot, TEntity, TAggregate> IGraphQLMultiOrderedNodeBuilder<TRoot, TEntity>.Aggregate<TAggregate>()
+        IGraphQLStandardAggregateBuilder<TRoot, TEntity, TAggregate> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.Aggregate<TAggregate>()
         {
             return Aggregate<TAggregate>();
         }
@@ -444,6 +447,7 @@ namespace FluentGraphQL.Builder.Builders
         }
 
         private GraphQLQueryBuilder<TRoot, TNode> Node<TNode>()
+            where TNode : IGraphQLEntity
         {
             if (_nodeBuilders is null)
             {
@@ -478,22 +482,23 @@ namespace FluentGraphQL.Builder.Builders
             return Node<TNode>();
         }
 
-        IGraphQLMultiNodeBuilder<TRoot, TNode> IGraphQLMultiNodeBuilderBase<TRoot>.Node<TNode>()
+        IGraphQLStandardNodeBuilder<TRoot, TNode> IGraphQLStandardNodeBuilderBase<TRoot>.Node<TNode>()
         {
             return Node<TNode>();
         }
 
-        IGraphQLQuery<TRoot> IGraphQLMultiQueryBuilderBase<TRoot>.Build()
+        IGraphQLStandardQuery<TRoot> IGraphQLStandardQueryBuilderBase<TRoot>.Build()
         {
-            return (IGraphQLQuery<TRoot>)_graphQLQuery;
+            return (IGraphQLStandardQuery<TRoot>)_graphQLQuery;
         }
 
         IGraphQLSingleQuery<TRoot> IGraphQLSingleQueryBuilder<TRoot>.Build()
         {
+            _graphQLQuery.IsSingleQuery = true;
             return (IGraphQLSingleQuery<TRoot>)_graphQLQuery;
         }
 
-        IGraphQLSingleNodeBuilder<TRoot> IGraphQLMultiQueryBuilder<TRoot>.Single(Expression<Func<TRoot, bool>> expressionPredicate)
+        IGraphQLSingleNodeBuilder<TRoot> IGraphQLStandardQueryBuilder<TRoot>.Single(Expression<Func<TRoot, bool>> expressionPredicate)
         {
             if (expressionPredicate is null)
                 return this;
@@ -545,20 +550,26 @@ namespace FluentGraphQL.Builder.Builders
 
         IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleNodeBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
-            return Select(selector);
+            var query = Select(selector);
+            query.IsSingleQuery = true;
+
+            return query;
         }
 
         IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleNodeBuilder<TRoot, TEntity>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
-            return Select(selector);
+            var query = Select(selector);
+            query.IsSingleQuery = true;
+
+            return query;
         }
 
-        IGraphQLSelectedQuery<TRoot, TResult> IGraphQLMultiNodeBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
+        IGraphQLSelectedQuery<TRoot, TResult> IGraphQLStandardNodeBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             return Select(selector);
         }
 
-        IGraphQLSelectedQuery<TRoot, TResult> IGraphQLMultiNodeBuilder<TRoot, TEntity>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
+        IGraphQLSelectedQuery<TRoot, TResult> IGraphQLStandardNodeBuilder<TRoot, TEntity>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             return Select(selector);
         }

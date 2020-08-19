@@ -25,31 +25,37 @@ namespace FluentGraphQL.Builder.Abstractions
     }
 
     public interface IGraphQLSingleQueryBuilder<TEntity> : IGraphQLQueryBuilder
+        where TEntity : IGraphQLEntity
     {
         IGraphQLSingleQuery<TEntity> Build();
     }
 
-    public interface IGraphQLMultiQueryBuilderBase<TEntity> : IGraphQLQueryBuilder
+    public interface IGraphQLStandardQueryBuilderBase<TEntity> : IGraphQLQueryBuilder
+        where TEntity : IGraphQLEntity
     {
-        IGraphQLQuery<TEntity> Build();
+        IGraphQLStandardQuery<TEntity> Build();
     }
 
-    public interface IGraphQLMultiQueryBuilder<TEntity> : IGraphQLMultiQueryBuilderBase<TEntity>
+    public interface IGraphQLStandardQueryBuilder<TEntity> : IGraphQLStandardQueryBuilderBase<TEntity>
+       where TEntity : IGraphQLEntity
     {
         IGraphQLSingleNodeBuilder<TEntity> Single(Expression<Func<TEntity, bool>> expressionPredicate = null);
     }
 
     public interface IGraphQLSingleNodeBuilderBase<TEntity> : IGraphQLSingleQueryBuilder<TEntity>
+        where TEntity : IGraphQLEntity
     {
-        IGraphQLSingleNodeBuilder<TEntity, TNode> Node<TNode>();
+        IGraphQLSingleNodeBuilder<TEntity, TNode> Node<TNode>() where TNode : IGraphQLEntity;
     }
 
-    public interface IGraphQLMultiNodeBuilderBase<TEntity> : IGraphQLMultiQueryBuilder<TEntity>
+    public interface IGraphQLStandardNodeBuilderBase<TEntity> : IGraphQLStandardQueryBuilder<TEntity>
+        where TEntity : IGraphQLEntity
     {
-        IGraphQLMultiNodeBuilder<TEntity, TNode> Node<TNode>();
+        IGraphQLStandardNodeBuilder<TEntity, TNode> Node<TNode>() where TNode : IGraphQLEntity;
     }
 
     public interface IGraphQLSingleNodeBuilder<TEntity> : IGraphQLSingleNodeBuilderBase<TEntity>
+        where TEntity : IGraphQLEntity
     {
         IGraphQLSingleNodeBuilder<TEntity> Where(Expression<Func<TEntity, bool>> expressionPredicate);
         IGraphQLSingleNodeBuilder<TEntity> Limit(int number, int offset = 0);
@@ -57,11 +63,13 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleOrderedNodeBuilder<TEntity> OrderByDescending<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         IGraphQLSingleOrderedNodeBuilder<TEntity> OrderByNullsFirst<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         IGraphQLSingleOrderedNodeBuilder<TEntity> OrderByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        IGraphQLSingleAggregateBuilder<TEntity, TAggregate> Aggregate<TAggregate>();
+        IGraphQLSingleAggregateBuilder<TEntity, TAggregate> Aggregate<TAggregate>() where TAggregate : IGraphQLEntity;
         IGraphQLSingleSelectedQuery<TEntity, TResult> Select<TResult>(Expression<Func<TEntity, TResult>> selector);
     }
 
-    public interface IGraphQLSingleNodeBuilder<TRoot, TNode> : IGraphQLMultiNodeBuilderBase<TRoot>
+    public interface IGraphQLSingleNodeBuilder<TRoot, TNode> : IGraphQLStandardNodeBuilderBase<TRoot>
+        where TRoot : IGraphQLEntity
+        where TNode : IGraphQLEntity
     {
         IGraphQLSingleNodeBuilder<TRoot, TNode> Where(Expression<Func<TNode, bool>> expressionPredicate);
         IGraphQLSingleNodeBuilder<TRoot, TNode> Limit(int number, int offset = 0);
@@ -69,42 +77,47 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleOrderedNodeBuilder<TRoot, TNode> OrderByDescending<TKey>(Expression<Func<TNode, TKey>> keySelector);
         IGraphQLSingleOrderedNodeBuilder<TRoot, TNode> OrderByNullsFirst<TKey>(Expression<Func<TNode, TKey>> keySelector);
         IGraphQLSingleOrderedNodeBuilder<TRoot, TNode> OrderByDescendingNullsLast<TKey>(Expression<Func<TNode, TKey>> keySelector);
-        IGraphQLSingleAggregateBuilder<TRoot, TNode, TAggregate> Aggregate<TAggregate>();
+        IGraphQLSingleAggregateBuilder<TRoot, TNode, TAggregate> Aggregate<TAggregate>() where TAggregate : IGraphQLEntity;
         IGraphQLSingleSelectedQuery<TRoot, TResult> Select<TResult>(Expression<Func<TRoot, TResult>> selector);
     }
 
-    public interface IGraphQLMultiNodeBuilder<TEntity> : IGraphQLMultiNodeBuilderBase<TEntity>
+    public interface IGraphQLStandardNodeBuilder<TEntity> : IGraphQLStandardNodeBuilderBase<TEntity>
+        where TEntity : IGraphQLEntity
     {
-        IGraphQLMultiNodeBuilder<TEntity> Where(Expression<Func<TEntity, bool>> expressionPredicate);
-        IGraphQLMultiNodeBuilder<TEntity> Limit(int number, int offset = 0);
-        IGraphQLMultiOrderedNodeBuilder<TEntity> OrderBy<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        IGraphQLMultiOrderedNodeBuilder<TEntity> OrderByDescending<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        IGraphQLMultiOrderedNodeBuilder<TEntity> OrderByNullsFirst<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        IGraphQLMultiOrderedNodeBuilder<TEntity> OrderByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        IGraphQLMultiAggregateBuilder<TEntity, TAggregate> Aggregate<TAggregate>();
+        IGraphQLStandardNodeBuilder<TEntity> Where(Expression<Func<TEntity, bool>> expressionPredicate);
+        IGraphQLStandardNodeBuilder<TEntity> Limit(int number, int offset = 0);
+        IGraphQLStandardOrderedNodeBuilder<TEntity> OrderBy<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        IGraphQLStandardOrderedNodeBuilder<TEntity> OrderByDescending<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        IGraphQLStandardOrderedNodeBuilder<TEntity> OrderByNullsFirst<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        IGraphQLStandardOrderedNodeBuilder<TEntity> OrderByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        IGraphQLStandardAggregateBuilder<TEntity, TAggregate> Aggregate<TAggregate>() where TAggregate : IGraphQLEntity;
 
         IGraphQLSelectedQuery<TEntity, TResult> Select<TResult>(Expression<Func<TEntity, TResult>> selector);
     }
 
-    public interface IGraphQLMultiNodeBuilder<TRoot, TNode> : IGraphQLMultiNodeBuilderBase<TRoot>
+    public interface IGraphQLStandardNodeBuilder<TRoot, TNode> : IGraphQLStandardNodeBuilderBase<TRoot>
+        where TRoot : IGraphQLEntity
+        where TNode : IGraphQLEntity
     {
-        IGraphQLMultiNodeBuilder<TRoot, TNode> Where(Expression<Func<TNode, bool>> expressionPredicate);
-        IGraphQLMultiNodeBuilder<TRoot, TNode> Limit(int number, int offset = 0);
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TNode> OrderBy<TKey>(Expression<Func<TNode, TKey>> keySelector);
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TNode> OrderByDescending<TKey>(Expression<Func<TNode, TKey>> keySelector);
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TNode> OrderByNullsFirst<TKey>(Expression<Func<TNode, TKey>> keySelector);
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TNode> OrderByDescendingNullsLast<TKey>(Expression<Func<TNode, TKey>> keySelector);
-        IGraphQLMultiAggregateBuilder<TRoot, TNode, TAggregate> Aggregate<TAggregate>();
+        IGraphQLStandardNodeBuilder<TRoot, TNode> Where(Expression<Func<TNode, bool>> expressionPredicate);
+        IGraphQLStandardNodeBuilder<TRoot, TNode> Limit(int number, int offset = 0);
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TNode> OrderBy<TKey>(Expression<Func<TNode, TKey>> keySelector);
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TNode> OrderByDescending<TKey>(Expression<Func<TNode, TKey>> keySelector);
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TNode> OrderByNullsFirst<TKey>(Expression<Func<TNode, TKey>> keySelector);
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TNode> OrderByDescendingNullsLast<TKey>(Expression<Func<TNode, TKey>> keySelector);
+        IGraphQLStandardAggregateBuilder<TRoot, TNode, TAggregate> Aggregate<TAggregate>() where TAggregate : IGraphQLEntity;
         IGraphQLSelectedQuery<TRoot, TResult> Select<TResult>(Expression<Func<TRoot, TResult>> selector);
     }
 
-    public interface IGraphQLRootNodeBuilder<TEntity> : IGraphQLMultiNodeBuilder<TEntity>
+    public interface IGraphQLRootNodeBuilder<TEntity> : IGraphQLStandardNodeBuilder<TEntity>
+        where TEntity : IGraphQLEntity
     {
         IGraphQLSingleQueryBuilder<TEntity> ById(object value);
         IGraphQLSingleQueryBuilder<TEntity> ByPrimaryKey(string key, object value);
     }
 
     public interface IGraphQLSingleOrderedNodeBuilder<TEntity> : IGraphQLSingleNodeBuilderBase<TEntity>
+        where TEntity : IGraphQLEntity
     {
         IGraphQLSingleNodeBuilder<TEntity> Limit(int number, int offset = 0);
         IGraphQLSingleOrderedNodeBuilder<TEntity> DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector);
@@ -112,10 +125,12 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleOrderedNodeBuilder<TEntity> ThenByDescending<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         IGraphQLSingleOrderedNodeBuilder<TEntity> ThenByNullsFirst<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         IGraphQLSingleOrderedNodeBuilder<TEntity> OrderByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        IGraphQLSingleAggregateBuilder<TEntity, TAggregate> Aggregate<TAggregate>();
+        IGraphQLSingleAggregateBuilder<TEntity, TAggregate> Aggregate<TAggregate>() where TAggregate : IGraphQLEntity;
     }
 
-    public interface IGraphQLSingleOrderedNodeBuilder<TRoot, TNode> : IGraphQLMultiNodeBuilderBase<TRoot>
+    public interface IGraphQLSingleOrderedNodeBuilder<TRoot, TNode> : IGraphQLStandardNodeBuilderBase<TRoot>
+        where TRoot : IGraphQLEntity
+        where TNode : IGraphQLEntity
     {
         IGraphQLSingleNodeBuilder<TRoot, TNode> Limit(int number, int offset = 0);
         IGraphQLSingleOrderedNodeBuilder<TRoot, TNode> DistinctOn<TKey>(Expression<Func<TNode, TKey>> keySelector);
@@ -123,32 +138,37 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleOrderedNodeBuilder<TRoot, TNode> ThenByDescending<TKey>(Expression<Func<TNode, TKey>> keySelector);
         IGraphQLSingleOrderedNodeBuilder<TRoot, TNode> ThenByNullsFirst<TKey>(Expression<Func<TNode, TKey>> keySelector);
         IGraphQLSingleOrderedNodeBuilder<TRoot, TNode> OrderByDescendingNullsLast<TKey>(Expression<Func<TNode, TKey>> keySelector);
-        IGraphQLSingleAggregateBuilder<TRoot, TNode, TAggregate> Aggregate<TAggregate>();
+        IGraphQLSingleAggregateBuilder<TRoot, TNode, TAggregate> Aggregate<TAggregate>() where TAggregate : IGraphQLEntity;
     }
 
-    public interface IGraphQLMultiOrderedNodeBuilder<TEntity> : IGraphQLMultiNodeBuilderBase<TEntity>
+    public interface IGraphQLStandardOrderedNodeBuilder<TEntity> : IGraphQLStandardNodeBuilderBase<TEntity>
+        where TEntity : IGraphQLEntity
     {
-        IGraphQLMultiNodeBuilder<TEntity> Limit(int number, int offset = 0);
-        IGraphQLMultiOrderedNodeBuilder<TEntity> DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        IGraphQLMultiOrderedNodeBuilder<TEntity> ThenBy<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        IGraphQLMultiOrderedNodeBuilder<TEntity> ThenByDescending<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        IGraphQLMultiOrderedNodeBuilder<TEntity> ThenByNullsFirst<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        IGraphQLMultiOrderedNodeBuilder<TEntity> OrderByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        IGraphQLMultiAggregateBuilder<TEntity, TAggregate> Aggregate<TAggregate>();
+        IGraphQLStandardNodeBuilder<TEntity> Limit(int number, int offset = 0);
+        IGraphQLStandardOrderedNodeBuilder<TEntity> DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        IGraphQLStandardOrderedNodeBuilder<TEntity> ThenBy<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        IGraphQLStandardOrderedNodeBuilder<TEntity> ThenByDescending<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        IGraphQLStandardOrderedNodeBuilder<TEntity> ThenByNullsFirst<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        IGraphQLStandardOrderedNodeBuilder<TEntity> OrderByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        IGraphQLStandardAggregateBuilder<TEntity, TAggregate> Aggregate<TAggregate>() where TAggregate : IGraphQLEntity;
     }
 
-    public interface IGraphQLMultiOrderedNodeBuilder<TRoot, TNode> : IGraphQLMultiNodeBuilderBase<TRoot>
+    public interface IGraphQLStandardOrderedNodeBuilder<TRoot, TNode> : IGraphQLStandardNodeBuilderBase<TRoot>
+        where TRoot : IGraphQLEntity
+        where TNode : IGraphQLEntity
     {
-        IGraphQLMultiNodeBuilder<TRoot, TNode> Limit(int number, int offset = 0);
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TNode> DistinctOn<TKey>(Expression<Func<TNode, TKey>> keySelector);
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TNode> ThenBy<TKey>(Expression<Func<TNode, TKey>> keySelector);
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TNode> ThenByDescending<TKey>(Expression<Func<TNode, TKey>> keySelector);
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TNode> ThenByNullsFirst<TKey>(Expression<Func<TNode, TKey>> keySelector);
-        IGraphQLMultiOrderedNodeBuilder<TRoot, TNode> OrderByDescendingNullsLast<TKey>(Expression<Func<TNode, TKey>> keySelector);
-        IGraphQLMultiAggregateBuilder<TRoot, TNode, TAggregate> Aggregate<TAggregate>();
+        IGraphQLStandardNodeBuilder<TRoot, TNode> Limit(int number, int offset = 0);
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TNode> DistinctOn<TKey>(Expression<Func<TNode, TKey>> keySelector);
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TNode> ThenBy<TKey>(Expression<Func<TNode, TKey>> keySelector);
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TNode> ThenByDescending<TKey>(Expression<Func<TNode, TKey>> keySelector);
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TNode> ThenByNullsFirst<TKey>(Expression<Func<TNode, TKey>> keySelector);
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TNode> OrderByDescendingNullsLast<TKey>(Expression<Func<TNode, TKey>> keySelector);
+        IGraphQLStandardAggregateBuilder<TRoot, TNode, TAggregate> Aggregate<TAggregate>() where TAggregate : IGraphQLEntity;
     }
 
     public interface IGraphQLSingleAggregateBuilder<TEntity, TAggregate> : IGraphQLSingleQueryBuilder<TEntity>
+        where TEntity : IGraphQLEntity
+        where TAggregate : IGraphQLEntity
     {
         IGraphQLSingleAggregateBuilder<TEntity, TAggregate> Count();
 
@@ -167,10 +187,13 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleAggregateBuilder<TEntity, TAggregate> Nodes();
         IGraphQLSingleNodeBuilder<TEntity> End();
 
-        IGraphQLSingleChildAggregateBuilder<TEntity, TAggregate, TChildAggregate> Aggregate<TChildAggregate>();
+        IGraphQLSingleChildAggregateBuilder<TEntity, TAggregate, TChildAggregate> Aggregate<TChildAggregate>() where TChildAggregate : IGraphQLEntity;
     }
 
-    public interface IGraphQLSingleAggregateBuilder<TRoot, TEntity, TAggregate> : IGraphQLMultiQueryBuilder<TRoot>
+    public interface IGraphQLSingleAggregateBuilder<TRoot, TEntity, TAggregate> : IGraphQLStandardQueryBuilder<TRoot>
+        where TRoot : IGraphQLEntity
+        where TEntity : IGraphQLEntity
+        where TAggregate : IGraphQLEntity
     {
         IGraphQLSingleAggregateBuilder<TRoot, TEntity, TAggregate> Count();
 
@@ -189,54 +212,62 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleAggregateBuilder<TRoot, TEntity, TAggregate> Nodes();
         IGraphQLSingleNodeBuilder<TRoot, TEntity> End();
 
-        IGraphQLSingleChildAggregateBuilder<TRoot, TEntity, TAggregate, TChildAggregate> Aggregate<TChildAggregate>();
+        IGraphQLSingleChildAggregateBuilder<TRoot, TEntity, TAggregate, TChildAggregate> Aggregate<TChildAggregate>() where TChildAggregate : IGraphQLEntity;
     }
 
-    public interface IGraphQLMultiAggregateBuilder<TEntity, TAggregate> : IGraphQLMultiQueryBuilder<TEntity>
+    public interface IGraphQLStandardAggregateBuilder<TEntity, TAggregate> : IGraphQLStandardQueryBuilder<TEntity>
+        where TEntity : IGraphQLEntity
+        where TAggregate : IGraphQLEntity
     {
-        IGraphQLMultiAggregateBuilder<TEntity, TAggregate> Count();
+        IGraphQLStandardAggregateBuilder<TEntity, TAggregate> Count();
 
-        IGraphQLMultiAggregateBuilder<TEntity, TAggregate> Sum<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
-        IGraphQLMultiAggregateBuilder<TEntity, TAggregate> Sum<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
+        IGraphQLStandardAggregateBuilder<TEntity, TAggregate> Sum<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
+        IGraphQLStandardAggregateBuilder<TEntity, TAggregate> Sum<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
-        IGraphQLMultiAggregateBuilder<TEntity, TAggregate> Avg<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
-        IGraphQLMultiAggregateBuilder<TEntity, TAggregate> Avg<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
+        IGraphQLStandardAggregateBuilder<TEntity, TAggregate> Avg<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
+        IGraphQLStandardAggregateBuilder<TEntity, TAggregate> Avg<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
-        IGraphQLMultiAggregateBuilder<TEntity, TAggregate> Max<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
-        IGraphQLMultiAggregateBuilder<TEntity, TAggregate> Max<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
+        IGraphQLStandardAggregateBuilder<TEntity, TAggregate> Max<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
+        IGraphQLStandardAggregateBuilder<TEntity, TAggregate> Max<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
-        IGraphQLMultiAggregateBuilder<TEntity, TAggregate> Min<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
-        IGraphQLMultiAggregateBuilder<TEntity, TAggregate> Min<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
+        IGraphQLStandardAggregateBuilder<TEntity, TAggregate> Min<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
+        IGraphQLStandardAggregateBuilder<TEntity, TAggregate> Min<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
-        IGraphQLMultiAggregateBuilder<TEntity, TAggregate> Nodes();
-        IGraphQLMultiNodeBuilder<TEntity> End();
+        IGraphQLStandardAggregateBuilder<TEntity, TAggregate> Nodes();
+        IGraphQLStandardNodeBuilder<TEntity> End();
 
-        IGraphQLMultiChildAggregateBuilder<TEntity, TAggregate, TChildAggregate> Aggregate<TChildAggregate>();
+        IGraphQLStandardChildAggregateBuilder<TEntity, TAggregate, TChildAggregate> Aggregate<TChildAggregate>() where TChildAggregate : IGraphQLEntity;
     }
 
-    public interface IGraphQLMultiAggregateBuilder<TRoot, TEntity, TAggregate> : IGraphQLMultiQueryBuilder<TRoot>
+    public interface IGraphQLStandardAggregateBuilder<TRoot, TEntity, TAggregate> : IGraphQLStandardQueryBuilder<TRoot>
+        where TRoot : IGraphQLEntity
+        where TEntity : IGraphQLEntity
+        where TAggregate : IGraphQLEntity
     {
-        IGraphQLMultiAggregateBuilder<TRoot, TEntity, TAggregate> Count();
+        IGraphQLStandardAggregateBuilder<TRoot, TEntity, TAggregate> Count();
 
-        IGraphQLMultiAggregateBuilder<TRoot, TEntity, TAggregate> Sum<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
-        IGraphQLMultiAggregateBuilder<TRoot, TEntity, TAggregate> Sum<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
+        IGraphQLStandardAggregateBuilder<TRoot, TEntity, TAggregate> Sum<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
+        IGraphQLStandardAggregateBuilder<TRoot, TEntity, TAggregate> Sum<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
-        IGraphQLMultiAggregateBuilder<TRoot, TEntity, TAggregate> Avg<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
-        IGraphQLMultiAggregateBuilder<TRoot, TEntity, TAggregate> Avg<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
+        IGraphQLStandardAggregateBuilder<TRoot, TEntity, TAggregate> Avg<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
+        IGraphQLStandardAggregateBuilder<TRoot, TEntity, TAggregate> Avg<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
-        IGraphQLMultiAggregateBuilder<TRoot, TEntity, TAggregate> Max<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
-        IGraphQLMultiAggregateBuilder<TRoot, TEntity, TAggregate> Max<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
+        IGraphQLStandardAggregateBuilder<TRoot, TEntity, TAggregate> Max<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
+        IGraphQLStandardAggregateBuilder<TRoot, TEntity, TAggregate> Max<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
-        IGraphQLMultiAggregateBuilder<TRoot, TEntity, TAggregate> Min<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
-        IGraphQLMultiAggregateBuilder<TRoot, TEntity, TAggregate> Min<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
+        IGraphQLStandardAggregateBuilder<TRoot, TEntity, TAggregate> Min<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
+        IGraphQLStandardAggregateBuilder<TRoot, TEntity, TAggregate> Min<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
-        IGraphQLMultiAggregateBuilder<TRoot, TEntity, TAggregate> Nodes();
-        IGraphQLMultiNodeBuilder<TRoot, TEntity> End();
+        IGraphQLStandardAggregateBuilder<TRoot, TEntity, TAggregate> Nodes();
+        IGraphQLStandardNodeBuilder<TRoot, TEntity> End();
 
-        IGraphQLMultiChildAggregateBuilder<TRoot, TEntity, TAggregate, TChildAggregate> Aggregate<TChildAggregate>();
+        IGraphQLStandardChildAggregateBuilder<TRoot, TEntity, TAggregate, TChildAggregate> Aggregate<TChildAggregate>() where TChildAggregate : IGraphQLEntity;
     }
 
     public interface IGraphQLSingleChildAggregateBuilder<TRoot, TParent, TAggregate> : IGraphQLSingleQueryBuilder<TRoot>
+        where TRoot : IGraphQLEntity
+        where TParent : IGraphQLEntity
+        where TAggregate : IGraphQLEntity
     {
         IGraphQLSingleChildAggregateBuilder<TRoot, TParent, TAggregate> Count();
 
@@ -256,7 +287,11 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleAggregateBuilder<TRoot, TParent> End();
     }
 
-    public interface IGraphQLSingleChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> : IGraphQLMultiQueryBuilder<TRoot>
+    public interface IGraphQLSingleChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> : IGraphQLStandardQueryBuilder<TRoot>
+        where TRoot : IGraphQLEntity
+        where TEntity : IGraphQLEntity
+        where TParent : IGraphQLEntity
+        where TAggregate : IGraphQLEntity
     {
         IGraphQLSingleChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Count();
 
@@ -276,43 +311,50 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleAggregateBuilder<TRoot, TEntity, TParent> End();
     }
 
-    public interface IGraphQLMultiChildAggregateBuilder<TRoot, TParent, TAggregate> : IGraphQLMultiQueryBuilder<TRoot>
+    public interface IGraphQLStandardChildAggregateBuilder<TRoot, TParent, TAggregate> : IGraphQLStandardQueryBuilder<TRoot>
+        where TRoot : IGraphQLEntity
+        where TParent : IGraphQLEntity
+        where TAggregate : IGraphQLEntity
     {
-        IGraphQLMultiChildAggregateBuilder<TRoot, TParent, TAggregate> Count();
+        IGraphQLStandardChildAggregateBuilder<TRoot, TParent, TAggregate> Count();
 
-        IGraphQLMultiChildAggregateBuilder<TRoot, TParent, TAggregate> Sum<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
-        IGraphQLMultiChildAggregateBuilder<TRoot, TParent, TAggregate> Sum<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
+        IGraphQLStandardChildAggregateBuilder<TRoot, TParent, TAggregate> Sum<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
+        IGraphQLStandardChildAggregateBuilder<TRoot, TParent, TAggregate> Sum<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
-        IGraphQLMultiChildAggregateBuilder<TRoot, TParent, TAggregate> Avg<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
-        IGraphQLMultiChildAggregateBuilder<TRoot, TParent, TAggregate> Avg<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
+        IGraphQLStandardChildAggregateBuilder<TRoot, TParent, TAggregate> Avg<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
+        IGraphQLStandardChildAggregateBuilder<TRoot, TParent, TAggregate> Avg<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
-        IGraphQLMultiChildAggregateBuilder<TRoot, TParent, TAggregate> Max<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
-        IGraphQLMultiChildAggregateBuilder<TRoot, TParent, TAggregate> Max<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
+        IGraphQLStandardChildAggregateBuilder<TRoot, TParent, TAggregate> Max<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
+        IGraphQLStandardChildAggregateBuilder<TRoot, TParent, TAggregate> Max<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
-        IGraphQLMultiChildAggregateBuilder<TRoot, TParent, TAggregate> Min<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
-        IGraphQLMultiChildAggregateBuilder<TRoot, TParent, TAggregate> Min<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
+        IGraphQLStandardChildAggregateBuilder<TRoot, TParent, TAggregate> Min<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
+        IGraphQLStandardChildAggregateBuilder<TRoot, TParent, TAggregate> Min<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
-        IGraphQLMultiChildAggregateBuilder<TRoot, TParent, TAggregate> Nodes();
-        IGraphQLMultiAggregateBuilder<TRoot, TParent> End();
+        IGraphQLStandardChildAggregateBuilder<TRoot, TParent, TAggregate> Nodes();
+        IGraphQLStandardAggregateBuilder<TRoot, TParent> End();
     }
 
-    public interface IGraphQLMultiChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> : IGraphQLMultiQueryBuilder<TRoot>
+    public interface IGraphQLStandardChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> : IGraphQLStandardQueryBuilder<TRoot>
+        where TRoot : IGraphQLEntity
+        where TEntity : IGraphQLEntity
+        where TParent : IGraphQLEntity
+        where TAggregate : IGraphQLEntity
     {
-        IGraphQLMultiChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Count();
+        IGraphQLStandardChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Count();
 
-        IGraphQLMultiChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Sum<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
-        IGraphQLMultiChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Sum<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
+        IGraphQLStandardChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Sum<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
+        IGraphQLStandardChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Sum<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
-        IGraphQLMultiChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Avg<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
-        IGraphQLMultiChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Avg<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
+        IGraphQLStandardChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Avg<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
+        IGraphQLStandardChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Avg<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
-        IGraphQLMultiChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Max<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
-        IGraphQLMultiChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Max<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
+        IGraphQLStandardChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Max<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
+        IGraphQLStandardChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Max<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
-        IGraphQLMultiChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Min<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
-        IGraphQLMultiChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Min<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
+        IGraphQLStandardChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Min<TKey>(Expression<Func<TAggregate, TKey>> keySelector);
+        IGraphQLStandardChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Min<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors);
 
-        IGraphQLMultiChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Nodes();
-        IGraphQLMultiAggregateBuilder<TRoot, TEntity, TParent> End();
+        IGraphQLStandardChildAggregateBuilder<TRoot, TEntity, TParent, TAggregate> Nodes();
+        IGraphQLStandardAggregateBuilder<TRoot, TEntity, TParent> End();
     }
 }

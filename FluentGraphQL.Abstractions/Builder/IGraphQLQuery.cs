@@ -14,12 +14,11 @@
     copies or substantial portions of the Software.
 */
 
-using System;
-
 namespace FluentGraphQL.Builder.Abstractions
 {
     public interface IGraphQLQuery : IGraphQLConstruct
     {
+        bool IsSingleQuery { get; set; }
         IGraphQLHeaderNode HeaderNode { get; set; }
         IGraphQLSelectNode SelectNode { get; set; }
 
@@ -30,25 +29,14 @@ namespace FluentGraphQL.Builder.Abstractions
     }
 
     public interface IGraphQLQuery<TEntity> : IGraphQLQuery
+    {
+    }
+
+    public interface IGraphQLStandardQuery<TEntity> : IGraphQLQuery<TEntity>
     {        
     }
 
-    public interface IGraphQLSingleQuery<TEntity> : IGraphQLQuery
+    public interface IGraphQLSingleQuery<TEntity> : IGraphQLQuery<TEntity>
     {
-    }
-
-    public interface IGraphQLSelectedQueryBase<TEntity, TResult>
-    {
-        Func<TEntity, TResult> Selector { get; }        
-    }
-
-    public interface IGraphQLSelectedQuery<TEntity, TResult> : IGraphQLQuery<TEntity>, IGraphQLSelectedQueryBase<TEntity, TResult>
-    {
-        IGraphQLQuery<TEntity> Cast();
-    }
-
-    public interface IGraphQLSingleSelectedQuery<TEntity, TResult> : IGraphQLSingleQuery<TEntity>, IGraphQLSelectedQueryBase<TEntity, TResult>
-    {
-        IGraphQLSingleQuery<TEntity> Cast();
     }
 }

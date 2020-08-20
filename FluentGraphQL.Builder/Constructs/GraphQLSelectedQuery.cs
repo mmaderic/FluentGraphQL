@@ -30,14 +30,20 @@ namespace FluentGraphQL.Builder.Constructs
             Selector = selector;
         }
 
-        IGraphQLStandardQuery<TEntity> IGraphQLStandardSelectedQuery<TEntity, TResult>.Cast()
+        IGraphQLStandardQuery<TEntity> IGraphQLStandardSelectedQuery<TEntity, TResult>.AsNamed()
         {
-            return this;
+            return new GraphQLQuery<TEntity>(HeaderNode, SelectNode)
+            {
+                IsSingleQuery = IsSingleQuery
+            };
         }
 
-        IGraphQLSingleQuery<TEntity> IGraphQLSingleSelectedQuery<TEntity, TResult>.Cast()
+        IGraphQLSingleQuery<TEntity> IGraphQLSingleSelectedQuery<TEntity, TResult>.AsNamed()
         {
-            return this;
+            return new GraphQLQuery<TEntity>(HeaderNode, SelectNode)
+            {
+                IsSingleQuery = IsSingleQuery
+            };
         }
 
         object IGraphQLSelectedQuery.InvokeSelector(object @object)

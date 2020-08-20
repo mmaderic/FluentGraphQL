@@ -21,6 +21,8 @@ namespace FluentGraphQL.Builder.Constructs
     public class GraphQLQuery : IGraphQLQuery
     {
         public bool IsSingleQuery { get; set; }
+        public bool IsSelectedQuery { get; set; }
+
         public IGraphQLHeaderNode HeaderNode { get; set; }
         public IGraphQLSelectNode SelectNode { get; set; }
 

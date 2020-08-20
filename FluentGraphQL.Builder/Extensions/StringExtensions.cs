@@ -77,17 +77,17 @@ namespace FluentGraphQL.Builder.Extensions
                 return cachedType;
 
             Type type = null;
-            if (_supportedMethodCalls.Any(x => x.Equals(methodName)))            
-                type = typeof(Constant.SupportedMethodCalls);            
+            if (_supportedMethodCalls.Any(x => x.Equals(methodName)))
+                type = typeof(Constant.SupportedMethodCalls);
 
-            else if (_extensionMethodCalls.Any(x => x.Equals(methodName)))            
-                type = typeof(Constant.ExtensionMethodCalls);                      
+            else if (_extensionMethodCalls.Any(x => x.Equals(methodName)))
+                type = typeof(Constant.ExtensionMethodCalls);
 
-            else if (_aggregateMethodCalls.Any(x => x.Equals(methodName)))            
+            else if (_aggregateMethodCalls.Any(x => x.Equals(methodName)))
                 type = typeof(Constant.AggregateMethodCalls);
 
             else if (type is null)
-                throw new NotImplementedException(methodName);
+                return null;
 
             _verifiedMethodCallsCache.TryAdd(methodName, type);
             return type;

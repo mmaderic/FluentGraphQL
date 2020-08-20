@@ -28,22 +28,19 @@ namespace FluentGraphQL.Builder.Constructs
             : base(graphQLHeaderNode, graphQLSelectNode)
         {
             Selector = selector;
+            IsSelectedQuery = true;
         }
 
         IGraphQLStandardQuery<TEntity> IGraphQLStandardSelectedQuery<TEntity, TResult>.AsNamed()
         {
-            return new GraphQLQuery<TEntity>(HeaderNode, SelectNode)
-            {
-                IsSingleQuery = IsSingleQuery
-            };
+            IsSelectedQuery = false;
+            return this;
         }
 
         IGraphQLSingleQuery<TEntity> IGraphQLSingleSelectedQuery<TEntity, TResult>.AsNamed()
         {
-            return new GraphQLQuery<TEntity>(HeaderNode, SelectNode)
-            {
-                IsSingleQuery = IsSingleQuery
-            };
+            IsSelectedQuery = false;
+            return this;
         }
 
         object IGraphQLSelectedQuery.InvokeSelector(object @object)

@@ -513,7 +513,7 @@ namespace FluentGraphQL.Builder.Builders
             _graphQLQuery.SelectNode.Deactivate();
             _graphQLQuery.SelectNode.IsActive = true;
 
-            var expressionStatement = _graphQLExpressionConverter.Convert(selector);
+            var expressionStatement = _graphQLExpressionConverter.ConvertSelectExpression(selector);
             void ReadStatement(IGraphQLValueStatement statement, IGraphQLSelectNode selectNode)
             {
                 if (statement.Value is IGraphQLCollectionValue collectionValue)

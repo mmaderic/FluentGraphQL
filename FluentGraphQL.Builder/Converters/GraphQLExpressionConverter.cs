@@ -74,6 +74,14 @@ namespace FluentGraphQL.Builder.Converters
             return EvaluateExpression(keySelector.Body);
         }
 
+        public IGraphQLValueStatement ConvertSelectExpression<TEntity, TKey>(Expression<Func<TEntity, TKey>> selector)
+        {
+            if (!(selector.Body is NewExpression newExpression))
+                throw new NotImplementedException();
+
+            return EvaluateSelectNewExpression(newExpression);
+        }
+
         private IGraphQLValueStatement EvaluateExpression(Expression expression)
         {
             if (expression is UnaryExpression unaryExpression)
@@ -93,9 +101,6 @@ namespace FluentGraphQL.Builder.Converters
 
             if (expression is ConstantExpression constantExpression)
                 return new GraphQLValueStatement(null, _graphQLValueFactory.Construct(constantExpression.Value));
-
-            if (expression is NewExpression newExpression)
-                return EvaluateNewExpression(newExpression);  
 
             throw new NotImplementedException();
         }
@@ -227,6 +232,9 @@ namespace FluentGraphQL.Builder.Converters
             var methodName = methodCallExpression.Method.Name;
             var category = methodName.EvaluateMethodCallCategory();
 
+            if (category is null)
+                throw new NotImplementedException(methodName);
+
             if (category.Equals(typeof(Constant.SupportedMethodCalls)))
                 return EvaluateSupportedMethodCallExpression(methodName, methodCallExpression);
 
@@ -274,8 +282,11 @@ namespace FluentGraphQL.Builder.Converters
 
             if (methodName.Equals(Constant.SupportedMethodCalls.Select))
             {
+                if (!(methodCallExpression.Arguments[1] is LambdaExpression lambdaExpression && lambdaExpression.Body is NewExpression newExpression))
+                    throw new NotImplementedException();
+
                 var expressionTarget = EvaluateExpression(methodCallExpression.Arguments[0]);
-                var selectExpression = EvaluateExpression(methodCallExpression.Arguments[1]);
+                var selectExpression = EvaluateSelectNewExpression(newExpression);
                 selectExpression.PropertyName = expressionTarget.PropertyName;
 
                 return selectExpression;
@@ -428,14 +439,62 @@ namespace FluentGraphQL.Builder.Converters
             }
 
             return valueStatement;
-        }  
-        
-        private IGraphQLValueStatement EvaluateNewExpression(NewExpression newExpression)
-        {
-            var arguments = newExpression.Arguments.Select(x => EvaluateExpression(x)).ToArray();
-            var objectValues = arguments.Select(x => new GraphQLObjectValue(x)).ToArray();
+        }
 
-            return new GraphQLValueStatement(null, new GraphQLCollectionValue(objectValues));           
+        private IGraphQLValueStatement EvaluateSelectNewExpression(NewExpression newExpression)
+        {
+            var arguments = newExpression.Arguments.Select(argument =>
+            {
+                if (argument is MemberExpression memberExpression)
+                    return EvaluateMemberExpression(memberExpression, null);
+
+                if (argument is MethodCallExpression methodCallExpression)
+                    return EvaluateSelectMethodCallExpression(methodCallExpression);
+
+                if (argument is BinaryExpression binaryExpression)
+                    return EvaluateSelectBinaryExpression(binaryExpression);
+                
+                throw new NotImplementedException();
+            }).ToArray();
+
+            var objectValues = arguments.Select(x => new GraphQLObjectValue(x)).ToArray();
+            return new GraphQLValueStatement(null, new GraphQLCollectionValue(objectValues));
+        }
+
+        private IGraphQLValueStatement EvaluateSelectMethodCallExpression(MethodCallExpression methodCallExpression)
+        {
+            if (methodCallExpression.Object is MemberExpression memberExpression)
+                return EvaluateMemberExpression(memberExpression, null);
+
+            var methodName = methodCallExpression.Method.Name;
+            var category = methodName.EvaluateMethodCallCategory();
+
+            if (category?.Equals(typeof(Constant.SupportedMethodCalls)) == true)
+                return EvaluateSupportedMethodCallExpression(methodName, methodCallExpression);
+
+            if (!(category is null) || methodCallExpression.Arguments.Count != 1)
+                throw new NotImplementedException();  
+
+            var expression = methodCallExpression.Arguments[0];
+
+            if (expression is MemberExpression argumentMemberExpression)
+                return EvaluateMemberExpression(argumentMemberExpression, null);
+
+            if (expression is MethodCallExpression argumentMethodCallExpression)
+                return EvaluateSelectMethodCallExpression(argumentMethodCallExpression);
+
+            throw new NotImplementedException(); 
+        }
+
+        private IGraphQLValueStatement EvaluateSelectBinaryExpression(BinaryExpression binaryExpression)
+        {
+            if (binaryExpression.Left is MemberExpression leftMemberExpression)
+                return EvaluateMemberExpression(leftMemberExpression, null);
+
+            if (binaryExpression.Right is MemberExpression rightMemberExpression)
+                return EvaluateMemberExpression(rightMemberExpression, null);
+            
+            throw new NotImplementedException();
         }
     }
 }

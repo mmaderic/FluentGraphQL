@@ -19,6 +19,7 @@ using FluentGraphQL.Builder.Atoms;
 using FluentGraphQL.Builder.Extensions;
 using FluentGraphQL.Builder.Nodes;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -132,7 +133,7 @@ namespace FluentGraphQL.Builder.Factories
         private bool IsCollectionProperty(PropertyInfo propertyInfo)
         {
             return propertyInfo.PropertyType.IsGenericType &&
-                propertyInfo.PropertyType.GetGenericTypeDefinition().Equals(typeof(ICollection<>));
+                typeof(IEnumerable).IsAssignableFrom(propertyInfo.PropertyType);
         }
 
         private bool IsAggregateContainerProperty(PropertyInfo propertyInfo)

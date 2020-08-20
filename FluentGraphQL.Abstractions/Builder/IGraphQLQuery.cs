@@ -19,6 +19,8 @@ namespace FluentGraphQL.Builder.Abstractions
     public interface IGraphQLQuery : IGraphQLConstruct
     {
         bool IsSingleQuery { get; set; }
+        bool IsSelectedQuery { get; set; }
+
         IGraphQLHeaderNode HeaderNode { get; set; }
         IGraphQLSelectNode SelectNode { get; set; }
 

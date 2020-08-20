@@ -26,6 +26,7 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLValueStatement Convert<TEntity>(Expression<Func<TEntity, bool>> expressionPredicate);
         IGraphQLValueStatement Convert<TEntity, TKey>(Expression<Func<TEntity, TKey>> keySelector, OrderByDirection orderByDirection);
         IGraphQLValueStatement Convert<TEntity, TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        IGraphQLValueStatement ConvertSelectExpression<TEntity, TKey>(Expression<Func<TEntity, TKey>> selector);
         IEnumerable<IGraphQLValueStatement> Convert<TEntity, TKey>(Expression<Func<TEntity, IEnumerable<TKey>>> keySelectors);
     }
 }

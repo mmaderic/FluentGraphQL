@@ -16,18 +16,13 @@
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLQuery : IGraphQLConstruct
+    public interface IGraphQLQuery : IGraphQLMethodConstruct, IGraphQLQueryString
     {
-        bool IsSingleQuery { get; set; }
-        bool IsSelectedQuery { get; set; }
-
         IGraphQLHeaderNode HeaderNode { get; set; }
         IGraphQLSelectNode SelectNode { get; set; }
 
         IGraphQLSelectNode GetSelectNode<TNode>();
         IGraphQLSelectStatement Get(string statementName);
-
-        bool HasAggregateContainer();
     }
 
     public interface IGraphQLQuery<TEntity> : IGraphQLQuery

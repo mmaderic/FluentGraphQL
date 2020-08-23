@@ -14,12 +14,16 @@
     copies or substantial portions of the Software.
 */
 
-using System.Collections.Generic;
+using FluentGraphQL.Abstractions.Enums;
 
-namespace FluentGraphQL.Client.Abstractions
+namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLAggregateJsonConverterProvider
+    public interface IGraphQLMethodConstruct : IGraphQLConstruct
     {
-        ICollection<IGraphQLJsonConverter> Provide();
+        GraphQLMethod Method { get; }
+        bool IsSingleItemExecution { get; set; }
+
+        string KeyString(IGraphQLStringFactory graphQLStringFactory);
+        bool HasAggregateContainer();
     }
 }

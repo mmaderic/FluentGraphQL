@@ -18,7 +18,7 @@ using System.Collections.Generic;
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLMultipleQuery : IGraphQLConstruct, IEnumerable<IGraphQLQuery>
+    public interface IGraphQLMultipleQuery : IGraphQLConstruct, IGraphQLQueryString, IEnumerable<IGraphQLQuery>
     {
     }
 

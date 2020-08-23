@@ -22,11 +22,12 @@ namespace FluentGraphQL.Builder.Nodes
     public class GraphQLHeaderNode : IGraphQLHeaderNode
     {
         public string Title { get; set; }
+        public string Prefix { get; set; }
         public string Suffix { get; set; }
         public int HierarchyLevel { get; set; }
         public List<IGraphQLStatement> Statements { get; set; }
 
-        public GraphQLHeaderNode(string title, int hierarchyLevel)
+        public GraphQLHeaderNode(string title, int hierarchyLevel = 1)
         {
             Title = title;
             HierarchyLevel = hierarchyLevel;
@@ -45,7 +46,7 @@ namespace FluentGraphQL.Builder.Nodes
 
         public string KeyString(IGraphQLStringFactory graphQLStringFactory)
         {
-            return graphQLStringFactory.Construct($"{Title}{Suffix}");
+            return graphQLStringFactory.Construct($"{Prefix}{Title}{Suffix}");
         }
     }
 }

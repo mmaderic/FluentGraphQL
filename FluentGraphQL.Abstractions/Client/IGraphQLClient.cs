@@ -25,6 +25,9 @@ namespace FluentGraphQL.Client.Abstractions
         IGraphQLRootNodeBuilder<TEntity> QueryBuilder<TEntity>()
             where TEntity : IGraphQLEntity;
 
+        IGraphQLMutationBuilder<TEntity> MutationBuilder<TEntity>()
+            where TEntity : IGraphQLEntity;
+
         Task<TEntity> ExecuteAsync<TEntity>(IGraphQLSingleQuery<TEntity> graphQLQuery);
         Task<TResult> ExecuteAsync<TEntity, TResult>(IGraphQLSingleSelectedQuery<TEntity, TResult> graphQLQuery);
 
@@ -42,5 +45,11 @@ namespace FluentGraphQL.Client.Abstractions
 
         Task<IGraphQLMultipleQueryResponse<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>>
             ExecuteAsync<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(IGraphQLMultipleQuery<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> graphQLMultipleQuery);
+
+        Task<TEntity> ExecuteAsync<TEntity>(IGraphQLInsertSingleMutation<TEntity> graphQLInsertSingleMutation);
+        Task<TReturn> ExecuteAsync<TEntity, TReturn>(IGraphQLSelectedInsertSingleMutation<TEntity, TReturn> graphQLInsertSingleMutation);
+
+        Task<IGraphQLMultipleInsertResponse<TEntity>> ExecuteAsync<TEntity>(IGraphQLInsertMultipleMutation<TEntity> graphQLInsertMultipleMutation);
+        Task<IGraphQLMultipleInsertResponse<TReturn>> ExecuteAsync<TEntity, TReturn>(IGraphQLSelectedInsertMultipleMutation<TEntity, TReturn> graphQLInsertMultipleMutation);
     }
 }

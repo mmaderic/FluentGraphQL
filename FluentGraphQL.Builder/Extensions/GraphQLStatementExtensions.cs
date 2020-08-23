@@ -43,6 +43,40 @@ namespace FluentGraphQL.Builder.Extensions
             return (TStatement) _finders[finderKey].Invoke(statements, key);
         }
 
+        public static void ApplySelectStatement(this IGraphQLValueStatement graphQLValueStatement, IGraphQLSelectNode graphQLSelectNode)
+        {
+            graphQLSelectNode.Deactivate();
+            graphQLSelectNode.IsActive = true;
+
+            ApplySelectStatementRecursive(graphQLValueStatement, graphQLSelectNode);
+        }
+
+        private static void ApplySelectStatementRecursive(IGraphQLValueStatement graphQLValueStatement, IGraphQLSelectNode graphQLSelectNode)
+        {
+            if (graphQLValueStatement.Value is IGraphQLCollectionValue collectionValue)
+            {
+                if (!(graphQLValueStatement.PropertyName is null))
+                {
+                    graphQLSelectNode = (IGraphQLSelectNode)graphQLSelectNode.Get(graphQLValueStatement.PropertyName);
+                    graphQLSelectNode.IsActive = true;
+                }
+
+                foreach (var item in collectionValue.CollectionItems)
+                {
+                    var objectValue = (IGraphQLObjectValue)item;
+                    ApplySelectStatementRecursive(objectValue.PropertyValues.First(), graphQLSelectNode);
+                }
+            }
+            else if (graphQLValueStatement.Value is IGraphQLObjectValue objectValue)
+            {
+                graphQLSelectNode = (IGraphQLSelectNode)graphQLSelectNode.Get(graphQLValueStatement.PropertyName);
+                graphQLSelectNode.IsActive = true;
+                ApplySelectStatementRecursive(objectValue.PropertyValues.First(), graphQLSelectNode);
+            }
+            else
+                graphQLSelectNode.Get(graphQLValueStatement.PropertyName).Activate();
+        }
+
         private static object FindGraphQLValueStatement(IEnumerable<IGraphQLStatement> statements, string key)
         {
             return statements.FirstOrDefault(x => x is GraphQLValueStatement statement && statement.PropertyName.Equals(key));

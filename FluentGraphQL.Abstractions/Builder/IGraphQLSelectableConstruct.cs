@@ -14,12 +14,18 @@
     copies or substantial portions of the Software.
 */
 
-using System.Collections.Generic;
+using System;
 
-namespace FluentGraphQL.Client.Abstractions
+namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLAggregateJsonConverterProvider
+    public interface IGraphQLSelectableConstruct
     {
-        ICollection<IGraphQLJsonConverter> Provide();
+        bool IsSelected { get; set; }
+        object InvokeSelector(object @object);
+    }
+
+    public interface IGraphQLSelectableConstruct<TEntity, TResult> : IGraphQLSelectableConstruct
+    {
+        Func<TEntity, TResult> Selector { get; set; }
     }
 }

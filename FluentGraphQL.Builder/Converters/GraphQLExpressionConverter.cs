@@ -76,10 +76,15 @@ namespace FluentGraphQL.Builder.Converters
 
         public IGraphQLValueStatement ConvertSelectExpression<TEntity, TKey>(Expression<Func<TEntity, TKey>> selector)
         {
-            if (!(selector.Body is NewExpression newExpression))
-                throw new NotImplementedException();
+            var expression = selector.Body;
 
-            return EvaluateSelectNewExpression(newExpression);
+            if (expression is NewExpression newExpression)
+                return EvaluateSelectNewExpression(newExpression);
+
+            if (expression is MemberExpression memberExpression)
+                return EvaluateMemberExpression(memberExpression, null);
+
+            throw new NotImplementedException();
         }
 
         private IGraphQLValueStatement EvaluateExpression(Expression expression)

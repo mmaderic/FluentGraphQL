@@ -16,7 +16,7 @@
 
 namespace FluentGraphQL.Builder.Constants
 {
-    internal static partial class Constant
+    public static partial class Constant
     {
         public static class GraphQLKeyords
         {
@@ -28,6 +28,16 @@ namespace FluentGraphQL.Builder.Constants
             public const string Offset = "Offset";
             public const string Nodes = "Nodes";
             public const string Id = "Id";
+            public const string One = "One";
+            public const string Insert = "Insert";
+            public const string Object = "Object";
+            public const string Objects = "Objects";
+            public const string Returning = "Returning";
+            public const string Null = "null";
+            public const string Aggregate = "Aggregate";
+            public const string AffectedRows = "AffectedRows";
+            public const string Data = "Data";
+            public const string Errors = "Errors";
         }
     }
 }

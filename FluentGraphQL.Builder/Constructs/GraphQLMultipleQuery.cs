@@ -22,6 +22,8 @@ namespace FluentGraphQL.Builder.Constructs
 {
     public abstract class GraphQLMultipleQuery : IGraphQLMultipleQuery
     {
+        public string QueryString { get; set; }
+
         public static GraphQLMultipleQuery<List<TResponseA>, List<TResponseB>> Construct<TResponseA, TResponseB>(
             IGraphQLStandardQuery<TResponseA> queryA, IGraphQLStandardQuery<TResponseB> queryB)
         {

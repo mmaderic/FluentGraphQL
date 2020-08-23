@@ -14,7 +14,7 @@
     copies or substantial portions of the Software.
 */
 
-namespace FluentGraphQL.Abstractions.Client
+namespace FluentGraphQL.Client.Abstractions
 {
     public interface IGraphQLJsonConverter
     {

@@ -18,8 +18,9 @@ using System.Collections.Generic;
 
 namespace FluentGraphQL.Client.Abstractions
 {
-    public interface IGraphQLAggregateJsonConverterProvider
+    public interface IGraphQLMultipleInsertResponse<TReturn>
     {
-        ICollection<IGraphQLJsonConverter> Provide();
+        int AffectedRows { get; set; }
+        ICollection<TReturn> Returning { get; set; }
     }
 }

@@ -21,6 +21,6 @@ namespace FluentGraphQL.Builder.Abstractions
 {
     public interface IGraphQLSelectNodeFactory
     {
-        IGraphQLSelectNode Construct(Type type, int hierarchyLevel, List<Type> parentTypes = null, bool isCollectionNode = false, string explicitNodeName = null);
+        IGraphQLSelectNode Construct(Type type, int hierarchyLevel = 1, List<Type> parentTypes = null, bool isCollectionNode = false, string explicitNodeName = null);
     }
 }

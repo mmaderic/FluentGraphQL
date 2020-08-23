@@ -15,32 +15,13 @@
 */
 
 using FluentGraphQL.Builder.Abstractions;
+using System.Collections.Generic;
 
-namespace FluentGraphQL.Builder.Atoms
+namespace FluentGraphQL.Builder.Nodes
 {
-    internal class GraphQLPropertyStatement : IGraphQLPropertyStatement
+    public class GraphQLMultipleInsertSelect<TReturn> : IGraphQLMultipleInsertSelect<TReturn>
     {
-        public string PropertyName { get; set; }
-        public bool IsActive { get; set; } = true;
-
-        public GraphQLPropertyStatement(string propertyName)
-        {
-            PropertyName = propertyName;
-        }
-
-        public virtual string ToString(IGraphQLStringFactory graphQLStringFactory)
-        {
-            return graphQLStringFactory.Construct(this);
-        }
-
-        public void Activate()
-        {
-            IsActive = true;
-        }
-
-        public void Deactivate()
-        {
-            IsActive = false;
-        }
+        public int AffectedRows { get; set; }
+        public ICollection<TReturn> Returning { get; set; }
     }
 }

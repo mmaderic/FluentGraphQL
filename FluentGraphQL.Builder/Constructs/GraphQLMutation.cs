@@ -19,26 +19,20 @@ using FluentGraphQL.Builder.Abstractions;
 
 namespace FluentGraphQL.Builder.Constructs
 {
-    public class GraphQLQuery : IGraphQLQuery
+    public class GraphQLMutation : IGraphQLInsertMutation
     {
-        public bool IsSingleItemExecution { get; set; }
-
         public IGraphQLHeaderNode HeaderNode { get; set; }
         public IGraphQLSelectNode SelectNode { get; set; }
 
-        public GraphQLMethod Method => GraphQLMethod.Query;
-
         public string QueryString { get; set; }
 
-        public GraphQLQuery(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode) 
+        public GraphQLMethod Method => GraphQLMethod.Mutation;
+        public bool IsSingleItemExecution { get; set; }
+
+        public GraphQLMutation(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode)
         {
             HeaderNode = graphQLHeaderNode;
             SelectNode = graphQLSelectNode;
-        }
-
-        public IGraphQLSelectNode GetSelectNode<TEntity>()
-        {
-            return SelectNode.EntityType.Equals(typeof(TEntity)) ? SelectNode : SelectNode.GetChildNode<TEntity>();
         }
 
         public string ToString(IGraphQLStringFactory graphQLStringFactory)
@@ -46,30 +40,22 @@ namespace FluentGraphQL.Builder.Constructs
             return graphQLStringFactory.Construct(this);
         }
 
-        public bool HasAggregateContainer()
-        {
-            return SelectNode.HasAggregateContainer();
-        }
-
-        public IGraphQLSelectStatement Get(string statementName)
-        {
-            if (HeaderNode.Title.Equals(statementName))
-                return SelectNode;
-
-            return SelectNode.Get(statementName);
-        }
-
         public string KeyString(IGraphQLStringFactory graphQLStringFactory)
         {
             return HeaderNode.KeyString(graphQLStringFactory);
         }
+
+        public bool HasAggregateContainer()
+        {
+            return SelectNode.HasAggregateContainer();
+        }
     }
 
-    public class GraphQLQuery<TEntity> : GraphQLQuery, IGraphQLStandardQuery<TEntity>, IGraphQLSingleQuery<TEntity>
-        where TEntity : IGraphQLEntity
+    public class GraphQLMutation<TEntity> : GraphQLMutation, IGraphQLInsertSingleMutation<TEntity>, IGraphQLInsertMultipleMutation<TEntity>
     {
-        public GraphQLQuery(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode) 
-            : base(graphQLHeaderNode, graphQLSelectNode) 
-        { }       
+        public GraphQLMutation(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode) 
+            : base(graphQLHeaderNode, graphQLSelectNode)
+        {
+        }
     }
 }

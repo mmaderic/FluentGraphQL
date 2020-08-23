@@ -14,12 +14,21 @@
     copies or substantial portions of the Software.
 */
 
-using System.Collections.Generic;
-
-namespace FluentGraphQL.Client.Abstractions
+namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLAggregateJsonConverterProvider
+    public interface IGraphQLInsertMutation : IGraphQLMutation
     {
-        ICollection<IGraphQLJsonConverter> Provide();
+    }
+
+    public interface IGraphQLInsertMutation<TEntity> : IGraphQLInsertMutation
+    {
+    }
+
+    public interface IGraphQLInsertSingleMutation<TEntity> : IGraphQLInsertMutation<TEntity>
+    {
+    }
+
+    public interface IGraphQLInsertMultipleMutation<TEntity> : IGraphQLInsertMutation<TEntity>
+    {
     }
 }

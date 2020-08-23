@@ -16,6 +16,7 @@
 
 using FluentGraphQL.Builder.Abstractions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FluentGraphQL.Builder.Atoms
 {
@@ -31,6 +32,11 @@ namespace FluentGraphQL.Builder.Atoms
         public virtual string ToString(IGraphQLStringFactory graphQLStringFactory)
         {
             return graphQLStringFactory.Construct(this);
+        }
+
+        public bool IsNull()
+        {
+            return CollectionItems is null || !CollectionItems.Any();
         }
     }
 }

@@ -14,13 +14,10 @@
     copies or substantial portions of the Software.
 */
 
-using FluentGraphQL.Builder.Abstractions;
-
-namespace FluentGraphQL.Client.Abstractions
+namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLQueryBuilderFactory
+    public interface IGraphQLQueryString
     {
-        IGraphQLRootNodeBuilder<TEntity> Construct<TEntity>()
-            where TEntity : IGraphQLEntity;
+        string QueryString { get; set; }
     }
 }

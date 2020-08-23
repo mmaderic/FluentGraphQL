@@ -14,7 +14,7 @@
     copies or substantial portions of the Software.
 */
 
-using FluentGraphQL.Abstractions.Builder;
+using FluentGraphQL.Builder.Abstractions;
 using System;
 using System.Linq;
 

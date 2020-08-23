@@ -16,31 +16,14 @@
 
 using FluentGraphQL.Builder.Abstractions;
 
-namespace FluentGraphQL.Builder.Atoms
+namespace FluentGraphQL.Client.Abstractions
 {
-    internal class GraphQLPropertyStatement : IGraphQLPropertyStatement
+    public interface IGraphQLBuilderFactory
     {
-        public string PropertyName { get; set; }
-        public bool IsActive { get; set; } = true;
+        IGraphQLRootNodeBuilder<TEntity> QueryBuilder<TEntity>()
+            where TEntity : IGraphQLEntity;
 
-        public GraphQLPropertyStatement(string propertyName)
-        {
-            PropertyName = propertyName;
-        }
-
-        public virtual string ToString(IGraphQLStringFactory graphQLStringFactory)
-        {
-            return graphQLStringFactory.Construct(this);
-        }
-
-        public void Activate()
-        {
-            IsActive = true;
-        }
-
-        public void Deactivate()
-        {
-            IsActive = false;
-        }
+        IGraphQLMutationBuilder<TEntity> MutationBuilder<TEntity>()
+            where TEntity : IGraphQLEntity;
     }
 }

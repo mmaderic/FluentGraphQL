@@ -20,6 +20,7 @@ using FluentGraphQL.Builder.Extensions;
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FluentGraphQL.Builder.Factories
 {
@@ -46,7 +47,7 @@ namespace FluentGraphQL.Builder.Factories
             var result = builder.ToString();
             var namingStrategy = GetNamingStrategyFunction();
 
-            return namingStrategy.Invoke(result);
+            return graphQLQuery.QueryString = namingStrategy.Invoke(result);
         }
 
         public string Construct(IGraphQLMultipleQuery graphQLMultipleQuery)
@@ -56,20 +57,43 @@ namespace FluentGraphQL.Builder.Factories
             builder.AppendLine("query {");
             foreach(var query in graphQLMultipleQuery)
             {
-                var selectNodeString = query.SelectNode.ToString(this);
-                builder.Append(selectNodeString);
+                var queryString = query.SelectNode.ToString(this);
+                builder.Append(queryString);
             }
             builder.Append("}");
 
             var result = builder.ToString();
             var namingStrategy = GetNamingStrategyFunction();
 
-            return namingStrategy.Invoke(result);
+            Parallel.ForEach(graphQLMultipleQuery, (query) =>
+            {
+                var queryString = query.SelectNode.ToString(this);
+                query.QueryString = namingStrategy.Invoke(queryString);
+            });
+
+            return graphQLMultipleQuery.QueryString = namingStrategy.Invoke(result);
+        }
+
+        public virtual string Construct(IGraphQLMutation graphQLMutation)
+        {
+            var builder = new StringBuilder();
+            var selectNodeString = graphQLMutation.SelectNode.ToString(this);
+
+            builder
+                .AppendLine("mutation {")
+                .Append(selectNodeString)
+                .Append("}");
+
+            var result = builder.ToString();
+            var namingStrategy = GetNamingStrategyFunction();
+
+            return graphQLMutation.QueryString = namingStrategy.Invoke(result);
         }
 
         public virtual string Construct(IGraphQLHeaderNode graphQLHeaderNode)
         {
             var builder = new StringBuilder();
+            builder.Append(graphQLHeaderNode.Prefix);
             builder.Append(graphQLHeaderNode.Title);
             builder.Append(graphQLHeaderNode.Suffix);
 
@@ -88,10 +112,13 @@ namespace FluentGraphQL.Builder.Factories
             var builder = new StringBuilder();
             var headerNode = graphQLSelectNode.HeaderNode;
 
-            var headerIndentation = string.Concat(Enumerable.Range(0, headerNode.HierarchyLevel).Select(x => " "));
-            var selectNodeIndentation = headerIndentation + " ";
+            var headerIndentation = headerNode is null 
+                ? null
+                : string.Concat(Enumerable.Range(0, headerNode.HierarchyLevel).Select(x => " "));
 
-            var headerNodeString = graphQLSelectNode.HeaderNode.ToString(this);
+            var selectNodeIndentation = headerIndentation is null ? " " : headerIndentation + " ";
+
+            var headerNodeString = graphQLSelectNode.HeaderNode?.ToString(this);
             var propertyStatements = graphQLSelectNode.PropertyStatements.Where(x => x.IsActive).Select(x => x.ToString(this)).Prepend($"{selectNodeIndentation}");
             var selectNodePropertiesString = string.Join($"\n{selectNodeIndentation}", propertyStatements);
 
@@ -211,6 +238,6 @@ namespace FluentGraphQL.Builder.Factories
                 default:
                     throw new NotImplementedException();
             };
-        } 
+        }
     }
 }

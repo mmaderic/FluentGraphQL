@@ -15,6 +15,7 @@
 */
 
 using FluentGraphQL.Builder.Abstractions;
+using FluentGraphQL.Builder.Constants;
 
 namespace FluentGraphQL.Builder.Atoms
 {
@@ -35,6 +36,11 @@ namespace FluentGraphQL.Builder.Atoms
         public override string ToString()
         {
             return ValueLiteral;
+        }
+
+        public bool IsNull()
+        {
+            return ValueLiteral is null || ValueLiteral.Equals(Constant.GraphQLKeyords.Null);
         }
     }
 }

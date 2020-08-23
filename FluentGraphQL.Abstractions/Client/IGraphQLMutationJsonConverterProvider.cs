@@ -18,7 +18,7 @@ using System.Collections.Generic;
 
 namespace FluentGraphQL.Client.Abstractions
 {
-    public interface IGraphQLAggregateJsonConverterProvider
+    public interface IGraphQLMutationJsonConverterProvider
     {
         ICollection<IGraphQLJsonConverter> Provide();
     }

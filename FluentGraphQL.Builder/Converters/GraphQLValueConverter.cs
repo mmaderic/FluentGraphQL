@@ -16,6 +16,7 @@
 
 using FluentGraphQL.Abstractions.Enums;
 using FluentGraphQL.Builder.Abstractions;
+using FluentGraphQL.Builder.Constants;
 using System;
 using System.Globalization;
 
@@ -56,6 +57,9 @@ namespace FluentGraphQL.Builder.Converters
 
         public virtual string ConvertGuid(Guid value)
         {
+            if (value.Equals(Guid.Empty))
+                return Constant.GraphQLKeyords.Null;
+
             return $"\"{ value }\"";
         }
 
@@ -66,6 +70,9 @@ namespace FluentGraphQL.Builder.Converters
 
         public virtual string ConvertDateTime(DateTime value)
         {
+            if (value.Equals(DateTime.MinValue))
+                return Constant.GraphQLKeyords.Null;
+
             return $"\"{ value.ToString("s", CultureInfo.InvariantCulture) }\"";
         }
 

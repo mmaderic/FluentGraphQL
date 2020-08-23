@@ -16,9 +16,9 @@
 
 namespace FluentGraphQL.Builder.Constants
 {
-    internal static partial class Constant
+    public static partial class Constant
     {
-        public static class SupportedMethodCalls
+        internal static class SupportedMethodCalls
         {
             public const string Any = "Any";
             public new const string Equals = "Equals";

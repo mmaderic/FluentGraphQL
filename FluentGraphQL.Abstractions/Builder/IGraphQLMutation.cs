@@ -14,12 +14,11 @@
     copies or substantial portions of the Software.
 */
 
-using System.Collections.Generic;
-
-namespace FluentGraphQL.Client.Abstractions
+namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLAggregateJsonConverterProvider
+    public interface IGraphQLMutation : IGraphQLMethodConstruct, IGraphQLQueryString
     {
-        ICollection<IGraphQLJsonConverter> Provide();
+        IGraphQLHeaderNode HeaderNode { get; set; }
+        IGraphQLSelectNode SelectNode { get; set; }
     }
 }

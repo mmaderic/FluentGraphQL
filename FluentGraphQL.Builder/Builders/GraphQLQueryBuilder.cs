@@ -494,7 +494,7 @@ namespace FluentGraphQL.Builder.Builders
 
         IGraphQLSingleQuery<TRoot> IGraphQLSingleQueryBuilder<TRoot>.Build()
         {
-            _graphQLQuery.IsSingleQuery = true;
+            _graphQLQuery.IsSingleItemExecution = true;
             return (IGraphQLSingleQuery<TRoot>)_graphQLQuery;
         }
 
@@ -510,37 +510,8 @@ namespace FluentGraphQL.Builder.Builders
 
         private GraphQLSelectedQuery<TRoot, TResult> Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
-            _graphQLQuery.SelectNode.Deactivate();
-            _graphQLQuery.SelectNode.IsActive = true;
-
-            var expressionStatement = _graphQLExpressionConverter.ConvertSelectExpression(selector);
-            void ReadStatement(IGraphQLValueStatement statement, IGraphQLSelectNode selectNode)
-            {
-                if (statement.Value is IGraphQLCollectionValue collectionValue)
-                {
-                    if (!(statement.PropertyName is null))
-                    {
-                        selectNode = (IGraphQLSelectNode)selectNode.Get(statement.PropertyName);
-                        selectNode.IsActive = true;
-                    }
-
-                    foreach (var item in collectionValue.CollectionItems)
-                    {
-                        var objectValue = (IGraphQLObjectValue) item;
-                        ReadStatement(objectValue.PropertyValues.First(), selectNode);
-                    }
-                }
-                else if (statement.Value is IGraphQLObjectValue objectValue)
-                {
-                    selectNode = (IGraphQLSelectNode) selectNode.Get(statement.PropertyName);
-                    selectNode.IsActive = true;
-                    ReadStatement(objectValue.PropertyValues.First(), selectNode);
-                }
-                else
-                    selectNode.Get(statement.PropertyName).Activate();
-            }
-
-            ReadStatement(expressionStatement, _graphQLQuery.SelectNode);
+            var expressionStatement = _graphQLExpressionConverter.ConvertSelectExpression(selector); 
+            expressionStatement.ApplySelectStatement(_graphQLQuery.SelectNode);
             
             var selectorFunc = selector.Compile();
             var query = new GraphQLSelectedQuery<TRoot, TResult>(_graphQLQuery.HeaderNode, _graphQLQuery.SelectNode, selectorFunc);
@@ -551,7 +522,7 @@ namespace FluentGraphQL.Builder.Builders
         IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleNodeBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             var query = Select(selector);
-            query.IsSingleQuery = true;
+            query.IsSingleItemExecution = true;
 
             return query;
         }
@@ -559,7 +530,7 @@ namespace FluentGraphQL.Builder.Builders
         IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleNodeBuilder<TRoot, TEntity>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             var query = Select(selector);
-            query.IsSingleQuery = true;
+            query.IsSingleItemExecution = true;
 
             return query;
         }

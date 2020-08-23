@@ -16,9 +16,9 @@
 
 namespace FluentGraphQL.Builder.Constants
 {
-    internal static partial class Constant 
+    public static partial class Constant 
     {
-        public static class ExtensionMethodCalls
+        internal static class ExtensionMethodCalls
         {
             public const string GreaterThan = "GreaterThan";
             public const string LessThan = "LessThan";

@@ -16,10 +16,11 @@
 
 using System.Collections.Generic;
 
-namespace FluentGraphQL.Client.Abstractions
+namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLAggregateJsonConverterProvider
+    public interface IGraphQLMultipleInsertSelect<TReturn>
     {
-        ICollection<IGraphQLJsonConverter> Provide();
+        int AffectedRows { get; set; }
+        ICollection<TReturn> Returning { get; set; }
     }
 }

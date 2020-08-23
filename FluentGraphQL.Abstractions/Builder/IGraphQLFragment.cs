@@ -14,9 +14,7 @@
     copies or substantial portions of the Software.
 */
 
-using FluentGraphQL.Builder.Abstractions;
-
-namespace FluentGraphQL.Abstractions.Builder
+namespace FluentGraphQL.Builder.Abstractions
 {
     public interface IGraphQLFragment<TEntity> : IGraphQLEntity
         where TEntity : IGraphQLEntity

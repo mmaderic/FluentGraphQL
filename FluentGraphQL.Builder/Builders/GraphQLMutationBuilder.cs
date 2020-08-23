@@ -46,21 +46,17 @@ namespace FluentGraphQL.Builder.Builders
         }
 
         private GraphQLMutationBuilder<TEntity> Insert(object value)
-        {
-            void RemoveNullValues(IGraphQLValue graphQLValueInstance)
-            {
-                var objectValue = (GraphQLObjectValue)graphQLValueInstance;
-                objectValue.PropertyValues = objectValue.PropertyValues.Where(x => !x.Value.IsNull());
-            }
-
+        {     
             var isSingle = !(value is IEnumerable);
-            var graphQLValue = _graphQLValueFactory.Construct(value);
+            var graphQLValue = _graphQLValueFactory.Construct(value);            
 
             if (isSingle)
             {
                 _graphQLSelectNode = _graphQLSelectNodeFactory.Construct(typeof(TEntity));
                 _graphQLSelectNode.HeaderNode.Suffix = Constant.GraphQLKeyords.One;
+
                 RemoveNullValues(graphQLValue);
+                ModifyNestedObjectInsertStatements((IGraphQLObjectValue)graphQLValue);
             }
             else
             {
@@ -69,6 +65,7 @@ namespace FluentGraphQL.Builder.Builders
 
                 var collectionValue = (GraphQLCollectionValue)graphQLValue;
                 Parallel.ForEach(collectionValue.CollectionItems, (item) => { RemoveNullValues(item); });
+                Parallel.ForEach(collectionValue.CollectionItems, (item) => { ModifyNestedObjectInsertStatements((IGraphQLObjectValue)item); });
             }
 
             _graphQLSelectNode.HeaderNode.Prefix = Constant.GraphQLKeyords.Insert;
@@ -128,6 +125,35 @@ namespace FluentGraphQL.Builder.Builders
         IGraphQLInsertMultipleMutation<TEntity> IGraphQLInsertMultipleMutationBuilder<TEntity>.Build()
         {
             return (IGraphQLInsertMultipleMutation<TEntity>)BuildInsertMutation<TEntity>();
+        }
+
+        private void RemoveNullValues(IGraphQLValue graphQLValue)
+        {
+            var objectValue = (GraphQLObjectValue)graphQLValue;
+            objectValue.PropertyValues = objectValue.PropertyValues.Where(x => !x.Value.IsNull()).ToArray();
+            foreach (var property in objectValue.PropertyValues)
+            {
+                if (property.Value is IGraphQLObjectValue)
+                    RemoveNullValues(property.Value);
+                else if (property.Value is IGraphQLCollectionValue collection)
+                {
+                    foreach (var item in collection.CollectionItems)
+                        RemoveNullValues(item);
+                }
+            }
+        }
+
+        private void ModifyNestedObjectInsertStatements(IGraphQLObjectValue graphQLObjectValue)
+        {
+            Parallel.For(0, graphQLObjectValue.PropertyValues.Count(), (i) =>
+            {
+                var statement = graphQLObjectValue.PropertyValues.ElementAt(i);
+                if (statement.Value is IGraphQLObjectValue || statement.Value is IGraphQLCollectionValue)
+                {
+                    statement.Value = new GraphQLObjectValue(new GraphQLValueStatement(Constant.GraphQLKeyords.Data, statement.Value));
+                    graphQLObjectValue.PropertyValues = graphQLObjectValue.PropertyValues.ReplaceAt(i, statement);
+                }
+             });
         }
     }
 }

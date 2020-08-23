@@ -51,6 +51,20 @@ namespace FluentGraphQL.Builder.Extensions
             ApplySelectStatementRecursive(graphQLValueStatement, graphQLSelectNode);
         }
 
+        public static IEnumerable<IGraphQLValueStatement> ReplaceAt(this IEnumerable<IGraphQLValueStatement> collection, int index, IGraphQLValueStatement newItem)
+        {
+            var currentIndex = 0;
+            foreach (var item in collection)
+            {
+                if (currentIndex != index)                
+                    yield return item;                
+                else                
+                    yield return newItem;     
+                
+                currentIndex++;
+            }
+        }
+
         private static void ApplySelectStatementRecursive(IGraphQLValueStatement graphQLValueStatement, IGraphQLSelectNode graphQLSelectNode)
         {
             if (graphQLValueStatement.Value is IGraphQLCollectionValue collectionValue)

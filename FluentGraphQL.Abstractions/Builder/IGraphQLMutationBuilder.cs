@@ -35,6 +35,12 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLUpdateSingleMutationBuilder<TEntity> UpdateByPrimaryKey<TProperty>(Expression<Func<TEntity, TProperty>> primaryKeySelector, TProperty primaryKeyValue);
         IGraphQLUpdateMultipleMutationBuilder<TEntity> UpdateWhere(Expression<Func<TEntity, bool>> expressionPredicate);
         IGraphQLUpdateMultipleMutationBuilder<TEntity> UpdateAll();
+
+        IGraphQLReturnSingleMutationBuilder<TEntity> DeleteById(object idValue);
+        IGraphQLReturnSingleMutationBuilder<TEntity> DeleteByPrimaryKey(string key, object primaryKeyValue);
+        IGraphQLReturnSingleMutationBuilder<TEntity> DeleteByPrimaryKey<TProperty>(Expression<Func<TEntity, TProperty>> primaryKeySelector, TProperty primaryKeyValue);
+        IGraphQLReturnMultipleMutationBuilder<TEntity> DeleteWhere(Expression<Func<TEntity, bool>> expressionPredicate);
+        IGraphQLReturnMultipleMutationBuilder<TEntity> DeleteAll();
     }
 
     public interface IGraphQLReturnSingleMutationBuilder<TEntity>

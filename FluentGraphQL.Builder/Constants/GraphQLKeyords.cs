@@ -42,6 +42,7 @@ namespace FluentGraphQL.Builder.Constants
             public const string PkColumns = "PkColumns";
             public const string Set = "_set";
             public const string Increment = "_inc";
+            public const string Delete = "Delete";
         }
     }
 }

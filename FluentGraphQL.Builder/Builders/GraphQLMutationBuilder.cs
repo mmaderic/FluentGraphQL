@@ -164,16 +164,16 @@ namespace FluentGraphQL.Builder.Builders
              });
         }
 
-        private void InitializeSingleReturnUpdateBuilder()
+        private void InitializeSingleReturnBuilder(string keyword)
         {
             _graphQLSelectNode = _graphQLSelectNodeFactory.Construct(typeof(TEntity));
-            _graphQLSelectNode.HeaderNode.Prefix = Constant.GraphQLKeyords.Update;
+            _graphQLSelectNode.HeaderNode.Prefix = keyword;
             _graphQLSelectNode.HeaderNode.Suffix = Constant.GraphQLKeyords.ByPk;
         }
 
         private GraphQLMutationBuilder<TEntity> UpdateByPrimaryKey(string key, object value)
         {
-            InitializeSingleReturnUpdateBuilder();
+            InitializeSingleReturnBuilder(Constant.GraphQLKeyords.Update);
 
             var graphQLValue = _graphQLValueFactory.Construct(value);
             var primaryKeyObjectValue = new GraphQLObjectValue(new GraphQLValueStatement(key, graphQLValue));
@@ -200,16 +200,16 @@ namespace FluentGraphQL.Builder.Builders
             return UpdateByPrimaryKey(expressionStatement.PropertyName, value);
         }
 
-        private void InitializeMultipleReturnUpdateBuilder()
+        private void InitializeMultipleReturnBuilder(string keyword)
         {
             _graphQLSelectNode = _graphQLSelectNodeFactory.Construct(typeof(GraphQLMutationReturningSelect<TEntity>));
             _graphQLSelectNode.HeaderNode.Title = typeof(TEntity).Name;
-            _graphQLSelectNode.HeaderNode.Prefix = Constant.GraphQLKeyords.Update;
+            _graphQLSelectNode.HeaderNode.Prefix = keyword;
         }
 
         IGraphQLUpdateMultipleMutationBuilder<TEntity> IGraphQLMutationBuilder<TEntity>.UpdateAll()
         {
-            InitializeMultipleReturnUpdateBuilder();
+            InitializeMultipleReturnBuilder(Constant.GraphQLKeyords.Update);
 
             var whereStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.Where, null);
             _graphQLSelectNode.HeaderNode.Statements.Add(whereStatement);
@@ -219,7 +219,7 @@ namespace FluentGraphQL.Builder.Builders
 
         IGraphQLUpdateMultipleMutationBuilder<TEntity> IGraphQLMutationBuilder<TEntity>.UpdateWhere(Expression<Func<TEntity, bool>> expressionPredicate)
         {
-            InitializeMultipleReturnUpdateBuilder();
+            InitializeMultipleReturnBuilder(Constant.GraphQLKeyords.Update);
 
             var expressionStatement = _graphQLExpressionConverter.Convert(expressionPredicate);
             var expressionStatementObject = new GraphQLObjectValue(expressionStatement);
@@ -319,5 +319,56 @@ namespace FluentGraphQL.Builder.Builders
         {
             return AddPropertyStatement(propertyExpression, incrementBy, Constant.GraphQLKeyords.Increment);
         }       
+
+        private GraphQLMutationBuilder<TEntity> DeleteByPrimaryKey(string key, object value)
+        {
+            InitializeSingleReturnBuilder(Constant.GraphQLKeyords.Delete);
+
+            var graphQLValue = _graphQLValueFactory.Construct(value);
+            var primaryKeyValue = new GraphQLValueStatement(key, graphQLValue);
+
+            _graphQLSelectNode.HeaderNode.Statements.Add(primaryKeyValue);
+
+            return this;
+        }
+
+        IGraphQLReturnSingleMutationBuilder<TEntity> IGraphQLMutationBuilder<TEntity>.DeleteById(object idValue)
+        {
+            return DeleteByPrimaryKey(Constant.GraphQLKeyords.Id, idValue);
+        }
+
+        IGraphQLReturnSingleMutationBuilder<TEntity> IGraphQLMutationBuilder<TEntity>.DeleteByPrimaryKey(string key, object primaryKeyValue)
+        {
+            return DeleteByPrimaryKey(key, primaryKeyValue);
+        }
+
+        IGraphQLReturnSingleMutationBuilder<TEntity> IGraphQLMutationBuilder<TEntity>.DeleteByPrimaryKey<TProperty>(Expression<Func<TEntity, TProperty>> primaryKeySelector, TProperty primaryKeyValue)
+        {
+            var expressionStatement = _graphQLExpressionConverter.Convert(primaryKeySelector);
+            return DeleteByPrimaryKey(expressionStatement.PropertyName, primaryKeyValue);
+        }
+
+        IGraphQLReturnMultipleMutationBuilder<TEntity> IGraphQLMutationBuilder<TEntity>.DeleteWhere(Expression<Func<TEntity, bool>> expressionPredicate)
+        {
+            InitializeMultipleReturnBuilder(Constant.GraphQLKeyords.Delete);
+
+            var expressionStatement = _graphQLExpressionConverter.Convert(expressionPredicate);
+            var expressionStatementObject = new GraphQLObjectValue(expressionStatement);
+            var whereStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.Where, expressionStatementObject);
+
+            _graphQLSelectNode.HeaderNode.Statements.Add(whereStatement);
+
+            return this;
+        }
+
+        IGraphQLReturnMultipleMutationBuilder<TEntity> IGraphQLMutationBuilder<TEntity>.DeleteAll()
+        {
+            InitializeMultipleReturnBuilder(Constant.GraphQLKeyords.Delete);
+
+            var whereStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.Where, null);
+            _graphQLSelectNode.HeaderNode.Statements.Add(whereStatement);
+
+            return this;
+        }
     }
 }

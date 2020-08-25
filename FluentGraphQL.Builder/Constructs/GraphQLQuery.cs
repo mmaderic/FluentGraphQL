@@ -30,7 +30,7 @@ namespace FluentGraphQL.Builder.Constructs
 
         public string QueryString { get; set; }
 
-        public GraphQLQuery(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode) 
+        internal GraphQLQuery(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode) 
         {
             HeaderNode = graphQLHeaderNode;
             SelectNode = graphQLSelectNode;

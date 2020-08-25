@@ -19,13 +19,13 @@ using System;
 
 namespace FluentGraphQL.Builder.Constructs
 {
-    public class GraphQLSelectedQuery<TEntity, TResult> : GraphQLQuery<TEntity>, IGraphQLStandardSelectedQuery<TEntity, TResult>, IGraphQLSingleSelectedQuery<TEntity, TResult>
+    class GraphQLSelectedQuery<TEntity, TResult> : GraphQLQuery<TEntity>, IGraphQLStandardSelectedQuery<TEntity, TResult>, IGraphQLSingleSelectedQuery<TEntity, TResult>
            where TEntity : IGraphQLEntity
     {
         public Func<TEntity, TResult> Selector { get; set; }
         public bool IsSelected { get; set; }
 
-        public GraphQLSelectedQuery(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode, Func<TEntity, TResult> selector)
+        internal GraphQLSelectedQuery(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode, Func<TEntity, TResult> selector)
             : base(graphQLHeaderNode, graphQLSelectNode)
         {
             Selector = selector;
@@ -46,7 +46,7 @@ namespace FluentGraphQL.Builder.Constructs
 
         public object InvokeSelector(object @object)
         {
-            if (Selector is null)
+            if (Selector is null || @object is null)
                 return null;
 
             return Selector.Invoke((TEntity)@object);

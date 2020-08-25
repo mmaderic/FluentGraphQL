@@ -44,6 +44,8 @@ namespace FluentGraphQL.Builder.Converters
                     return ConvertDateTime((DateTime)@object);
                 case nameof(Int32):
                     return ConvertInt32((int)@object);
+                case nameof(Int64):
+                    return ConvertInt64((long)@object);
                 case nameof(Decimal):
                     return ConvertDecimal((decimal)@object);
                 case nameof(Boolean):
@@ -77,6 +79,11 @@ namespace FluentGraphQL.Builder.Converters
         }
 
         public virtual string ConvertInt32(int value)
+        {
+            return value.ToString();
+        }
+
+        public virtual string ConvertInt64(long value)
         {
             return value.ToString();
         }

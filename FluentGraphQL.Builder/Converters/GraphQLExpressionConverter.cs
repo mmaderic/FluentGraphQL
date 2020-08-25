@@ -87,7 +87,7 @@ namespace FluentGraphQL.Builder.Converters
             throw new NotImplementedException();
         }
 
-        private IGraphQLValueStatement EvaluateExpression(Expression expression)
+        public IGraphQLValueStatement EvaluateExpression(Expression expression)
         {
             if (expression is UnaryExpression unaryExpression)
                 return EvaluateUnaryExpression(unaryExpression);

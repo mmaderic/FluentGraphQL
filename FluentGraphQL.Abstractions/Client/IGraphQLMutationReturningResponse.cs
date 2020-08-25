@@ -14,21 +14,13 @@
     copies or substantial portions of the Software.
 */
 
-namespace FluentGraphQL.Builder.Abstractions
+using System.Collections.Generic;
+
+namespace FluentGraphQL.Client.Abstractions
 {
-    public interface IGraphQLInsertMutation : IGraphQLMutation
+    public interface IGraphQLMutationReturningResponse<TReturn>
     {
-    }
-
-    public interface IGraphQLInsertMutation<TEntity> : IGraphQLInsertMutation
-    {
-    }
-
-    public interface IGraphQLInsertSingleMutation<TEntity> : IGraphQLInsertMutation<TEntity>
-    {
-    }
-
-    public interface IGraphQLInsertMultipleMutation<TEntity> : IGraphQLInsertMutation<TEntity>
-    {
+        int AffectedRows { get; set; }
+        ICollection<TReturn> Returning { get; set; }
     }
 }

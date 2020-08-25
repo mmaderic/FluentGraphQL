@@ -20,17 +20,17 @@ namespace FluentGraphQL.Builder.Abstractions
     {
     }
 
-    public interface IGraphQLSelectedMutation<TEntity, TResult> : IGraphQLSelectableConstruct<TEntity, TResult>
+    public interface IGraphQLSelectedMutation<TEntity, TResult> : IGraphQLSelectedMutation, IGraphQLSelectableConstruct<TEntity, TResult>
     {
     }
 
-    public interface IGraphQLSelectedInsertSingleMutation<TEntity, TResult> : IGraphQLSelectedMutation<TEntity, TResult>, IGraphQLInsertSingleMutation<TEntity>
+    public interface IGraphQLSelectedReturnSingleMutation<TEntity, TResult> : IGraphQLSelectedMutation<TEntity, TResult>, IGraphQLReturnSingleMutation<TEntity>
     {
-        IGraphQLInsertSingleMutation<TEntity> AsNamed();
+        IGraphQLReturnSingleMutation<TEntity> AsNamed();
     }
 
-    public interface IGraphQLSelectedInsertMultipleMutation<TEntity, TResult> : IGraphQLSelectedMutation<TEntity, TResult>, IGraphQLInsertMultipleMutation<TEntity>
+    public interface IGraphQLSelectedReturnMultipleMutation<TEntity, TResult> : IGraphQLSelectedMutation<TEntity, TResult>, IGraphQLReturnMultipleMutation<TEntity>
     {
-        IGraphQLInsertMultipleMutation<TEntity> AsNamed();
+        IGraphQLReturnMultipleMutation<TEntity> AsNamed();
     }
 }

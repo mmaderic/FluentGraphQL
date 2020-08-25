@@ -21,4 +21,12 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLHeaderNode HeaderNode { get; set; }
         IGraphQLSelectNode SelectNode { get; set; }
     }
+
+    public interface IGraphQLReturnSingleMutation<TEntity> : IGraphQLMutation
+    {
+    }
+
+    public interface IGraphQLReturnMultipleMutation<TEntity> : IGraphQLMutation
+    {
+    }
 }

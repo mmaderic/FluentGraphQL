@@ -14,13 +14,14 @@
     copies or substantial portions of the Software.
 */
 
+using FluentGraphQL.Builder.Abstractions;
 using System.Collections.Generic;
 
-namespace FluentGraphQL.Client.Abstractions
+namespace FluentGraphQL.Builder.Nodes
 {
-    public interface IGraphQLMultipleInsertResponse<TReturn>
+    public class GraphQLMutationReturningSelect<TReturn> : IGraphQLMutationReturningSelect<TReturn>
     {
-        int AffectedRows { get; set; }
-        ICollection<TReturn> Returning { get; set; }
+        public int AffectedRows { get; set; }
+        public ICollection<TReturn> Returning { get; set; }
     }
 }

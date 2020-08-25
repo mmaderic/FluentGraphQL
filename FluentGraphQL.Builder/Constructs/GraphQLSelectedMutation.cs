@@ -20,26 +20,26 @@ using System;
 namespace FluentGraphQL.Builder.Constructs
 {
     public class GraphQLSelectedMutation<TEntity, TResult> : GraphQLMutation<TEntity>,
-        IGraphQLSelectedInsertSingleMutation<TEntity, TResult>, IGraphQLSelectedInsertMultipleMutation<TEntity, TResult>
+        IGraphQLSelectedReturnSingleMutation<TEntity, TResult>, IGraphQLSelectedReturnMultipleMutation<TEntity, TResult>
            where TEntity : IGraphQLEntity
     {
         public Func<TEntity, TResult> Selector { get; set; }
         public bool IsSelected { get; set; }
 
-        public GraphQLSelectedMutation(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode, Func<TEntity, TResult> selector)
+        internal GraphQLSelectedMutation(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode, Func<TEntity, TResult> selector)
             : base(graphQLHeaderNode, graphQLSelectNode)
         {
             Selector = selector;
             IsSelected = true;
         }
 
-        IGraphQLInsertSingleMutation<TEntity> IGraphQLSelectedInsertSingleMutation<TEntity, TResult>.AsNamed()
+        IGraphQLReturnSingleMutation<TEntity> IGraphQLSelectedReturnSingleMutation<TEntity, TResult>.AsNamed()
         {
             IsSelected = false;
             return this;
         }
 
-        IGraphQLInsertMultipleMutation<TEntity> IGraphQLSelectedInsertMultipleMutation<TEntity, TResult>.AsNamed()
+        IGraphQLReturnMultipleMutation<TEntity> IGraphQLSelectedReturnMultipleMutation<TEntity, TResult>.AsNamed()
         {
             IsSelected = false;
             return this;
@@ -47,7 +47,7 @@ namespace FluentGraphQL.Builder.Constructs
 
         public object InvokeSelector(object @object)
         {
-            if (Selector is null)
+            if (Selector is null || @object is null)
                 return null;
 
             return Selector.Invoke((TEntity)@object);

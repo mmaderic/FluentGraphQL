@@ -38,6 +38,10 @@ namespace FluentGraphQL.Builder.Constants
             public const string AffectedRows = "AffectedRows";
             public const string Data = "Data";
             public const string Errors = "Errors";
+            public const string Update = "Update";
+            public const string PkColumns = "PkColumns";
+            public const string Set = "_set";
+            public const string Increment = "_inc";
         }
     }
 }

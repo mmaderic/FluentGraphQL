@@ -29,19 +29,56 @@ namespace FluentGraphQL.Builder.Abstractions
     {
         IGraphQLInsertSingleMutationBuilder<TEntity> Insert(TEntity entity);
         IGraphQLInsertMultipleMutationBuilder<TEntity> Insert(IEnumerable<TEntity> entities);
+
+        IGraphQLUpdateSingleMutationBuilder<TEntity> UpdateById(object idValue);
+        IGraphQLUpdateSingleMutationBuilder<TEntity> UpdateByPrimaryKey(string key, object primaryKeyValue);
+        IGraphQLUpdateSingleMutationBuilder<TEntity> UpdateByPrimaryKey<TProperty>(Expression<Func<TEntity, TProperty>> primaryKeySelector, TProperty primaryKeyValue);
+        IGraphQLUpdateMultipleMutationBuilder<TEntity> UpdateWhere(Expression<Func<TEntity, bool>> expressionPredicate);
+        IGraphQLUpdateMultipleMutationBuilder<TEntity> UpdateAll();
     }
 
-    public interface IGraphQLInsertSingleMutationBuilder<TEntity> : IGraphQLMutationBuilder<TEntity>
-        where TEntity : IGraphQLEntity
+    public interface IGraphQLReturnSingleMutationBuilder<TEntity>
     {
-        IGraphQLSelectedInsertSingleMutation<TEntity, TReturn> Return<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression);
-        IGraphQLInsertSingleMutation<TEntity> Build();
+        IGraphQLSelectedReturnSingleMutation<TEntity, TReturn> Return<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression);
+        IGraphQLReturnSingleMutation<TEntity> Build();
     }
 
-    public interface IGraphQLInsertMultipleMutationBuilder<TEntity> : IGraphQLMutationBuilder<TEntity>
+    public interface IGraphQLReturnMultipleMutationBuilder<TEntity>
+    {
+        IGraphQLSelectedReturnMultipleMutation<TEntity, TReturn> Return<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression);
+        IGraphQLReturnMultipleMutation<TEntity> Build();
+    }
+
+    public interface IGraphQLInsertSingleMutationBuilder<TEntity> : IGraphQLReturnSingleMutationBuilder<TEntity>
         where TEntity : IGraphQLEntity
     {
-        IGraphQLSelectedInsertMultipleMutation<TEntity, TReturn> Return<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression);
-        IGraphQLInsertMultipleMutation<TEntity> Build();
+    }
+
+    public interface IGraphQLInsertMultipleMutationBuilder<TEntity> : IGraphQLReturnMultipleMutationBuilder<TEntity>
+        where TEntity : IGraphQLEntity
+    {       
+    }
+
+    public interface IGraphQLUpdateSingleMutationBuilder<TEntity> : IGraphQLReturnSingleMutationBuilder<TEntity>
+        where TEntity : IGraphQLEntity
+    {
+        IGraphQLUpdateSingleMutationBuilder<TEntity> Set<TProperty>(Expression<Func<TEntity, TProperty>> propertyExpression, TProperty value);
+        IGraphQLUpdateSingleMutationBuilder<TEntity> Set(TEntity entity);
+
+        IGraphQLUpdateSingleMutationBuilder<TEntity> Increment(Expression<Func<TEntity, int>> propertyExpression, int incrementBy = 1);
+        IGraphQLUpdateSingleMutationBuilder<TEntity> Increment(Expression<Func<TEntity, long>> propertyExpression, long incrementBy = 1);
+        IGraphQLUpdateSingleMutationBuilder<TEntity> Increment(Expression<Func<TEntity, int?>> propertyExpression, int incrementBy = 1);
+        IGraphQLUpdateSingleMutationBuilder<TEntity> Increment(Expression<Func<TEntity, long?>> propertyExpression, long incrementBy = 1);
+    }
+
+    public interface IGraphQLUpdateMultipleMutationBuilder<TEntity> : IGraphQLReturnMultipleMutationBuilder<TEntity>
+        where TEntity : IGraphQLEntity
+    {
+        IGraphQLUpdateMultipleMutationBuilder<TEntity> Set<TProperty>(Expression<Func<TEntity, TProperty>> propertyExpression, TProperty value);
+
+        IGraphQLUpdateMultipleMutationBuilder<TEntity> Increment(Expression<Func<TEntity, int>> propertyExpression, int incrementBy = 1);
+        IGraphQLUpdateMultipleMutationBuilder<TEntity> Increment(Expression<Func<TEntity, long>> propertyExpression, long incrementBy = 1);
+        IGraphQLUpdateMultipleMutationBuilder<TEntity> Increment(Expression<Func<TEntity, int?>> propertyExpression, int incrementBy = 1);
+        IGraphQLUpdateMultipleMutationBuilder<TEntity> Increment(Expression<Func<TEntity, long?>> propertyExpression, long incrementBy = 1);
     }
 }

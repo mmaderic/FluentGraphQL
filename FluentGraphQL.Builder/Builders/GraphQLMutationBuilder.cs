@@ -29,7 +29,9 @@ using System.Threading.Tasks;
 
 namespace FluentGraphQL.Builder.Builders
 {
-    public class GraphQLMutationBuilder<TEntity> : IGraphQLInsertSingleMutationBuilder<TEntity>, IGraphQLInsertMultipleMutationBuilder<TEntity>
+    public class GraphQLMutationBuilder<TEntity> : IGraphQLMutationBuilder<TEntity>, 
+        IGraphQLInsertSingleMutationBuilder<TEntity>, IGraphQLInsertMultipleMutationBuilder<TEntity>,
+        IGraphQLUpdateSingleMutationBuilder<TEntity>, IGraphQLUpdateMultipleMutationBuilder<TEntity>
         where TEntity : IGraphQLEntity
     {
         private readonly IGraphQLSelectNodeFactory _graphQLSelectNodeFactory;
@@ -60,7 +62,7 @@ namespace FluentGraphQL.Builder.Builders
             }
             else
             {
-                _graphQLSelectNode = _graphQLSelectNodeFactory.Construct(typeof(GraphQLMultipleInsertSelect<TEntity>));
+                _graphQLSelectNode = _graphQLSelectNodeFactory.Construct(typeof(GraphQLMutationReturningSelect<TEntity>));
                 _graphQLSelectNode.HeaderNode.Title = typeof(TEntity).Name;
 
                 var collectionValue = (GraphQLCollectionValue)graphQLValue;
@@ -90,7 +92,7 @@ namespace FluentGraphQL.Builder.Builders
             return Insert(entities);
         }
 
-        private GraphQLMutation BuildInsertMutation<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression = null)
+        private GraphQLMutation BuildMutation<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression = null)
         {
             if (!(returnExpression is null))
             {
@@ -107,24 +109,30 @@ namespace FluentGraphQL.Builder.Builders
             return new GraphQLMutation<TEntity>(_graphQLSelectNode.HeaderNode, _graphQLSelectNode);            
         }
 
-        IGraphQLSelectedInsertSingleMutation<TEntity, TReturn> IGraphQLInsertSingleMutationBuilder<TEntity>.Return<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression)
+        IGraphQLSelectedReturnSingleMutation<TEntity, TReturn> IGraphQLReturnSingleMutationBuilder<TEntity>.Return<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression)
         {
-            return (IGraphQLSelectedInsertSingleMutation<TEntity, TReturn>)BuildInsertMutation(returnExpression);
+            var mutation = BuildMutation(returnExpression);
+            mutation.IsSingleItemExecution = true;
+
+            return (IGraphQLSelectedReturnSingleMutation<TEntity, TReturn>)mutation;
         }
 
-        IGraphQLSelectedInsertMultipleMutation<TEntity, TReturn> IGraphQLInsertMultipleMutationBuilder<TEntity>.Return<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression)
+        IGraphQLSelectedReturnMultipleMutation<TEntity, TReturn> IGraphQLReturnMultipleMutationBuilder<TEntity>.Return<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression)
         {
-            return (IGraphQLSelectedInsertMultipleMutation<TEntity, TReturn>)BuildInsertMutation(returnExpression);
+            return (IGraphQLSelectedReturnMultipleMutation<TEntity, TReturn>)BuildMutation(returnExpression);
         }
 
-        IGraphQLInsertSingleMutation<TEntity> IGraphQLInsertSingleMutationBuilder<TEntity>.Build()
+        IGraphQLReturnSingleMutation<TEntity> IGraphQLReturnSingleMutationBuilder<TEntity>.Build()
         {
-            return (IGraphQLInsertSingleMutation<TEntity>)BuildInsertMutation<TEntity>();
+            var mutation = BuildMutation<TEntity>(); 
+            mutation.IsSingleItemExecution = true;
+
+            return (IGraphQLReturnSingleMutation<TEntity>)mutation;
         }
 
-        IGraphQLInsertMultipleMutation<TEntity> IGraphQLInsertMultipleMutationBuilder<TEntity>.Build()
+        IGraphQLReturnMultipleMutation<TEntity> IGraphQLReturnMultipleMutationBuilder<TEntity>.Build()
         {
-            return (IGraphQLInsertMultipleMutation<TEntity>)BuildInsertMutation<TEntity>();
+            return (IGraphQLReturnMultipleMutation<TEntity>)BuildMutation<TEntity>();
         }
 
         private void RemoveNullValues(IGraphQLValue graphQLValue)
@@ -155,5 +163,161 @@ namespace FluentGraphQL.Builder.Builders
                 }
              });
         }
+
+        private void InitializeSingleReturnUpdateBuilder()
+        {
+            _graphQLSelectNode = _graphQLSelectNodeFactory.Construct(typeof(TEntity));
+            _graphQLSelectNode.HeaderNode.Prefix = Constant.GraphQLKeyords.Update;
+            _graphQLSelectNode.HeaderNode.Suffix = Constant.GraphQLKeyords.ByPk;
+        }
+
+        private GraphQLMutationBuilder<TEntity> UpdateByPrimaryKey(string key, object value)
+        {
+            InitializeSingleReturnUpdateBuilder();
+
+            var graphQLValue = _graphQLValueFactory.Construct(value);
+            var primaryKeyObjectValue = new GraphQLObjectValue(new GraphQLValueStatement(key, graphQLValue));
+            var primaryKeyStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.PkColumns, primaryKeyObjectValue);
+
+            _graphQLSelectNode.HeaderNode.Statements.Add(primaryKeyStatement);
+
+            return this;
+        }
+
+        IGraphQLUpdateSingleMutationBuilder<TEntity> IGraphQLMutationBuilder<TEntity>.UpdateByPrimaryKey(string key, object value)
+        {
+            return UpdateByPrimaryKey(key, value);
+        }
+
+        IGraphQLUpdateSingleMutationBuilder<TEntity> IGraphQLMutationBuilder<TEntity>.UpdateById(object value)
+        {
+            return UpdateByPrimaryKey(Constant.GraphQLKeyords.Id, value);
+        }
+
+        IGraphQLUpdateSingleMutationBuilder<TEntity> IGraphQLMutationBuilder<TEntity>.UpdateByPrimaryKey<TProperty>(Expression<Func<TEntity, TProperty>> propertyExpression, TProperty value)
+        {
+            var expressionStatement = _graphQLExpressionConverter.Convert(propertyExpression);
+            return UpdateByPrimaryKey(expressionStatement.PropertyName, value);
+        }
+
+        private void InitializeMultipleReturnUpdateBuilder()
+        {
+            _graphQLSelectNode = _graphQLSelectNodeFactory.Construct(typeof(GraphQLMutationReturningSelect<TEntity>));
+            _graphQLSelectNode.HeaderNode.Title = typeof(TEntity).Name;
+            _graphQLSelectNode.HeaderNode.Prefix = Constant.GraphQLKeyords.Update;
+        }
+
+        IGraphQLUpdateMultipleMutationBuilder<TEntity> IGraphQLMutationBuilder<TEntity>.UpdateAll()
+        {
+            InitializeMultipleReturnUpdateBuilder();
+
+            var whereStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.Where, null);
+            _graphQLSelectNode.HeaderNode.Statements.Add(whereStatement);
+
+            return this;
+        }
+
+        IGraphQLUpdateMultipleMutationBuilder<TEntity> IGraphQLMutationBuilder<TEntity>.UpdateWhere(Expression<Func<TEntity, bool>> expressionPredicate)
+        {
+            InitializeMultipleReturnUpdateBuilder();
+
+            var expressionStatement = _graphQLExpressionConverter.Convert(expressionPredicate);
+            var expressionStatementObject = new GraphQLObjectValue(expressionStatement);
+            var whereStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.Where, expressionStatementObject);
+
+            _graphQLSelectNode.HeaderNode.Statements.Add(whereStatement);
+
+            return this;
+        }
+
+        private GraphQLMutationBuilder<TEntity> AddPropertyStatement<TProperty>(Expression<Func<TEntity, TProperty>> propertyExpression, TProperty value, string statementKey)
+        {
+            var expressionStatement = _graphQLExpressionConverter.Convert(propertyExpression);
+            var graphQLValue = _graphQLValueFactory.Construct(value);
+            var graphQLValueStatement = new GraphQLValueStatement(expressionStatement.PropertyName, graphQLValue);
+
+            return AddPropertyStatement(graphQLValueStatement, statementKey);
+        }
+
+        private GraphQLMutationBuilder<TEntity> AddPropertyStatement(IGraphQLValueStatement graphQLValueStatement, string statementKey)
+        {
+            var existingStatement = _graphQLSelectNode.HeaderNode.Statements.Find<GraphQLValueStatement>(statementKey);
+            if (existingStatement is null)
+            {
+                var graphQLObjectValue = new GraphQLObjectValue(graphQLValueStatement);
+                _graphQLSelectNode.HeaderNode.Statements.Add(new GraphQLValueStatement(statementKey, graphQLObjectValue));
+            }
+            else
+            {
+                var setStatementValue = (GraphQLObjectValue)existingStatement.Value;
+                setStatementValue.PropertyValues = setStatementValue.PropertyValues.Append(graphQLValueStatement);
+            }
+
+            return this;
+        }
+
+        IGraphQLUpdateSingleMutationBuilder<TEntity> IGraphQLUpdateSingleMutationBuilder<TEntity>.Set<TProperty>(Expression<Func<TEntity, TProperty>> propertyExpression, TProperty value)
+        {
+            return AddPropertyStatement(propertyExpression, value, Constant.GraphQLKeyords.Set);
+        }
+
+        IGraphQLUpdateMultipleMutationBuilder<TEntity> IGraphQLUpdateMultipleMutationBuilder<TEntity>.Set<TProperty>(Expression<Func<TEntity, TProperty>> propertyExpression, TProperty value)
+        {
+            return AddPropertyStatement(propertyExpression, value, Constant.GraphQLKeyords.Set);
+        }
+
+        IGraphQLUpdateSingleMutationBuilder<TEntity> IGraphQLUpdateSingleMutationBuilder<TEntity>.Set(TEntity entity)
+        {
+            var graphQLObjectValue = (IGraphQLObjectValue)_graphQLValueFactory.Construct(entity);
+            foreach (var property in graphQLObjectValue.PropertyValues)
+            {
+                if (!(property.Value is IGraphQLPropertyValue))
+                    continue;
+
+                AddPropertyStatement(property, Constant.GraphQLKeyords.Set);
+            }
+
+            return this;
+        }
+
+        IGraphQLUpdateSingleMutationBuilder<TEntity> IGraphQLUpdateSingleMutationBuilder<TEntity>.Increment(Expression<Func<TEntity, int>> propertyExpression, int incrementBy)
+        {
+            return AddPropertyStatement(propertyExpression, incrementBy, Constant.GraphQLKeyords.Increment);
+        }
+
+        IGraphQLUpdateSingleMutationBuilder<TEntity> IGraphQLUpdateSingleMutationBuilder<TEntity>.Increment(Expression<Func<TEntity, long>> propertyExpression, long incrementBy)
+        {
+            return AddPropertyStatement(propertyExpression, incrementBy, Constant.GraphQLKeyords.Increment);
+        }
+
+        IGraphQLUpdateSingleMutationBuilder<TEntity> IGraphQLUpdateSingleMutationBuilder<TEntity>.Increment(Expression<Func<TEntity, int?>> propertyExpression, int incrementBy)
+        {
+            return AddPropertyStatement(propertyExpression, incrementBy, Constant.GraphQLKeyords.Increment);
+        }
+
+        IGraphQLUpdateSingleMutationBuilder<TEntity> IGraphQLUpdateSingleMutationBuilder<TEntity>.Increment(Expression<Func<TEntity, long?>> propertyExpression, long incrementBy)
+        {
+            return AddPropertyStatement(propertyExpression, incrementBy, Constant.GraphQLKeyords.Increment);
+        }
+
+        IGraphQLUpdateMultipleMutationBuilder<TEntity> IGraphQLUpdateMultipleMutationBuilder<TEntity>.Increment(Expression<Func<TEntity, int>> propertyExpression, int incrementBy)
+        {
+            return AddPropertyStatement(propertyExpression, incrementBy, Constant.GraphQLKeyords.Increment);
+        }
+
+        IGraphQLUpdateMultipleMutationBuilder<TEntity> IGraphQLUpdateMultipleMutationBuilder<TEntity>.Increment(Expression<Func<TEntity, long>> propertyExpression, long incrementBy)
+        {
+            return AddPropertyStatement(propertyExpression, incrementBy, Constant.GraphQLKeyords.Increment);
+        }
+
+        IGraphQLUpdateMultipleMutationBuilder<TEntity> IGraphQLUpdateMultipleMutationBuilder<TEntity>.Increment(Expression<Func<TEntity, int?>> propertyExpression, int incrementBy)
+        {
+            return AddPropertyStatement(propertyExpression, incrementBy, Constant.GraphQLKeyords.Increment);
+        }
+
+        IGraphQLUpdateMultipleMutationBuilder<TEntity> IGraphQLUpdateMultipleMutationBuilder<TEntity>.Increment(Expression<Func<TEntity, long?>> propertyExpression, long incrementBy)
+        {
+            return AddPropertyStatement(propertyExpression, incrementBy, Constant.GraphQLKeyords.Increment);
+        }       
     }
 }

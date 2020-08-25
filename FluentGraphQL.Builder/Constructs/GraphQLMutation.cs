@@ -19,7 +19,7 @@ using FluentGraphQL.Builder.Abstractions;
 
 namespace FluentGraphQL.Builder.Constructs
 {
-    public class GraphQLMutation : IGraphQLInsertMutation
+    public class GraphQLMutation : IGraphQLMutation
     {
         public IGraphQLHeaderNode HeaderNode { get; set; }
         public IGraphQLSelectNode SelectNode { get; set; }
@@ -29,7 +29,7 @@ namespace FluentGraphQL.Builder.Constructs
         public GraphQLMethod Method => GraphQLMethod.Mutation;
         public bool IsSingleItemExecution { get; set; }
 
-        public GraphQLMutation(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode)
+        internal GraphQLMutation(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode)
         {
             HeaderNode = graphQLHeaderNode;
             SelectNode = graphQLSelectNode;
@@ -51,7 +51,7 @@ namespace FluentGraphQL.Builder.Constructs
         }
     }
 
-    public class GraphQLMutation<TEntity> : GraphQLMutation, IGraphQLInsertSingleMutation<TEntity>, IGraphQLInsertMultipleMutation<TEntity>
+    public class GraphQLMutation<TEntity> : GraphQLMutation, IGraphQLReturnSingleMutation<TEntity>, IGraphQLReturnMultipleMutation<TEntity>
     {
         public GraphQLMutation(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode) 
             : base(graphQLHeaderNode, graphQLSelectNode)

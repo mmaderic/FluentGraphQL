@@ -113,6 +113,7 @@ namespace FluentGraphQL.Builder.Abstractions
     {
         IGraphQLSingleQueryBuilder<TEntity> ById(object value);
         IGraphQLSingleQueryBuilder<TEntity> ByPrimaryKey(string key, object value);
+        IGraphQLSingleQueryBuilder<TEntity> ByPrimaryKey<TPrimaryKey>(Expression<Func<TEntity, TPrimaryKey>> propertyExpression, TPrimaryKey value);
     }
 
     public interface IGraphQLSingleOrderedNodeBuilder<TEntity> : IGraphQLSingleNodeBuilderBase<TEntity>

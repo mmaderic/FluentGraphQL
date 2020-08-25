@@ -73,6 +73,12 @@ namespace FluentGraphQL.Builder.Builders
             return ByPrimaryKey(key, value);
         }
 
+        IGraphQLSingleQueryBuilder<TRoot> IGraphQLRootNodeBuilder<TRoot>.ByPrimaryKey<TPrimaryKey>(Expression<Func<TRoot, TPrimaryKey>> propertyExpression, TPrimaryKey value)
+        {
+            var expressionStatement = _graphQLExpressionConverter.Convert(propertyExpression);
+            return ByPrimaryKey(expressionStatement.PropertyName, value);
+        }
+
         private GraphQLQueryBuilder<TRoot, TEntity> Where<TNode>(Expression<Func<TNode, bool>> expressionPredicate)
         {
             var expressionStatement = _graphQLExpressionConverter.Convert(expressionPredicate);
@@ -159,12 +165,13 @@ namespace FluentGraphQL.Builder.Builders
         {
             var expressionStatement = _graphQLExpressionConverter.Convert(keySelector, orderByDirection);
             var expressionStatementObject = new GraphQLObjectValue(expressionStatement);
-            var orderByStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.OrderBy, expressionStatementObject);
 
             var existingOrderByStatement = _graphQLSelectNode.HeaderNode.Statements.Find<GraphQLValueStatement>(Constant.GraphQLKeyords.OrderBy);
             if (existingOrderByStatement is null)
             {
+                var orderByStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.OrderBy, expressionStatementObject);
                 _graphQLSelectNode.HeaderNode.Statements.Add(orderByStatement);
+
                 return this;
             }
 

@@ -20,7 +20,7 @@ using System;
 
 namespace FluentGraphQL.Builder.Constructs
 {
-    class GraphQLSelectedMethodConstruct<TEntity, TResult> : GraphQLMethodConstruct<TEntity>, 
+    internal class GraphQLSelectedMethodConstruct<TEntity, TResult> : GraphQLMethodConstruct<TEntity>, 
         IGraphQLStandardSelectedQuery<TEntity, TResult>, IGraphQLSingleSelectedQuery<TEntity, TResult>,
         IGraphQLSelectedReturnSingleMutation<TEntity, TResult>, IGraphQLSelectedReturnMultipleMutation<TEntity, TResult>
            where TEntity : IGraphQLEntity
@@ -28,7 +28,7 @@ namespace FluentGraphQL.Builder.Constructs
         public Func<TEntity, TResult> Selector { get; set; }
         public bool IsSelected { get; set; }
 
-        internal GraphQLSelectedMethodConstruct(GraphQLMethod graphQLMethod, IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode, Func<TEntity, TResult> selector)
+        public GraphQLSelectedMethodConstruct(GraphQLMethod graphQLMethod, IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode, Func<TEntity, TResult> selector)
             : base(graphQLMethod, graphQLHeaderNode, graphQLSelectNode)
         {
             Selector = selector;

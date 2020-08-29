@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace FluentGraphQL.Builder.Nodes
 {
-    public class GraphQLMutationReturningSelect<TReturn> : IGraphQLMutationReturningSelect<TReturn>
+    internal class GraphQLMutationReturningSelect<TReturn> : IGraphQLMutationReturningSelect<TReturn>
     {
         public int AffectedRows { get; set; }
         public ICollection<TReturn> Returning { get; set; }

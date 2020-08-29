@@ -45,6 +45,17 @@ namespace FluentGraphQL.Builder.Builders
         private Dictionary<RuntimeTypeHandle, IGraphQLQueryBuilder> _aggregateBuilders;
 
         public GraphQLQueryBuilder(
+            IGraphQLSelectNodeFactory graphQLSelectNodeFactory, IGraphQLExpressionConverter graphQLExpressionConverter, IGraphQLValueFactory graphQLValueFactory)
+        {
+            var selectNode = graphQLSelectNodeFactory.Construct(typeof(TEntity), 1);
+
+            _graphQLQuery = new GraphQLMethodConstruct<TEntity>(GraphQLMethod.Query, selectNode.HeaderNode, selectNode);
+            _graphQLSelectNode = selectNode;
+            _graphQLExpressionConverter = graphQLExpressionConverter;
+            _graphQLValueFactory = graphQLValueFactory;
+        }
+
+        public GraphQLQueryBuilder(
             IGraphQLQuery graphQLQuery, IGraphQLSelectNode graphQLSelectNode,
             IGraphQLExpressionConverter graphQLExpressionConverter, IGraphQLValueFactory graphQLValuefactory)
         {

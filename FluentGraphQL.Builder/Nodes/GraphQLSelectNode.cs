@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace FluentGraphQL.Builder.Nodes
 {
-    public class GraphQLSelectNode : IGraphQLSelectNode
+    internal class GraphQLSelectNode : IGraphQLSelectNode
     {
         public IGraphQLHeaderNode HeaderNode { get; set; }
         public IEnumerable<IGraphQLPropertyStatement> PropertyStatements { get; set; }

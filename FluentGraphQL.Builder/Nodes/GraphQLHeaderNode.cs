@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace FluentGraphQL.Builder.Nodes
 {
-    public class GraphQLHeaderNode : IGraphQLHeaderNode
+    internal class GraphQLHeaderNode : IGraphQLHeaderNode
     {
         public string Title { get; set; }
         public string Prefix { get; set; }

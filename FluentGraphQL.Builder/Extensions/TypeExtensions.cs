@@ -21,9 +21,9 @@ using System.Reflection;
 
 namespace FluentGraphQL.Builder.Extensions
 {
-    public static class TypeExtensions
+    internal static class TypeExtensions
     {
-        internal static Type Root(this Type type)
+        public static Type Root(this Type type)
         {
             if (type.IsInterface)
                 return type;

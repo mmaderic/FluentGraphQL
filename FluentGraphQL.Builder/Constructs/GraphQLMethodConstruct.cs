@@ -20,7 +20,7 @@ using System;
 
 namespace FluentGraphQL.Builder.Constructs
 {
-    public abstract class GraphQLMethodConstruct : IGraphQLQuery, IGraphQLMutation
+    internal abstract class GraphQLMethodConstruct : IGraphQLQuery, IGraphQLMutation
     {
         public bool IsSingleItemExecution { get; set; }
 
@@ -67,7 +67,7 @@ namespace FluentGraphQL.Builder.Constructs
         }
     }
 
-    public class GraphQLMethodConstruct<TEntity> : GraphQLMethodConstruct, 
+    internal class GraphQLMethodConstruct<TEntity> : GraphQLMethodConstruct, 
         IGraphQLStandardQuery<TEntity>, IGraphQLSingleQuery<TEntity>,
         IGraphQLReturnSingleMutation<TEntity>, IGraphQLReturnMultipleMutation<TEntity>,
         IGraphQLQueryAction<TEntity>, IGraphQLMutationAction<TEntity>

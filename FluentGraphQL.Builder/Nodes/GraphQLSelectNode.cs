@@ -47,7 +47,13 @@ namespace FluentGraphQL.Builder.Nodes
             if (!active)
                 Deactivate();
             else IsActive = true;
-        }  
+        }
+
+        public GraphQLSelectNode(
+            IGraphQLPropertyStatement propertyStatement, Type entityType, bool isCollectionNode = false, bool active = true) :
+            this(null, new[] { propertyStatement }, Enumerable.Empty<IGraphQLSelectNode>(), Enumerable.Empty<IGraphQLSelectNode>(), entityType, isCollectionNode, active)
+        {  
+        }
 
         public void ActivateNode<TNode>()
         {

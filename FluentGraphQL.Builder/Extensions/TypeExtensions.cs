@@ -17,12 +17,13 @@
 using FluentGraphQL.Builder.Abstractions;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace FluentGraphQL.Builder.Extensions
 {
-    internal static class TypeExtensions
+    public static class TypeExtensions
     {
-        public static Type Root(this Type type)
+        internal static Type Root(this Type type)
         {
             if (type.IsInterface)
                 return type;
@@ -40,6 +41,16 @@ namespace FluentGraphQL.Builder.Extensions
                 type = type.BaseType;
 
             return type;
+        }
+
+        public static bool IsSimple(this Type type)
+        {
+            return
+                type.GetTypeInfo().IsPrimitive ||
+                type.Equals(typeof(string)) ||                
+                type.Equals(typeof(decimal)) ||
+                type.Equals(typeof(DateTime)) ||
+                type.Equals(typeof(Guid));
         }
     }
 }

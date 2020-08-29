@@ -19,8 +19,8 @@ using FluentGraphQL.Builder.Abstractions;
 using FluentGraphQL.Builder.Atoms;
 using FluentGraphQL.Builder.Constants;
 using FluentGraphQL.Builder.Constructs;
+using FluentGraphQL.Builder.Extensions;
 using FluentGraphQL.Builder.Nodes;
-using System;
 using System.Linq;
 using System.Reflection;
 
@@ -41,16 +41,11 @@ namespace FluentGraphQL.Builder.Builders
         {
             var actionType = graphQLAction.GetType();
             var responseType = typeof(TResponse);
-            var isSimpleType = IsSimpleResponseType(responseType);
+            var isSimpleType = responseType.IsSimple();
 
             var headerNode = new GraphQLHeaderNode(actionType.Name);
             var selectNode = isSimpleType
-                ? new GraphQLSelectNode(
-                    null, 
-                    new[] { new GraphQLPropertyStatement(Constant.GraphQLKeyords.DefaultActionResponseSelect) },
-                    Enumerable.Empty<IGraphQLSelectNode>(),
-                    Enumerable.Empty<IGraphQLSelectNode>(),
-                    actionType)
+                ? new GraphQLSelectNode(new GraphQLPropertyStatement(Constant.GraphQLKeyords.DefaultActionResponseSelect), responseType)
                 : _graphQLSelectNodeFactory.Construct(responseType);
 
             selectNode.HeaderNode = headerNode;
@@ -64,18 +59,10 @@ namespace FluentGraphQL.Builder.Builders
             }
 
             headerNode.Statements = actionType.GetProperties().AsParallel().Select(x => ConstructStatement(x)).ToList();
-            return new GraphQLMethodConstruct<TResponse>(graphQLMethod, headerNode, selectNode);
-        }
-
-        private bool IsSimpleResponseType(Type type)
-        {
-            return
-                type.GetTypeInfo().IsPrimitive ||
-                type.Equals(typeof(string)) ||
-                type.Equals(typeof(float)) ||
-                type.Equals(typeof(decimal)) ||
-                type.Equals(typeof(DateTime)) ||
-                type.Equals(typeof(Guid));
+            return new GraphQLMethodConstruct<TResponse>(graphQLMethod, headerNode, selectNode)
+            {
+                IsSingleItemExecution = true
+            };
         }
 
         IGraphQLQueryAction<TResponse> IGraphQLActionBuilder.Query<TResponse>(IGraphQLAction<TResponse> graphQLAction)

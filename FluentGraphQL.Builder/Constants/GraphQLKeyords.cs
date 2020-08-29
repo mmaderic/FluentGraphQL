@@ -43,6 +43,7 @@ namespace FluentGraphQL.Builder.Constants
             public const string Set = "_set";
             public const string Increment = "_inc";
             public const string Delete = "Delete";
+            public const string DefaultActionResponseSelect = "Result";
         }
     }
 }

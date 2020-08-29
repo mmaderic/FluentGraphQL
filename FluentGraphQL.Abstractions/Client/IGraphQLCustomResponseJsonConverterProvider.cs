@@ -14,18 +14,12 @@
     copies or substantial portions of the Software.
 */
 
-using FluentGraphQL.Builder.Abstractions;
+using System.Collections.Generic;
 
 namespace FluentGraphQL.Client.Abstractions
 {
-    public interface IGraphQLBuilderFactory
+    public interface IGraphQLCustomResponseJsonConverterProvider
     {
-        IGraphQLRootNodeBuilder<TEntity> QueryBuilder<TEntity>()
-            where TEntity : IGraphQLEntity;
-
-        IGraphQLMutationBuilder<TEntity> MutationBuilder<TEntity>()
-            where TEntity : IGraphQLEntity;
-
-        IGraphQLActionBuilder ActionBuilder();
+        ICollection<IGraphQLJsonConverter> Provide();
     }
 }

@@ -14,34 +14,51 @@
     copies or substantial portions of the Software.
 */
 
+using FluentGraphQL.Abstractions.Enums;
 using FluentGraphQL.Builder.Abstractions;
 using System;
 
 namespace FluentGraphQL.Builder.Constructs
 {
-    class GraphQLSelectedQuery<TEntity, TResult> : GraphQLQuery<TEntity>, IGraphQLStandardSelectedQuery<TEntity, TResult>, IGraphQLSingleSelectedQuery<TEntity, TResult>
+    class GraphQLSelectedMethodConstruct<TEntity, TResult> : GraphQLMethodConstruct<TEntity>, 
+        IGraphQLStandardSelectedQuery<TEntity, TResult>, IGraphQLSingleSelectedQuery<TEntity, TResult>,
+        IGraphQLSelectedReturnSingleMutation<TEntity, TResult>, IGraphQLSelectedReturnMultipleMutation<TEntity, TResult>
            where TEntity : IGraphQLEntity
     {
         public Func<TEntity, TResult> Selector { get; set; }
         public bool IsSelected { get; set; }
 
-        internal GraphQLSelectedQuery(IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode, Func<TEntity, TResult> selector)
-            : base(graphQLHeaderNode, graphQLSelectNode)
+        internal GraphQLSelectedMethodConstruct(GraphQLMethod graphQLMethod, IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode, Func<TEntity, TResult> selector)
+            : base(graphQLMethod, graphQLHeaderNode, graphQLSelectNode)
         {
             Selector = selector;
             IsSelected = true;
         }
 
-        IGraphQLStandardQuery<TEntity> IGraphQLStandardSelectedQuery<TEntity, TResult>.AsNamed()
+        private GraphQLSelectedMethodConstruct<TEntity, TResult> AsNamed()
         {
             IsSelected = false;
             return this;
         }
 
+        IGraphQLStandardQuery<TEntity> IGraphQLStandardSelectedQuery<TEntity, TResult>.AsNamed()
+        {
+            return AsNamed();
+        }
+
         IGraphQLSingleQuery<TEntity> IGraphQLSingleSelectedQuery<TEntity, TResult>.AsNamed()
         {
-            IsSelected = false;
-            return this;
+            return AsNamed();
+        }
+
+        IGraphQLReturnSingleMutation<TEntity> IGraphQLSelectedReturnSingleMutation<TEntity, TResult>.AsNamed()
+        {
+            return AsNamed();
+        }
+
+        IGraphQLReturnMultipleMutation<TEntity> IGraphQLSelectedReturnMultipleMutation<TEntity, TResult>.AsNamed()
+        {
+            return AsNamed();
         }
 
         public object InvokeSelector(object @object)

@@ -26,8 +26,7 @@ namespace FluentGraphQL.Client.Abstractions
         Func<Task<AuthenticationHeaderValue>> AuthenticationHeaderProvider { get; set; }
         Func<HttpClient> HttpClientProvider { get; set; }
 
-        bool UseAdminHeaderAlways { get; set; }
-        bool UseAdminHeaderForActions { get; set; }
+        bool UseAdminHeader { get; set; }
         bool UseAdminHeaderForQueries { get; set; }
         bool UseAdminHeaderForMutations { get; set; }
 

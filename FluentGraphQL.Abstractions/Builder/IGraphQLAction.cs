@@ -14,18 +14,21 @@
     copies or substantial portions of the Software.
 */
 
-using FluentGraphQL.Builder.Abstractions;
-
-namespace FluentGraphQL.Client.Abstractions
+namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLBuilderFactory
+    public interface IGraphQLAction
     {
-        IGraphQLRootNodeBuilder<TEntity> QueryBuilder<TEntity>()
-            where TEntity : IGraphQLEntity;
+    }
 
-        IGraphQLMutationBuilder<TEntity> MutationBuilder<TEntity>()
-            where TEntity : IGraphQLEntity;
+    public interface IGraphQLAction<TResponse> : IGraphQLAction
+    {
+    }
 
-        IGraphQLActionBuilder ActionBuilder();
+    public interface IGraphQLQueryAction<TResponse> : IGraphQLSingleQuery<TResponse>
+    {
+    }
+
+    public interface IGraphQLMutationAction<TResponse> : IGraphQLReturnSingleMutation<TResponse>
+    {
     }
 }

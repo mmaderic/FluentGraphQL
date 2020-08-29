@@ -22,11 +22,15 @@ namespace FluentGraphQL.Client.Abstractions
 {
     public interface IGraphQLClient
     {
+        IGraphQLClient UseAdminHeader();
+
         IGraphQLRootNodeBuilder<TEntity> QueryBuilder<TEntity>()
             where TEntity : IGraphQLEntity;
 
         IGraphQLMutationBuilder<TEntity> MutationBuilder<TEntity>()
             where TEntity : IGraphQLEntity;
+
+        IGraphQLActionBuilder ActionBuilder();
 
         Task<TEntity> ExecuteAsync<TEntity>(IGraphQLSingleQuery<TEntity> graphQLQuery);
         Task<TResult> ExecuteAsync<TEntity, TResult>(IGraphQLSingleSelectedQuery<TEntity, TResult> graphQLQuery);
@@ -51,5 +55,9 @@ namespace FluentGraphQL.Client.Abstractions
 
         Task<IGraphQLMutationReturningResponse<TEntity>> ExecuteAsync<TEntity>(IGraphQLReturnMultipleMutation<TEntity> graphQLReturnMultipleMutation);
         Task<IGraphQLMutationReturningResponse<TReturn>> ExecuteAsync<TEntity, TReturn>(IGraphQLSelectedReturnMultipleMutation<TEntity, TReturn> graphQLSelectedReturnMultipleMutation);
+
+        Task<IGraphQLActionResponse<TResult>> ExecuteAsync<TResult>(IGraphQLQueryAction<TResult> graphQLQueryAction);
+        Task<IGraphQLActionResponse<TResult>> ExecuteAsync<TResult>(IGraphQLMutationAction<TResult> graphQLMutationAction);
     }
 }
+                                                                                

@@ -20,11 +20,7 @@ using System.Linq.Expressions;
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLMutationBuilder
-    {
-    }
-
-    public interface IGraphQLMutationBuilder<TEntity> : IGraphQLMutationBuilder
+    public interface IGraphQLMutationBuilder<TEntity>
         where TEntity : IGraphQLEntity
     {
         IGraphQLInsertSingleMutationBuilder<TEntity> Insert(TEntity entity);

@@ -14,6 +14,7 @@
     copies or substantial portions of the Software.
 */
 
+using FluentGraphQL.Abstractions.Enums;
 using FluentGraphQL.Builder.Abstractions;
 using FluentGraphQL.Builder.Atoms;
 using FluentGraphQL.Builder.Constants;
@@ -92,7 +93,7 @@ namespace FluentGraphQL.Builder.Builders
             return Insert(entities);
         }
 
-        private GraphQLMutation BuildMutation<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression = null)
+        private GraphQLMethodConstruct BuildMutation<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression = null)
         {
             if (!(returnExpression is null))
             {
@@ -103,10 +104,10 @@ namespace FluentGraphQL.Builder.Builders
 
                 expressionStatement.ApplySelectStatement(selectNode);
 
-                return new GraphQLSelectedMutation<TEntity, TReturn>(_graphQLSelectNode.HeaderNode, _graphQLSelectNode, returnExpression.Compile());
+                return new GraphQLSelectedMethodConstruct<TEntity, TReturn>(GraphQLMethod.Mutation, _graphQLSelectNode.HeaderNode, _graphQLSelectNode, returnExpression.Compile());
             }
 
-            return new GraphQLMutation<TEntity>(_graphQLSelectNode.HeaderNode, _graphQLSelectNode);            
+            return new GraphQLMethodConstruct<TEntity>(GraphQLMethod.Mutation, _graphQLSelectNode.HeaderNode, _graphQLSelectNode);            
         }
 
         IGraphQLSelectedReturnSingleMutation<TEntity, TReturn> IGraphQLReturnSingleMutationBuilder<TEntity>.Return<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression)

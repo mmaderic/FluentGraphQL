@@ -14,12 +14,16 @@
     copies or substantial portions of the Software.
 */
 
-using System.Collections.Generic;
-
 namespace FluentGraphQL.Client.Abstractions
 {
-    public interface IGraphQLMutationJsonConverterProvider
+    public interface IGraphQLActionResponse
     {
-        ICollection<IGraphQLJsonConverter> Provide();
+        bool IsSuccessful { get; }
+        string ErrorMessage { get; set; }
+    }
+
+    public interface IGraphQLActionResponse<TResult> : IGraphQLActionResponse
+    {
+        TResult Result { get; set; }
     }
 }

@@ -515,13 +515,13 @@ namespace FluentGraphQL.Builder.Builders
             return this;
         }
 
-        private GraphQLSelectedQuery<TRoot, TResult> Select<TResult>(Expression<Func<TRoot, TResult>> selector)
+        private GraphQLSelectedMethodConstruct<TRoot, TResult> Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             var expressionStatement = _graphQLExpressionConverter.ConvertSelectExpression(selector); 
             expressionStatement.ApplySelectStatement(_graphQLQuery.SelectNode);
             
             var selectorFunc = selector.Compile();
-            var query = new GraphQLSelectedQuery<TRoot, TResult>(_graphQLQuery.HeaderNode, _graphQLQuery.SelectNode, selectorFunc);
+            var query = new GraphQLSelectedMethodConstruct<TRoot, TResult>(GraphQLMethod.Query, _graphQLQuery.HeaderNode, _graphQLQuery.SelectNode, selectorFunc);
 
             return query;
         }

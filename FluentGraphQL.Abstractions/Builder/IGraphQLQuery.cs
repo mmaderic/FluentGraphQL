@@ -22,7 +22,6 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSelectNode SelectNode { get; set; }
 
         IGraphQLSelectNode GetSelectNode<TNode>();
-        IGraphQLSelectStatement Get(string statementName);
     }
 
     public interface IGraphQLQuery<TEntity> : IGraphQLQuery

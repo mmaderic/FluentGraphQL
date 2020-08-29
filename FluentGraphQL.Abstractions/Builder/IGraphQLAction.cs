@@ -22,13 +22,5 @@ namespace FluentGraphQL.Builder.Abstractions
 
     public interface IGraphQLAction<TResponse> : IGraphQLAction
     {
-    }
-
-    public interface IGraphQLQueryAction<TResponse> : IGraphQLSingleQuery<TResponse>
-    {
-    }
-
-    public interface IGraphQLMutationAction<TResponse> : IGraphQLReturnSingleMutation<TResponse>
-    {
-    }
+    } 
 }

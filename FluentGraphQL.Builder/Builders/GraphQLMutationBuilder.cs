@@ -63,7 +63,7 @@ namespace FluentGraphQL.Builder.Builders
             }
             else
             {
-                _graphQLSelectNode = _graphQLSelectNodeFactory.Construct(typeof(GraphQLMutationReturningSelect<TEntity>));
+                _graphQLSelectNode = _graphQLSelectNodeFactory.Construct(typeof(GraphQLMutationReturningSelectNode<TEntity>));
                 _graphQLSelectNode.HeaderNode.Title = typeof(TEntity).Name;
 
                 var collectionValue = (GraphQLCollectionValue)graphQLValue;
@@ -113,7 +113,7 @@ namespace FluentGraphQL.Builder.Builders
         IGraphQLSelectedReturnSingleMutation<TEntity, TReturn> IGraphQLReturnSingleMutationBuilder<TEntity>.Return<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression)
         {
             var mutation = BuildMutation(returnExpression);
-            mutation.IsSingleItemExecution = true;
+            mutation.IsSingle = true;
 
             return (IGraphQLSelectedReturnSingleMutation<TEntity, TReturn>)mutation;
         }
@@ -126,7 +126,7 @@ namespace FluentGraphQL.Builder.Builders
         IGraphQLReturnSingleMutation<TEntity> IGraphQLReturnSingleMutationBuilder<TEntity>.Build()
         {
             var mutation = BuildMutation<TEntity>(); 
-            mutation.IsSingleItemExecution = true;
+            mutation.IsSingle = true;
 
             return (IGraphQLReturnSingleMutation<TEntity>)mutation;
         }
@@ -203,7 +203,7 @@ namespace FluentGraphQL.Builder.Builders
 
         private void InitializeMultipleReturnBuilder(string keyword)
         {
-            _graphQLSelectNode = _graphQLSelectNodeFactory.Construct(typeof(GraphQLMutationReturningSelect<TEntity>));
+            _graphQLSelectNode = _graphQLSelectNodeFactory.Construct(typeof(GraphQLMutationReturningSelectNode<TEntity>));
             _graphQLSelectNode.HeaderNode.Title = typeof(TEntity).Name;
             _graphQLSelectNode.HeaderNode.Prefix = keyword;
         }

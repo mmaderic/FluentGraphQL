@@ -34,30 +34,36 @@ namespace FluentGraphQL.Builder.Factories
             Options = graphQLStringFactoryOptions;
         }
 
-        public virtual string Construct(IGraphQLQuery graphQLQuery)
+        public virtual string Construct(IGraphQLNodeConstruct graphQLMethodConstruct)
         {
             var builder = new StringBuilder();
-            var selectNodeString = graphQLQuery.SelectNode.ToString(this);
+            var selectNodeString = graphQLMethodConstruct.SelectNode.ToString(this);
+            var methodString = graphQLMethodConstruct.Method.Equals(GraphQLMethod.Query)
+                ? "query {"
+                : "mutation {";
 
             builder
-                .AppendLine("query {")
+                .AppendLine(methodString)
                 .Append(selectNodeString)
                 .Append("}");
 
             var result = builder.ToString();
             var namingStrategy = GetNamingStrategyFunction();
 
-            return graphQLQuery.QueryString = namingStrategy.Invoke(result);
+            return graphQLMethodConstruct.QueryString = namingStrategy.Invoke(result);
         }
 
-        public string Construct(IGraphQLMultipleQuery graphQLMultipleQuery)
+        public virtual string Construct(IGraphQLMultiConstruct graphQLMultipleMethodConstruct)
         {
             var builder = new StringBuilder();
+            var methodString = graphQLMultipleMethodConstruct.Method.Equals(GraphQLMethod.Query)
+                ? "query {"
+                : "mutation {";
 
-            builder.AppendLine("query {");
-            foreach(var query in graphQLMultipleQuery)
+            builder.AppendLine(methodString);
+            foreach (var construct in graphQLMultipleMethodConstruct)
             {
-                var queryString = query.SelectNode.ToString(this);
+                var queryString = construct.SelectNode.ToString(this);
                 builder.Append(queryString);
             }
             builder.Append("}");
@@ -65,29 +71,13 @@ namespace FluentGraphQL.Builder.Factories
             var result = builder.ToString();
             var namingStrategy = GetNamingStrategyFunction();
 
-            Parallel.ForEach(graphQLMultipleQuery, (query) =>
+            Parallel.ForEach(graphQLMultipleMethodConstruct, (construct) =>
             {
-                var queryString = query.SelectNode.ToString(this);
-                query.QueryString = namingStrategy.Invoke(queryString);
+                var queryString = construct.SelectNode.ToString(this);
+                construct.QueryString = namingStrategy.Invoke(queryString);
             });
 
-            return graphQLMultipleQuery.QueryString = namingStrategy.Invoke(result);
-        }
-
-        public virtual string Construct(IGraphQLMutation graphQLMutation)
-        {
-            var builder = new StringBuilder();
-            var selectNodeString = graphQLMutation.SelectNode.ToString(this);
-
-            builder
-                .AppendLine("mutation {")
-                .Append(selectNodeString)
-                .Append("}");
-
-            var result = builder.ToString();
-            var namingStrategy = GetNamingStrategyFunction();
-
-            return graphQLMutation.QueryString = namingStrategy.Invoke(result);
+            return graphQLMultipleMethodConstruct.QueryString = namingStrategy.Invoke(result);
         }
 
         public virtual string Construct(IGraphQLHeaderNode graphQLHeaderNode)

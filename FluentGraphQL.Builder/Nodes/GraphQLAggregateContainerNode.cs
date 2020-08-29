@@ -19,16 +19,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace FluentGraphQL.Builder.Constructs
+namespace FluentGraphQL.Builder.Nodes
 {
-    public class GraphQLAggregateContainer<TEntity> : IGraphQLAggregateContainer<TEntity>
+    public class GraphQLAggregateContainerNode<TEntity> : IGraphQLAggregateContainerNode<TEntity>
     {
         private readonly IGraphQLExpressionConverter _graphQLExpressionConverter;
 
         public ICollection<TEntity> Nodes { get; set; }
-        public IGraphQLAggregate Aggregate { get; set; }
+        public IGraphQLAggregateNode Aggregate { get; set; }
 
-        public GraphQLAggregateContainer(IGraphQLExpressionConverter graphQLExpressionConverter)
+        public GraphQLAggregateContainerNode(IGraphQLExpressionConverter graphQLExpressionConverter)
         {
             _graphQLExpressionConverter = graphQLExpressionConverter;
         }

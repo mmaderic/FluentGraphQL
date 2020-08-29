@@ -14,25 +14,12 @@
     copies or substantial portions of the Software.
 */
 
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLAggregateContainer
+    public interface IGraphQLAggregateClauseNode : IGraphQLNode
     {
-        IGraphQLAggregate Aggregate { get; set; }
-    }
-
-    public interface IGraphQLAggregateContainer<TEntity> : IGraphQLAggregateContainer
-    {
-        ICollection<TEntity> Nodes { get; set; }
-
-        int Count();
-        TKey Avg<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        TKey Sum<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        TKey Min<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        TKey Max<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        Dictionary<string, object> PropertyValues { get; set; }
     }
 }

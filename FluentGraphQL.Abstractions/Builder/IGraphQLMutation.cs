@@ -16,10 +16,8 @@
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLMutation : IGraphQLMethodConstruct, IGraphQLQueryString
+    public interface IGraphQLMutation : IGraphQLNodeConstruct
     {
-        IGraphQLHeaderNode HeaderNode { get; set; }
-        IGraphQLSelectNode SelectNode { get; set; }
     }
 
     public interface IGraphQLReturnSingleMutation<TEntity> : IGraphQLMutation

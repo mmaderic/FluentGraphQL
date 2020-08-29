@@ -18,7 +18,7 @@ namespace FluentGraphQL.Builder.Abstractions
 {
     public interface IGraphQLActionBuilder
     {
-        IGraphQLQueryAction<TResponse> Query<TResponse>(IGraphQLAction<TResponse> graphQLAction);
-        IGraphQLMutationAction<TResponse> Mutation<TResponse>(IGraphQLAction<TResponse> graphQLAction);
+        IGraphQLQueryExtension<TResponse> Query<TResponse>(IGraphQLAction<TResponse> graphQLAction);
+        IGraphQLMutationExtension<TResponse> Mutation<TResponse>(IGraphQLAction<TResponse> graphQLAction);
     }
 }

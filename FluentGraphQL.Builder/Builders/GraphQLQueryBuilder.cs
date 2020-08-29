@@ -47,7 +47,7 @@ namespace FluentGraphQL.Builder.Builders
         public GraphQLQueryBuilder(
             IGraphQLSelectNodeFactory graphQLSelectNodeFactory, IGraphQLExpressionConverter graphQLExpressionConverter, IGraphQLValueFactory graphQLValueFactory)
         {
-            var selectNode = graphQLSelectNodeFactory.Construct(typeof(TEntity), 1);
+            var selectNode = graphQLSelectNodeFactory.Construct(typeof(TEntity));
 
             _graphQLQuery = new GraphQLMethodConstruct<TEntity>(GraphQLMethod.Query, selectNode.HeaderNode, selectNode);
             _graphQLSelectNode = selectNode;
@@ -512,7 +512,7 @@ namespace FluentGraphQL.Builder.Builders
 
         IGraphQLSingleQuery<TRoot> IGraphQLSingleQueryBuilder<TRoot>.Build()
         {
-            _graphQLQuery.IsSingleItemExecution = true;
+            _graphQLQuery.IsSingle = true;
             return (IGraphQLSingleQuery<TRoot>)_graphQLQuery;
         }
 
@@ -540,7 +540,7 @@ namespace FluentGraphQL.Builder.Builders
         IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleNodeBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             var query = Select(selector);
-            query.IsSingleItemExecution = true;
+            query.IsSingle = true;
 
             return query;
         }
@@ -548,7 +548,7 @@ namespace FluentGraphQL.Builder.Builders
         IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleNodeBuilder<TRoot, TEntity>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             var query = Select(selector);
-            query.IsSingleItemExecution = true;
+            query.IsSingle = true;
 
             return query;
         }

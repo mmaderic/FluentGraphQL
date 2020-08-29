@@ -14,9 +14,16 @@
     copies or substantial portions of the Software.
 */
 
-namespace FluentGraphQL.Builder.Abstractions
+using FluentGraphQL.Builder.Abstractions;
+
+namespace FluentGraphQL.Builder.Nodes
 {
-    public interface IGraphQLNode
+    public class GraphQLAggregateNode : IGraphQLAggregateNode
     {
+        public int Count { get; set; }
+        public IGraphQLAggregateClauseNode Sum { get; set; }
+        public IGraphQLAggregateClauseNode Avg { get; set; }
+        public IGraphQLAggregateClauseNode Max { get; set; }
+        public IGraphQLAggregateClauseNode Min { get; set; }
     }
 }

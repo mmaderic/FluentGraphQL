@@ -37,7 +37,12 @@ namespace FluentGraphQL.Builder.Factories
             public IEnumerable<IGraphQLSelectNode> NestedAggregateContainers { get; set; }           
         }
 
-        public virtual IGraphQLSelectNode Construct(Type type, int hierarchyLevel, List<Type> parentTypes = null, bool isCollectionNode = false, string explicitNodeName = null)
+        public IGraphQLSelectNode Construct(Type type)
+        {
+            return ConstructRecursive(type);
+        }
+
+        public virtual IGraphQLSelectNode ConstructRecursive(Type type, int hierarchyLevel = 1, List<Type> parentTypes = null, bool isCollectionNode = false, string explicitNodeName = null)
         {
             if (parentTypes is null)
                 parentTypes = new List<Type>();
@@ -50,11 +55,11 @@ namespace FluentGraphQL.Builder.Factories
                 ? type.GetInterfaces().SelectMany(x => x.GetProperties()).Concat(type.GetProperties())
                 : type.GetProperties();
 
-            var isAggregateContainer = typeof(IGraphQLAggregateContainer).IsAssignableFrom(type);
+            var isAggregateContainer = typeof(IGraphQLAggregateContainerNode).IsAssignableFrom(type);
             var entityType = isAggregateContainer ? type.GetGenericArguments().First() : type;
             var headerNode = new GraphQLHeaderNode(nodeName, hierarchyLevel);
 
-            var container = !type.Equals(typeof(IGraphQLAggregateClause))
+            var container = !type.Equals(typeof(IGraphQLAggregateClauseNode))
                 ? BuildNestedStatementsContainer(properties, type, parentTypes, hierarchyLevel, isAggregateContainer)
                 : null;
 
@@ -90,11 +95,11 @@ namespace FluentGraphQL.Builder.Factories
                 .Select(x => 
                 {
                     var useExplicitName = 
-                        x.PropertyType.Equals(typeof(IGraphQLAggregate)) ||
-                        x.PropertyType.Equals(typeof(IGraphQLAggregateClause));
+                        x.PropertyType.Equals(typeof(IGraphQLAggregateNode)) ||
+                        x.PropertyType.Equals(typeof(IGraphQLAggregateClauseNode));
 
                     var explicitName = useExplicitName ? x.Name : null;
-                    return Construct(x.PropertyType, hierarchyLevel + 1, parentTypes, false, explicitName);
+                    return ConstructRecursive(x.PropertyType, hierarchyLevel + 1, parentTypes, false, explicitName);
                 }).ToArray();
         }
 
@@ -102,7 +107,7 @@ namespace FluentGraphQL.Builder.Factories
             IEnumerable<PropertyInfo> propertyInfos, int hierarchyLevel, List<Type> parentTypes)
         {
             return propertyInfos.Where(x => !parentTypes.Contains(x.PropertyType.GetGenericArguments().First()))
-                .Select(x => Construct(x.PropertyType.GetGenericArguments().First(), hierarchyLevel + 1, parentTypes, true, x.Name)).ToArray();
+                .Select(x => ConstructRecursive(x.PropertyType.GetGenericArguments().First(), hierarchyLevel + 1, parentTypes, true, x.Name)).ToArray();
         }
 
         private IEnumerable<IGraphQLPropertyStatement> ConstructPropertyStatements(IEnumerable<PropertyInfo> propertyInfos)
@@ -114,7 +119,7 @@ namespace FluentGraphQL.Builder.Factories
             IEnumerable<PropertyInfo> propertyInfos, int hierarchyLevel, List<Type> parentTypes)
         {
             return propertyInfos.Where(x => !parentTypes.Contains(x.PropertyType))
-                .Select(x => Construct(x.PropertyType, hierarchyLevel + 1, parentTypes, false, x.Name)).ToArray();
+                .Select(x => ConstructRecursive(x.PropertyType, hierarchyLevel + 1, parentTypes, false, x.Name)).ToArray();
         }
 
         private bool IsSimpleProperty(PropertyInfo propertyInfo)
@@ -125,9 +130,9 @@ namespace FluentGraphQL.Builder.Factories
             var type = propertyInfo.PropertyType;
             return
                 !typeof(IGraphQLEntity).IsAssignableFrom(type) &&
-                !typeof(IGraphQLAggregateContainer).IsAssignableFrom(type) &&
-                !typeof(IGraphQLAggregate).IsAssignableFrom(type) &&
-                !typeof(IGraphQLAggregateClause).IsAssignableFrom(type);
+                !typeof(IGraphQLAggregateContainerNode).IsAssignableFrom(type) &&
+                !typeof(IGraphQLAggregateNode).IsAssignableFrom(type) &&
+                !typeof(IGraphQLAggregateClauseNode).IsAssignableFrom(type);
         }
 
         private bool IsCollectionProperty(PropertyInfo propertyInfo)
@@ -139,7 +144,7 @@ namespace FluentGraphQL.Builder.Factories
         private bool IsAggregateContainerProperty(PropertyInfo propertyInfo)
         {
             return propertyInfo.PropertyType.IsGenericType &&
-                propertyInfo.PropertyType.GetGenericTypeDefinition().Equals(typeof(IGraphQLAggregateContainer<>));
+                propertyInfo.PropertyType.GetGenericTypeDefinition().Equals(typeof(IGraphQLAggregateContainerNode<>));
         }
 
         private IGraphQLSelectNode BuildSelectNode(IGraphQLHeaderNode headerNode, StatementContainer container, Type entityType, bool isCollectionNode, bool isActive)
@@ -164,6 +169,6 @@ namespace FluentGraphQL.Builder.Factories
                 entityType,
                 isCollectionNode,
                 isActive);
-        }
+        }        
     }
 }

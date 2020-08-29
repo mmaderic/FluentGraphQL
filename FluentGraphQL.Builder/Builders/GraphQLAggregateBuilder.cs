@@ -47,7 +47,7 @@ namespace FluentGraphQL.Builder.Builders
         {
             _graphQLSelectNode.IsActive = true;
 
-            var aggregateNode = _graphQLSelectNode.GetChildNode<IGraphQLAggregate>();
+            var aggregateNode = _graphQLSelectNode.GetChildNode<IGraphQLAggregateNode>();
             aggregateNode.IsActive = true;
             aggregateNode.ActivateProperty(Constant.AggregateMethodCalls.Count);
 
@@ -250,7 +250,7 @@ namespace FluentGraphQL.Builder.Builders
         {
             _graphQLSelectNode.IsActive = true;
 
-            var aggregateNode = _graphQLSelectNode.GetChildNode<IGraphQLAggregate>();
+            var aggregateNode = _graphQLSelectNode.GetChildNode<IGraphQLAggregateNode>();
             var methodNode = aggregateNode.GetChildNode(aggregateMethod);
             aggregateNode.IsActive = true;
             methodNode.IsActive = true;

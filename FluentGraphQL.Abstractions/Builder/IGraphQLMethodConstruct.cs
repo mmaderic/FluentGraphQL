@@ -18,12 +18,8 @@ using FluentGraphQL.Abstractions.Enums;
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLMethodConstruct : IGraphQLConstruct
-    {
+    public interface IGraphQLMethodConstruct : IGraphQLQueryString, IGraphQLStatement
+    {  
         GraphQLMethod Method { get; }
-        bool IsSingleItemExecution { get; set; }
-
-        string KeyString(IGraphQLStringFactory graphQLStringFactory);
-        bool HasAggregateContainer();
     }
 }

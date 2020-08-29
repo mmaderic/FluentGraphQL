@@ -16,13 +16,12 @@
 
 using FluentGraphQL.Abstractions.Enums;
 using FluentGraphQL.Builder.Abstractions;
-using System;
 
 namespace FluentGraphQL.Builder.Constructs
 {
     internal abstract class GraphQLMethodConstruct : IGraphQLQuery, IGraphQLMutation
     {
-        public bool IsSingleItemExecution { get; set; }
+        public bool IsSingle { get; set; }
 
         public IGraphQLHeaderNode HeaderNode { get; set; }
         public IGraphQLSelectNode SelectNode { get; set; }
@@ -55,22 +54,14 @@ namespace FluentGraphQL.Builder.Constructs
 
         public string ToString(IGraphQLStringFactory graphQLStringFactory)
         {
-            switch (Method)
-            {
-                case GraphQLMethod.Query:
-                    return graphQLStringFactory.Construct((IGraphQLQuery)this);
-                case GraphQLMethod.Mutation:
-                    return graphQLStringFactory.Construct((IGraphQLMutation)this);
-                default:
-                    throw new NotImplementedException(Method.ToString());
-            }
+            return graphQLStringFactory.Construct(this);      
         }
     }
 
     internal class GraphQLMethodConstruct<TEntity> : GraphQLMethodConstruct, 
         IGraphQLStandardQuery<TEntity>, IGraphQLSingleQuery<TEntity>,
         IGraphQLReturnSingleMutation<TEntity>, IGraphQLReturnMultipleMutation<TEntity>,
-        IGraphQLQueryAction<TEntity>, IGraphQLMutationAction<TEntity>
+        IGraphQLQueryExtension<TEntity>, IGraphQLMutationExtension<TEntity>
     {
         public GraphQLMethodConstruct(GraphQLMethod graphQLMethod, IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode) 
             : base(graphQLMethod, graphQLHeaderNode, graphQLSelectNode) 

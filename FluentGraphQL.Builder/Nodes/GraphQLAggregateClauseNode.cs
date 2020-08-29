@@ -14,13 +14,18 @@
     copies or substantial portions of the Software.
 */
 
+using FluentGraphQL.Builder.Abstractions;
 using System.Collections.Generic;
 
-namespace FluentGraphQL.Builder.Abstractions
+namespace FluentGraphQL.Builder.Nodes
 {
-    public interface IGraphQLMutationReturningSelect<TReturn>
+    public class GraphQLAggregateClauseNode : IGraphQLAggregateClauseNode
     {
-        int AffectedRows { get; set; }
-        ICollection<TReturn> Returning { get; set; }
+        public Dictionary<string, object> PropertyValues { get; set; }
+
+        public GraphQLAggregateClauseNode()
+        {
+            PropertyValues = new Dictionary<string, object>();
+        }
     }
 }

@@ -14,18 +14,9 @@
     copies or substantial portions of the Software.
 */
 
-using FluentGraphQL.Builder.Abstractions;
-using System.Collections.Generic;
-
-namespace FluentGraphQL.Builder.Constructs
+namespace FluentGraphQL.Abstractions.Builder
 {
-    public class GraphQLAggregateClause : IGraphQLAggregateClause
+    public interface IGraphQLExtension
     {
-        public Dictionary<string, object> PropertyValues { get; set; }
-
-        public GraphQLAggregateClause()
-        {
-            PropertyValues = new Dictionary<string, object>();
-        }
     }
 }

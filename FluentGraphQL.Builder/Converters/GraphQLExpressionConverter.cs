@@ -397,7 +397,7 @@ namespace FluentGraphQL.Builder.Converters
                     throw new ArgumentException("MemberInfo must be type of PropertyInfo or FieldInfo");
             };
 
-            if (!typeof(IGraphQLAggregateContainer).IsAssignableFrom(type))
+            if (!typeof(IGraphQLAggregateContainerNode).IsAssignableFrom(type))
                 throw new InvalidOperationException("Order by clause method call expression is only supported using IAggregateContainer properties.");
 
             if (methodCallExpression.Method.Name.Equals(Constant.AggregateMethodCalls.Count))

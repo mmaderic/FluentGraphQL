@@ -61,16 +61,16 @@ namespace FluentGraphQL.Builder.Builders
             headerNode.Statements = actionType.GetProperties().AsParallel().Select(x => ConstructStatement(x)).ToList();
             return new GraphQLMethodConstruct<TResponse>(graphQLMethod, headerNode, selectNode)
             {
-                IsSingleItemExecution = true
+                IsSingle = true
             };
         }
 
-        IGraphQLQueryAction<TResponse> IGraphQLActionBuilder.Query<TResponse>(IGraphQLAction<TResponse> graphQLAction)
+        IGraphQLQueryExtension<TResponse> IGraphQLActionBuilder.Query<TResponse>(IGraphQLAction<TResponse> graphQLAction)
         {
             return BuildAction(graphQLAction, GraphQLMethod.Query);
         }
 
-        IGraphQLMutationAction<TResponse> IGraphQLActionBuilder.Mutation<TResponse>(IGraphQLAction<TResponse> graphQLAction)
+        IGraphQLMutationExtension<TResponse> IGraphQLActionBuilder.Mutation<TResponse>(IGraphQLAction<TResponse> graphQLAction)
         {
             return BuildAction(graphQLAction, GraphQLMethod.Mutation);
         }

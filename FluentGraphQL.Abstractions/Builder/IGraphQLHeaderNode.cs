@@ -18,7 +18,7 @@ using System.Collections.Generic;
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLHeaderNode : IGraphQLNode
+    public interface IGraphQLHeaderNode : IGraphQLNode, IGraphQLStatement
     {
         string Title { get; set; }
         string Prefix { get; set; }

@@ -38,17 +38,17 @@ namespace FluentGraphQL.Client.Abstractions
         Task<List<TEntity>> ExecuteAsync<TEntity>(IGraphQLStandardQuery<TEntity> graphQLQuery);
         Task<List<TResult>> ExecuteAsync<TEntity, TResult>(IGraphQLStandardSelectedQuery<TEntity, TResult> graphQLQuery);
 
-        Task<IGraphQLMultipleQueryResponse<TResponseA, TResponseB>> 
-            ExecuteAsync<TResponseA, TResponseB>(IGraphQLMultipleQuery<TResponseA, TResponseB> graphQLMultipleQuery);
+        Task<IGraphQLMultiResponse<TResponseA, TResponseB>> 
+            ExecuteAsync<TResponseA, TResponseB>(IGraphQLMultiConstruct<TResponseA, TResponseB> graphQLMultiConstruct);
 
-        Task<IGraphQLMultipleQueryResponse<TResponseA, TResponseB, TResponseC>> 
-            ExecuteAsync<TResponseA, TResponseB, TResponseC>(IGraphQLMultipleQuery<TResponseA, TResponseB, TResponseC> graphQLMultipleQuery);
+        Task<IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC>> 
+            ExecuteAsync<TResponseA, TResponseB, TResponseC>(IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC> graphQLMultiConstruct);
 
-        Task<IGraphQLMultipleQueryResponse<TResponseA, TResponseB, TResponseC, TResponseD>>
-            ExecuteAsync<TResponseA, TResponseB, TResponseC, TResponseD>(IGraphQLMultipleQuery<TResponseA, TResponseB, TResponseC, TResponseD> graphQLMultipleQuery);
+        Task<IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC, TResponseD>>
+            ExecuteAsync<TResponseA, TResponseB, TResponseC, TResponseD>(IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD> graphQLMultiConstruct);
 
-        Task<IGraphQLMultipleQueryResponse<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>>
-            ExecuteAsync<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(IGraphQLMultipleQuery<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> graphQLMultipleQuery);
+        Task<IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>>
+            ExecuteAsync<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> graphQLMultiConstruct);
 
         Task<TEntity> ExecuteAsync<TEntity>(IGraphQLReturnSingleMutation<TEntity> graphQLReturnSingleMutation);
         Task<TReturn> ExecuteAsync<TEntity, TReturn>(IGraphQLSelectedReturnSingleMutation<TEntity, TReturn> graphQLSelectedReturnSingleMutation);
@@ -56,8 +56,8 @@ namespace FluentGraphQL.Client.Abstractions
         Task<IGraphQLMutationReturningResponse<TEntity>> ExecuteAsync<TEntity>(IGraphQLReturnMultipleMutation<TEntity> graphQLReturnMultipleMutation);
         Task<IGraphQLMutationReturningResponse<TReturn>> ExecuteAsync<TEntity, TReturn>(IGraphQLSelectedReturnMultipleMutation<TEntity, TReturn> graphQLSelectedReturnMultipleMutation);
 
-        Task<IGraphQLActionResponse<TResult>> ExecuteAsync<TResult>(IGraphQLQueryAction<TResult> graphQLQueryAction);
-        Task<IGraphQLActionResponse<TResult>> ExecuteAsync<TResult>(IGraphQLMutationAction<TResult> graphQLMutationAction);
+        Task<IGraphQLActionResponse<TResult>> ExecuteAsync<TResult>(IGraphQLQueryExtension<TResult> graphQLQueryExtension);
+        Task<IGraphQLActionResponse<TResult>> ExecuteAsync<TResult>(IGraphQLMutationExtension<TResult> graphQLMutationExtension); 
     }
 }
                                                                                 

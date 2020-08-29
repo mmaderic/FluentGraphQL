@@ -14,9 +14,13 @@
     copies or substantial portions of the Software.
 */
 
+using System.Collections.Generic;
+
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLConstruct : IGraphQLStatement
+    public interface IGraphQLMutationReturningSelectNode<TReturn> : IGraphQLNode
     {
+        int AffectedRows { get; set; }
+        ICollection<TReturn> Returning { get; set; }
     }
 }

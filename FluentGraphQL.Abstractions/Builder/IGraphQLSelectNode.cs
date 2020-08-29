@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLSelectNode : IGraphQLNode, IGraphQLSelectStatement
+    public interface IGraphQLSelectNode : IGraphQLNode, IGraphQLSelectStatement, IGraphQLStatement
     {
         IGraphQLHeaderNode HeaderNode { get; set; }
         IEnumerable<IGraphQLPropertyStatement> PropertyStatements { get; set; }

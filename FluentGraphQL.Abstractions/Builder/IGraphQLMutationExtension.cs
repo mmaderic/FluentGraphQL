@@ -14,16 +14,9 @@
     copies or substantial portions of the Software.
 */
 
-using FluentGraphQL.Builder.Abstractions;
-
-namespace FluentGraphQL.Builder.Constructs
+namespace FluentGraphQL.Builder.Abstractions
 {
-    public class GraphQLAggregate : IGraphQLAggregate
+    public interface IGraphQLMutationExtension<TResponse> : IGraphQLReturnSingleMutation<TResponse>
     {
-        public int Count { get; set; }
-        public IGraphQLAggregateClause Sum { get; set; }
-        public IGraphQLAggregateClause Avg { get; set; }
-        public IGraphQLAggregateClause Max { get; set; }
-        public IGraphQLAggregateClause Min { get; set; }
     }
 }

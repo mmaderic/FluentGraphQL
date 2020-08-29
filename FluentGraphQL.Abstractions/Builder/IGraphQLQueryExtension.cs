@@ -14,12 +14,9 @@
     copies or substantial portions of the Software.
 */
 
-using System.Collections.Generic;
-
 namespace FluentGraphQL.Builder.Abstractions
-{
-    public interface IGraphQLAggregateClause
+{   
+    public interface IGraphQLQueryExtension<TResponse> : IGraphQLSingleQuery<TResponse>
     {
-        Dictionary<string, object> PropertyValues { get; set; }
     }
 }

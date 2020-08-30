@@ -46,21 +46,24 @@ namespace FluentGraphQL.Builder.Builders
 
         public GraphQLQueryBuilder(
             IGraphQLSelectNodeFactory graphQLSelectNodeFactory, IGraphQLExpressionConverter graphQLExpressionConverter, IGraphQLValueFactory graphQLValueFactory)
+            : this(graphQLExpressionConverter, graphQLValueFactory)
         {
             var selectNode = graphQLSelectNodeFactory.Construct(typeof(TEntity));
-
             _graphQLQuery = new GraphQLMethodConstruct<TEntity>(GraphQLMethod.Query, selectNode.HeaderNode, selectNode);
             _graphQLSelectNode = selectNode;
-            _graphQLExpressionConverter = graphQLExpressionConverter;
-            _graphQLValueFactory = graphQLValueFactory;
         }
 
         public GraphQLQueryBuilder(
             IGraphQLQuery graphQLQuery, IGraphQLSelectNode graphQLSelectNode,
             IGraphQLExpressionConverter graphQLExpressionConverter, IGraphQLValueFactory graphQLValuefactory)
+            : this(graphQLExpressionConverter, graphQLValuefactory)
         {
             _graphQLQuery = graphQLQuery;
             _graphQLSelectNode = graphQLSelectNode;
+        } 
+        
+        private GraphQLQueryBuilder(IGraphQLExpressionConverter graphQLExpressionConverter, IGraphQLValueFactory graphQLValuefactory)
+        {
             _graphQLExpressionConverter = graphQLExpressionConverter;
             _graphQLValueFactory = graphQLValuefactory;
         }
@@ -424,6 +427,11 @@ namespace FluentGraphQL.Builder.Builders
             return (GraphQLAggregateBuilder<TRoot, TEntity, TAggregate>)builder;
         }
 
+        IGraphQLRootAggregateBuilder<TRoot> IGraphQLRootNodeBuilder<TRoot>.Aggregate()
+        {
+            return Aggregate<TRoot>();
+        }
+
         IGraphQLSingleAggregateBuilder<TRoot, TAggregate> IGraphQLSingleNodeBuilder<TRoot>.Aggregate<TAggregate>()
         {
             return Aggregate<TAggregate>();
@@ -561,6 +569,6 @@ namespace FluentGraphQL.Builder.Builders
         IGraphQLStandardSelectedQuery<TRoot, TResult> IGraphQLStandardNodeBuilder<TRoot, TEntity>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             return Select(selector);
-        }
+        }        
     }
 }

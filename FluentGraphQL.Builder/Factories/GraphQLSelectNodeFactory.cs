@@ -16,6 +16,7 @@
 
 using FluentGraphQL.Builder.Abstractions;
 using FluentGraphQL.Builder.Atoms;
+using FluentGraphQL.Builder.Constants;
 using FluentGraphQL.Builder.Extensions;
 using FluentGraphQL.Builder.Nodes;
 using System;
@@ -37,12 +38,20 @@ namespace FluentGraphQL.Builder.Factories
             public IEnumerable<IGraphQLSelectNode> NestedAggregateContainers { get; set; }           
         }
 
-        public IGraphQLSelectNode Construct(Type type)
+        public virtual IGraphQLSelectNode Construct(Type type)
         {
-            return ConstructRecursive(type);
+            var selectNode = ConstructRecursive(type);
+            var rootAggregateNode = ConstructRecursive(typeof(IGraphQLAggregateContainerNode<>).MakeGenericType(type));
+
+            rootAggregateNode.HeaderNode.Title = type.Name;
+            rootAggregateNode.HeaderNode.Suffix = Constant.GraphQLKeyords.Aggregate;
+
+            ((List<IGraphQLSelectNode>)selectNode.AggregateContainerNodes).Add(rootAggregateNode);
+
+            return selectNode;
         }
 
-        public virtual IGraphQLSelectNode ConstructRecursive(Type type, int hierarchyLevel = 1, List<Type> parentTypes = null, bool isCollectionNode = false, string explicitNodeName = null)
+        private IGraphQLSelectNode ConstructRecursive(Type type, int hierarchyLevel = 1, List<Type> parentTypes = null, bool isCollectionNode = false, string explicitNodeName = null)
         {
             if (parentTypes is null)
                 parentTypes = new List<Type>();
@@ -51,7 +60,7 @@ namespace FluentGraphQL.Builder.Factories
                 ? type.Root().Name
                 : explicitNodeName;
 
-            var properties = type.IsInterface 
+            var properties = type.IsInterface
                 ? type.GetInterfaces().SelectMany(x => x.GetProperties()).Concat(type.GetProperties())
                 : type.GetProperties();
 
@@ -74,7 +83,7 @@ namespace FluentGraphQL.Builder.Factories
             var AggregateContainerProperties = complexProperties.Except(CollectionProperties).Where(x => IsAggregateContainerProperty(x)).ToArray();
             var ObjectProperties = complexProperties.Except(CollectionProperties.Union(AggregateContainerProperties)).ToArray();
 
-            var parentTypeArgument = isAggregateContainer ? parentTypes.Last() : type;
+            var parentTypeArgument = isAggregateContainer && parentTypes.Any() ? parentTypes.Last() : type;
             parentTypes.Add(parentTypeArgument);
 
             var container = new StatementContainer();
@@ -119,7 +128,7 @@ namespace FluentGraphQL.Builder.Factories
             IEnumerable<PropertyInfo> propertyInfos, int hierarchyLevel, List<Type> parentTypes)
         {
             return propertyInfos.Where(x => !parentTypes.Contains(x.PropertyType))
-                .Select(x => ConstructRecursive(x.PropertyType, hierarchyLevel + 1, parentTypes, false, x.Name)).ToArray();
+                .Select(x => ConstructRecursive(x.PropertyType, hierarchyLevel + 1, parentTypes, false, x.Name)).ToList();
         }
 
         private bool IsSimpleProperty(PropertyInfo propertyInfo)

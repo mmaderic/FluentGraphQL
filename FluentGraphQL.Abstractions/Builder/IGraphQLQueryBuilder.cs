@@ -114,6 +114,7 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleQueryBuilder<TEntity> ById(object value);
         IGraphQLSingleQueryBuilder<TEntity> ByPrimaryKey(string key, object value);
         IGraphQLSingleQueryBuilder<TEntity> ByPrimaryKey<TPrimaryKey>(Expression<Func<TEntity, TPrimaryKey>> propertyExpression, TPrimaryKey value);
+        IGraphQLRootAggregateBuilder<TEntity> Aggregate();
     }
 
     public interface IGraphQLSingleOrderedNodeBuilder<TEntity> : IGraphQLSingleNodeBuilderBase<TEntity>
@@ -213,6 +214,28 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleNodeBuilder<TRoot, TEntity> End();
 
         IGraphQLSingleChildAggregateBuilder<TRoot, TEntity, TAggregate, TChildAggregate> Aggregate<TChildAggregate>() where TChildAggregate : IGraphQLEntity;
+    }
+
+    public interface IGraphQLRootAggregateBuilder<TEntity> : IGraphQLQueryBuilder
+        where TEntity : IGraphQLEntity
+    {
+        IGraphQLRootAggregateBuilder<TEntity> Count();
+
+        IGraphQLRootAggregateBuilder<TEntity> Sum<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        IGraphQLRootAggregateBuilder<TEntity> Sum<TKey>(Expression<Func<TEntity, IEnumerable<TKey>>> keySelectors);
+
+        IGraphQLRootAggregateBuilder<TEntity> Avg<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        IGraphQLRootAggregateBuilder<TEntity> Avg<TKey>(Expression<Func<TEntity, IEnumerable<TKey>>> keySelectors);
+
+        IGraphQLRootAggregateBuilder<TEntity> Max<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        IGraphQLRootAggregateBuilder<TEntity> Max<TKey>(Expression<Func<TEntity, IEnumerable<TKey>>> keySelectors);
+
+        IGraphQLRootAggregateBuilder<TEntity> Min<TKey>(Expression<Func<TEntity, TKey>> keySelector);
+        IGraphQLRootAggregateBuilder<TEntity> Min<TKey>(Expression<Func<TEntity, IEnumerable<TKey>>> keySelectors);
+
+        IGraphQLRootAggregateBuilder<TEntity> Nodes();        
+
+        IGraphQLSingleQuery<IGraphQLAggregateContainerNode<TEntity>> Build();
     }
 
     public interface IGraphQLStandardAggregateBuilder<TEntity, TAggregate> : IGraphQLStandardQueryBuilder<TEntity>

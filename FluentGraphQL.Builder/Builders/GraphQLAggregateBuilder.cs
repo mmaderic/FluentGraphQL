@@ -14,9 +14,11 @@
     copies or substantial portions of the Software.
 */
 
+using FluentGraphQL.Abstractions.Enums;
 using FluentGraphQL.Builder.Abstractions;
 using FluentGraphQL.Builder.Atoms;
 using FluentGraphQL.Builder.Constants;
+using FluentGraphQL.Builder.Constructs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +27,7 @@ using System.Linq.Expressions;
 namespace FluentGraphQL.Builder.Builders
 {
     public class GraphQLAggregateBuilder<TRoot, TEntity, TAggregate> : GraphQLQueryBuilder<TRoot, TEntity>,
+        IGraphQLRootAggregateBuilder<TRoot>,
         IGraphQLSingleAggregateBuilder<TRoot, TAggregate>, IGraphQLSingleAggregateBuilder<TRoot, TEntity, TAggregate>,
         IGraphQLStandardAggregateBuilder<TRoot, TAggregate>, IGraphQLStandardAggregateBuilder<TRoot, TEntity, TAggregate>
         where TRoot : IGraphQLEntity
@@ -54,6 +57,11 @@ namespace FluentGraphQL.Builder.Builders
             return this;
         }
 
+        IGraphQLRootAggregateBuilder<TRoot> IGraphQLRootAggregateBuilder<TRoot>.Count()
+        {
+            return Count();
+        }
+
         IGraphQLStandardAggregateBuilder<TRoot, TAggregate> IGraphQLStandardAggregateBuilder<TRoot, TAggregate>.Count()
         {
             return Count();
@@ -72,6 +80,16 @@ namespace FluentGraphQL.Builder.Builders
         IGraphQLSingleAggregateBuilder<TRoot, TEntity, TAggregate> IGraphQLSingleAggregateBuilder<TRoot, TEntity, TAggregate>.Count()
         {
             return Count();
+        }
+
+        IGraphQLRootAggregateBuilder<TRoot> IGraphQLRootAggregateBuilder<TRoot>.Avg<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        {
+            return ActivateSingleSelector(keySelector, Constant.AggregateMethodCalls.Avg);
+        }
+
+        IGraphQLRootAggregateBuilder<TRoot> IGraphQLRootAggregateBuilder<TRoot>.Avg<TKey>(Expression<Func<TRoot, IEnumerable<TKey>>> keySelectors)
+        {
+            return ActivateMultiSelector(keySelectors, Constant.AggregateMethodCalls.Avg);
         }
 
         IGraphQLStandardAggregateBuilder<TRoot, TAggregate> IGraphQLStandardAggregateBuilder<TRoot, TAggregate>.Avg<TKey>(Expression<Func<TAggregate, TKey>> keySelector)
@@ -114,6 +132,16 @@ namespace FluentGraphQL.Builder.Builders
             return ActivateMultiSelector(keySelectors, Constant.AggregateMethodCalls.Avg);
         }
 
+        IGraphQLRootAggregateBuilder<TRoot> IGraphQLRootAggregateBuilder<TRoot>.Sum<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        {
+            return ActivateSingleSelector(keySelector, Constant.AggregateMethodCalls.Sum);
+        }
+
+        IGraphQLRootAggregateBuilder<TRoot> IGraphQLRootAggregateBuilder<TRoot>.Sum<TKey>(Expression<Func<TRoot, IEnumerable<TKey>>> keySelectors)
+        {
+            return ActivateMultiSelector(keySelectors, Constant.AggregateMethodCalls.Sum);
+        }
+
         IGraphQLStandardAggregateBuilder<TRoot, TAggregate> IGraphQLStandardAggregateBuilder<TRoot, TAggregate>.Sum<TKey>(Expression<Func<TAggregate, TKey>> keySelector)
         {
             return ActivateSingleSelector(keySelector, Constant.AggregateMethodCalls.Sum);
@@ -152,6 +180,16 @@ namespace FluentGraphQL.Builder.Builders
         IGraphQLSingleAggregateBuilder<TRoot, TEntity, TAggregate> IGraphQLSingleAggregateBuilder<TRoot, TEntity, TAggregate>.Sum<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors)
         {
             return ActivateMultiSelector(keySelectors, Constant.AggregateMethodCalls.Sum);
+        }
+
+        IGraphQLRootAggregateBuilder<TRoot> IGraphQLRootAggregateBuilder<TRoot>.Min<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        {
+            return ActivateSingleSelector(keySelector, Constant.AggregateMethodCalls.Min);
+        }
+
+        IGraphQLRootAggregateBuilder<TRoot> IGraphQLRootAggregateBuilder<TRoot>.Min<TKey>(Expression<Func<TRoot, IEnumerable<TKey>>> keySelectors)
+        {
+            return ActivateMultiSelector(keySelectors, Constant.AggregateMethodCalls.Min);
         }
 
         IGraphQLStandardAggregateBuilder<TRoot, TAggregate> IGraphQLStandardAggregateBuilder<TRoot, TAggregate>.Min<TKey>(Expression<Func<TAggregate, TKey>> keySelector)
@@ -194,6 +232,16 @@ namespace FluentGraphQL.Builder.Builders
             return ActivateMultiSelector(keySelectors, Constant.AggregateMethodCalls.Min);
         }
 
+        IGraphQLRootAggregateBuilder<TRoot> IGraphQLRootAggregateBuilder<TRoot>.Max<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        {
+            return ActivateSingleSelector(keySelector, Constant.AggregateMethodCalls.Max);
+        }
+
+        IGraphQLRootAggregateBuilder<TRoot> IGraphQLRootAggregateBuilder<TRoot>.Max<TKey>(Expression<Func<TRoot, IEnumerable<TKey>>> keySelectors)
+        {
+            return ActivateMultiSelector(keySelectors, Constant.AggregateMethodCalls.Max);
+        }
+
         IGraphQLStandardAggregateBuilder<TRoot, TAggregate> IGraphQLStandardAggregateBuilder<TRoot, TAggregate>.Max<TKey>(Expression<Func<TAggregate, TKey>> keySelector)
         {
             return ActivateSingleSelector(keySelector, Constant.AggregateMethodCalls.Max);
@@ -234,13 +282,13 @@ namespace FluentGraphQL.Builder.Builders
             return ActivateMultiSelector(keySelectors, Constant.AggregateMethodCalls.Max);
         }
 
-        protected GraphQLAggregateBuilder<TRoot, TEntity, TAggregate> ActivateSingleSelector<TKey>(Expression<Func<TAggregate, TKey>> keySelector, string aggregateMethod)
+        protected GraphQLAggregateBuilder<TRoot, TEntity, TAggregate> ActivateSingleSelector<TAggregateNode, TKey>(Expression<Func<TAggregateNode, TKey>> keySelector, string aggregateMethod)
         {
             var selector = _graphQLExpressionConverter.Convert(keySelector);
             return ActivateSelectors(new[] { selector }, aggregateMethod);
         }
 
-        protected GraphQLAggregateBuilder<TRoot, TEntity, TAggregate> ActivateMultiSelector<TKey>(Expression<Func<TAggregate, IEnumerable<TKey>>> keySelectors, string aggregateMethod)
+        protected GraphQLAggregateBuilder<TRoot, TEntity, TAggregate> ActivateMultiSelector<TAggregateNode, TKey>(Expression<Func<TAggregateNode, IEnumerable<TKey>>> keySelectors, string aggregateMethod)
         {
             var selectors = _graphQLExpressionConverter.Convert(keySelectors);
             return ActivateSelectors(selectors, aggregateMethod);
@@ -257,7 +305,7 @@ namespace FluentGraphQL.Builder.Builders
 
             foreach (var selector in selectors)
             {
-                var propertyStatement = new GraphQLPropertyStatement(((IGraphQLPropertyValue)selector.Value).ValueLiteral);
+                var propertyStatement = new GraphQLPropertyStatement(selector.PropertyName);
                 ((List<IGraphQLPropertyStatement>)methodNode.PropertyStatements).Add(propertyStatement);
             }
 
@@ -271,6 +319,11 @@ namespace FluentGraphQL.Builder.Builders
 
             _graphQLAggregateNodes.Activate();
             return this;
+        }
+
+        IGraphQLRootAggregateBuilder<TRoot> IGraphQLRootAggregateBuilder<TRoot>.Nodes()
+        {
+            return Nodes();
         }
 
         IGraphQLStandardAggregateBuilder<TRoot, TAggregate> IGraphQLStandardAggregateBuilder<TRoot, TAggregate>.Nodes()
@@ -366,6 +419,11 @@ namespace FluentGraphQL.Builder.Builders
         IGraphQLStandardChildAggregateBuilder<TRoot, TEntity, TAggregate, TChildAggregate> IGraphQLStandardAggregateBuilder<TRoot, TEntity, TAggregate>.Aggregate<TChildAggregate>()
         {
             return Aggregate<TChildAggregate>();
+        }
+
+        IGraphQLSingleQuery<IGraphQLAggregateContainerNode<TRoot>> IGraphQLRootAggregateBuilder<TRoot>.Build()
+        {
+            return new GraphQLMethodConstruct<IGraphQLAggregateContainerNode<TRoot>>(GraphQLMethod.Query, _graphQLSelectNode.HeaderNode, _graphQLSelectNode);
         }
     }
 }

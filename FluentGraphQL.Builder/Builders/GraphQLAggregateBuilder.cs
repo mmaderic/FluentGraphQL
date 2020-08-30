@@ -423,7 +423,11 @@ namespace FluentGraphQL.Builder.Builders
 
         IGraphQLSingleQuery<IGraphQLAggregateContainerNode<TRoot>> IGraphQLRootAggregateBuilder<TRoot>.Build()
         {
-            return new GraphQLMethodConstruct<IGraphQLAggregateContainerNode<TRoot>>(GraphQLMethod.Query, _graphQLSelectNode.HeaderNode, _graphQLSelectNode);
+            _graphQLSelectNode.EntityType = typeof(IGraphQLAggregateContainerNode<TRoot>);
+            return new GraphQLMethodConstruct<IGraphQLAggregateContainerNode<TRoot>>(GraphQLMethod.Query, _graphQLSelectNode.HeaderNode, _graphQLSelectNode)
+            {
+                IsSingle = true
+            };
         }
     }
 }

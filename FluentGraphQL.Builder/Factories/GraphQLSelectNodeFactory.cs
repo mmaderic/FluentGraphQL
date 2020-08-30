@@ -41,7 +41,8 @@ namespace FluentGraphQL.Builder.Factories
         public virtual IGraphQLSelectNode Construct(Type type)
         {
             var selectNode = ConstructRecursive(type);
-            var rootAggregateNode = ConstructRecursive(typeof(IGraphQLAggregateContainerNode<>).MakeGenericType(type));
+            var rootAggregateContainer = typeof(IGraphQLAggregateContainerNode<>).MakeGenericType(type);
+            var rootAggregateNode = ConstructRecursive(rootAggregateContainer);
 
             rootAggregateNode.HeaderNode.Title = type.Name;
             rootAggregateNode.HeaderNode.Suffix = Constant.GraphQLKeyords.Aggregate;

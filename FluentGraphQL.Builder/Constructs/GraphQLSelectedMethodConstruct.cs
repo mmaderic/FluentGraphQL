@@ -23,7 +23,6 @@ namespace FluentGraphQL.Builder.Constructs
     internal class GraphQLSelectedMethodConstruct<TEntity, TResult> : GraphQLMethodConstruct<TEntity>, 
         IGraphQLStandardSelectedQuery<TEntity, TResult>, IGraphQLSingleSelectedQuery<TEntity, TResult>,
         IGraphQLSelectedReturnSingleMutation<TEntity, TResult>, IGraphQLSelectedReturnMultipleMutation<TEntity, TResult>
-           where TEntity : IGraphQLEntity
     {
         public Func<TEntity, TResult> Selector { get; set; }
         public bool IsSelected { get; set; }

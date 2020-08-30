@@ -19,6 +19,8 @@ using FluentGraphQL.Builder.Abstractions;
 using FluentGraphQL.Builder.Atoms;
 using FluentGraphQL.Builder.Constants;
 using FluentGraphQL.Builder.Constructs;
+using FluentGraphQL.Builder.Extensions;
+using FluentGraphQL.Builder.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +29,7 @@ using System.Linq.Expressions;
 namespace FluentGraphQL.Builder.Builders
 {
     public class GraphQLAggregateBuilder<TRoot, TEntity, TAggregate> : GraphQLQueryBuilder<TRoot, TEntity>,
-        IGraphQLRootAggregateBuilder<TRoot>,
+        IGraphQLRootAggregateBuilder<TRoot>, IGraphQLRootAggregateNodesBuilder<TRoot>,
         IGraphQLSingleAggregateBuilder<TRoot, TAggregate>, IGraphQLSingleAggregateBuilder<TRoot, TEntity, TAggregate>,
         IGraphQLStandardAggregateBuilder<TRoot, TAggregate>, IGraphQLStandardAggregateBuilder<TRoot, TEntity, TAggregate>
         where TRoot : IGraphQLEntity
@@ -321,7 +323,7 @@ namespace FluentGraphQL.Builder.Builders
             return this;
         }
 
-        IGraphQLRootAggregateBuilder<TRoot> IGraphQLRootAggregateBuilder<TRoot>.Nodes()
+        IGraphQLRootAggregateNodesBuilder<TRoot> IGraphQLRootAggregateBuilder<TRoot>.Nodes()
         {
             return Nodes();
         }
@@ -421,13 +423,54 @@ namespace FluentGraphQL.Builder.Builders
             return Aggregate<TChildAggregate>();
         }
 
-        IGraphQLSingleQuery<IGraphQLAggregateContainerNode<TRoot>> IGraphQLRootAggregateBuilder<TRoot>.Build()
+        private GraphQLMethodConstruct Build()
         {
             _graphQLSelectNode.EntityType = typeof(IGraphQLAggregateContainerNode<TRoot>);
             return new GraphQLMethodConstruct<IGraphQLAggregateContainerNode<TRoot>>(GraphQLMethod.Query, _graphQLSelectNode.HeaderNode, _graphQLSelectNode)
             {
                 IsSingle = true
             };
+        }
+
+        IGraphQLSingleQuery<IGraphQLAggregateContainerNode<TRoot>> IGraphQLRootAggregateBuilder<TRoot>.Build()
+        {
+            return (IGraphQLSingleQuery<IGraphQLAggregateContainerNode<TRoot>>)Build();
+        }
+
+        IGraphQLSingleQuery<IGraphQLAggregateContainerNode<TRoot>> IGraphQLRootAggregateNodesBuilder<TRoot>.Build()
+        {
+            return (IGraphQLSingleQuery<IGraphQLAggregateContainerNode<TRoot>>)Build();
+        }
+
+        IGraphQLSingleSelectedQuery<IGraphQLAggregateContainerNode<TRoot>, IGraphQLAggregateContainerNode<TResult>> IGraphQLRootAggregateNodesBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
+        {
+            var expressionStatement = _graphQLExpressionConverter.ConvertSelectExpression(selector);
+            expressionStatement.ApplySelectStatement(_graphQLAggregateNodes);
+
+            var selectorFunc = selector.Compile();
+            var aggregateSelectorFunc = new Func<IGraphQLAggregateContainerNode<TRoot>, IGraphQLAggregateContainerNode<TResult>>((aggregateContainer) =>
+            {
+                var resultAggregateContainer = new GraphQLAggregateContainerNode<TResult>(_graphQLExpressionConverter)
+                {
+                    Aggregate = aggregateContainer.Aggregate,
+                    Nodes = new List<TResult>()
+                };
+
+                foreach(var item in aggregateContainer.Nodes)                
+                    resultAggregateContainer.Nodes.Add(selectorFunc.Invoke(item));
+
+                return resultAggregateContainer;
+            });
+
+            var query = new GraphQLSelectedMethodConstruct<
+                IGraphQLAggregateContainerNode<TRoot>,
+                IGraphQLAggregateContainerNode<TResult>>
+                (GraphQLMethod.Query, _graphQLSelectNode.HeaderNode, _graphQLSelectNode, aggregateSelectorFunc)
+            {
+                IsSingle = true
+            };
+
+            return query;
         }
     }
 }

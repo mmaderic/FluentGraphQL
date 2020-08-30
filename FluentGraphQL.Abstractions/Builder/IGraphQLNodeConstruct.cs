@@ -16,7 +16,7 @@
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLNodeConstruct : IGraphQLStatement, IGraphQLMethodConstruct
+    public interface IGraphQLNodeConstruct : IGraphQLMethodConstruct
     {
         IGraphQLHeaderNode HeaderNode { get; set; }
         IGraphQLSelectNode SelectNode { get; set; }

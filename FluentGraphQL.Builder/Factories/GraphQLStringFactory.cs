@@ -40,7 +40,9 @@ namespace FluentGraphQL.Builder.Factories
             var selectNodeString = graphQLMethodConstruct.SelectNode.ToString(this);
             var methodString = graphQLMethodConstruct.Method.Equals(GraphQLMethod.Query)
                 ? "query {"
-                : "mutation {";
+                : graphQLMethodConstruct.Method.Equals(GraphQLMethod.Mutation) 
+                    ? "mutation {"
+                    : "subscription {";
 
             builder
                 .AppendLine(methodString)

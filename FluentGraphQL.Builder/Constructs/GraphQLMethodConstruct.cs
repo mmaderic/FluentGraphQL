@@ -26,7 +26,7 @@ namespace FluentGraphQL.Builder.Constructs
         public IGraphQLHeaderNode HeaderNode { get; set; }
         public IGraphQLSelectNode SelectNode { get; set; }
 
-        public GraphQLMethod Method { get; }
+        public GraphQLMethod Method { get; set; }
 
         public string QueryString { get; set; }
 

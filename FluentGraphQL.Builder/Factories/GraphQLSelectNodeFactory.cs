@@ -109,7 +109,7 @@ namespace FluentGraphQL.Builder.Factories
                         x.PropertyType.Equals(typeof(IGraphQLAggregateClauseNode));
 
                     var explicitName = useExplicitName ? x.Name : null;
-                    return ConstructRecursive(x.PropertyType, hierarchyLevel + 1, parentTypes, false, explicitName);
+                    return ConstructRecursive(x.PropertyType, hierarchyLevel + 1, new List<Type>(parentTypes), false, explicitName);
                 }).ToArray();
         }
 
@@ -117,7 +117,7 @@ namespace FluentGraphQL.Builder.Factories
             IEnumerable<PropertyInfo> propertyInfos, int hierarchyLevel, List<Type> parentTypes)
         {
             return propertyInfos.Where(x => !parentTypes.Contains(x.PropertyType.GetGenericArguments().First()))
-                .Select(x => ConstructRecursive(x.PropertyType.GetGenericArguments().First(), hierarchyLevel + 1, parentTypes, true, x.Name)).ToArray();
+                .Select(x => ConstructRecursive(x.PropertyType.GetGenericArguments().First(), hierarchyLevel + 1, new List<Type>(parentTypes), true, x.Name)).ToArray();
         }
 
         private IEnumerable<IGraphQLPropertyStatement> ConstructPropertyStatements(IEnumerable<PropertyInfo> propertyInfos)
@@ -129,7 +129,7 @@ namespace FluentGraphQL.Builder.Factories
             IEnumerable<PropertyInfo> propertyInfos, int hierarchyLevel, List<Type> parentTypes)
         {
             return propertyInfos.Where(x => !parentTypes.Contains(x.PropertyType))
-                .Select(x => ConstructRecursive(x.PropertyType, hierarchyLevel + 1, parentTypes, false, x.Name)).ToList();
+                .Select(x => ConstructRecursive(x.PropertyType, hierarchyLevel + 1, new List<Type>(parentTypes), false, x.Name)).ToList();
         }
 
         private bool IsSimpleProperty(PropertyInfo propertyInfo)

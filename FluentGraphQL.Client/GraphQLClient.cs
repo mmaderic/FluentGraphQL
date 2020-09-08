@@ -42,20 +42,20 @@ namespace FluentGraphQL.Client
         private readonly IGraphQLClientOptions _graphQLClientOptions;
         private readonly IGraphQLStringFactory _graphQLStringFactory;
         private readonly IGraphQLBuilderFactory _graphQLBuilderFactory;
-        private readonly IGraphQLWebSocketProtocolService _graphQLWebSocketHandler;
+        private readonly IGraphQLWebSocketProtocolService _graphQLWebSocketService;
         private readonly IGraphQLSerializerOptionsProvider _graphQLSerializerOptionsProvider;
 
         private readonly Lazy<HttpClient> _httpClient;
 
         public GraphQLClient(
            IGraphQLClientOptions graphQLClientOptions, IGraphQLStringFactory graphQLStringFactory, IGraphQLBuilderFactory graphQLBuilderFactory,           
-           IServiceProvider serviceProvider, IGraphQLWebSocketProtocolService graphQLWebSocketHandler, IGraphQLSerializerOptionsProvider graphQLSerializerOptionsProvider)
+           IServiceProvider serviceProvider, IGraphQLWebSocketProtocolService graphQLWebSocketService, IGraphQLSerializerOptionsProvider graphQLSerializerOptionsProvider)
         {
             _graphQLStringFactory = graphQLStringFactory;
             _graphQLBuilderFactory = graphQLBuilderFactory;
             _graphQLClientOptions = graphQLClientOptions;
             _graphQLSerializerOptionsProvider = graphQLSerializerOptionsProvider;
-            _graphQLWebSocketHandler = graphQLWebSocketHandler;
+            _graphQLWebSocketService = graphQLWebSocketService;
 
             _httpClient = new Lazy<HttpClient>(() => _graphQLClientOptions.HttpClientProvider.Invoke(serviceProvider));
         }
@@ -151,7 +151,7 @@ namespace FluentGraphQL.Client
 
         public async Task<IGraphQLMultiResponse<TResponseA, TResponseB>> ExecuteAsync<TResponseA, TResponseB>(IGraphQLMultiConstruct<TResponseA, TResponseB> graphQLMultiConstruct)
         {
-            var dictionary = await ExecuteMultipleQueryAsync(graphQLMultiConstruct);
+            var dictionary = await ExecuteMultipleQueryAsync(graphQLMultiConstruct).ConfigureAwait(false);
 
             var valueA = ProcessMultiConstructResponseValue<TResponseA>(graphQLMultiConstruct.ConstructA, dictionary);
             var valueB = ProcessMultiConstructResponseValue<TResponseB>(graphQLMultiConstruct.ConstructB, dictionary);
@@ -161,7 +161,7 @@ namespace FluentGraphQL.Client
 
         public async Task<IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC>> ExecuteAsync<TResponseA, TResponseB, TResponseC>(IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC> graphQLMultiConstruct)
         {
-            var dictionary = await ExecuteMultipleQueryAsync(graphQLMultiConstruct);
+            var dictionary = await ExecuteMultipleQueryAsync(graphQLMultiConstruct).ConfigureAwait(false);
 
             var valueA = ProcessMultiConstructResponseValue<TResponseA>(graphQLMultiConstruct.ConstructA, dictionary);
             var valueB = ProcessMultiConstructResponseValue<TResponseB>(graphQLMultiConstruct.ConstructB, dictionary);
@@ -172,7 +172,7 @@ namespace FluentGraphQL.Client
 
         public async Task<IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC, TResponseD>> ExecuteAsync<TResponseA, TResponseB, TResponseC, TResponseD>(IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD> graphQLMultiConstruct)
         {
-            var dictionary = await ExecuteMultipleQueryAsync(graphQLMultiConstruct);
+            var dictionary = await ExecuteMultipleQueryAsync(graphQLMultiConstruct).ConfigureAwait(false);
 
             var valueA = ProcessMultiConstructResponseValue<TResponseA>(graphQLMultiConstruct.ConstructA, dictionary);
             var valueB = ProcessMultiConstructResponseValue<TResponseB>(graphQLMultiConstruct.ConstructB, dictionary);
@@ -184,7 +184,7 @@ namespace FluentGraphQL.Client
 
         public async Task<IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>> ExecuteAsync<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> graphQLMultiConstruct)
         {
-            var dictionary = await ExecuteMultipleQueryAsync(graphQLMultiConstruct);
+            var dictionary = await ExecuteMultipleQueryAsync(graphQLMultiConstruct).ConfigureAwait(false);
 
             var valueA = ProcessMultiConstructResponseValue<TResponseA>(graphQLMultiConstruct.ConstructA, dictionary);
             var valueB = ProcessMultiConstructResponseValue<TResponseB>(graphQLMultiConstruct.ConstructB, dictionary);
@@ -216,7 +216,9 @@ namespace FluentGraphQL.Client
                 Query = queryString
             };
 
-            var subscription = await _graphQLWebSocketHandler.StartSubscriptionAsync(request, (bytes) => ProcessSubscriptionResponse(graphQLQuery, bytes, subscriptionHandler, exceptionHandler));
+            var subscription = await _graphQLWebSocketService.StartSubscriptionAsync(request, (bytes) => ProcessSubscriptionResponse(graphQLQuery, bytes, subscriptionHandler, exceptionHandler))
+                .ConfigureAwait(false);
+
             return subscription;
         }
 
@@ -232,7 +234,7 @@ namespace FluentGraphQL.Client
             using (var document = JsonDocument.Parse(content))
             {
                 var root = document.RootElement;
-                return DeserializeJsonElement<TResponse>(graphQLNodeConstruct, root);
+                return (TResponse)DeserializeJsonElement(graphQLNodeConstruct, root, typeof(TResponse));
             }
         }
 
@@ -253,8 +255,7 @@ namespace FluentGraphQL.Client
                 Parallel.ForEach(graphQLMultiConstruct, (construct) =>
                 {
                     var responseType = ResolveContentType(construct);
-                    var deserializer = typeof(GraphQLClient).GetMethod(nameof(DeserializeJsonElement), BindingFlags.NonPublic | BindingFlags.Instance).MakeGenericMethod(responseType);
-                    var result = deserializer.Invoke(this, new object[] { construct, document.RootElement });
+                    var result = DeserializeJsonElement(construct, document.RootElement, responseType);
 
                     resultDictionary.TryAdd(responseType.TypeHandle, result);
                 });
@@ -282,17 +283,17 @@ namespace FluentGraphQL.Client
             return content;
         }
 
-        private TResponse DeserializeJsonElement<TResponse>(IGraphQLNodeConstruct graphQLNodeConstruct, JsonElement jsonElement)
+        private object DeserializeJsonElement(IGraphQLNodeConstruct graphQLNodeConstruct, JsonElement jsonElement, Type responseType)
         {
             var key = graphQLNodeConstruct.KeyString(_graphQLStringFactory);
             var options = _graphQLSerializerOptionsProvider.Provide(graphQLNodeConstruct);
 
             var successful = jsonElement.TryGetProperty(_graphQLStringFactory.Construct(GraphQLResponseKeys.Data), out JsonElement element);
             if (!successful)
-                return HandleErrorResponse<TResponse>(jsonElement, options);
+                return HandleErrorResponse(jsonElement, options, responseType);
 
-            var data = ReadJsonStringData<TResponse>(element, key, graphQLNodeConstruct);
-            return JsonSerializer.Deserialize<TResponse>(data, options);
+            var data = ReadJsonStringData(element, key, graphQLNodeConstruct, responseType);
+            return JsonSerializer.Deserialize(data, responseType, options);
         }
 
         private GraphQLError[] ReadErrors(JsonElement root, JsonSerializerOptions options)
@@ -338,7 +339,7 @@ namespace FluentGraphQL.Client
                     AddAdminHeader();
 
                 else if (!(_graphQLClientOptions.AuthenticationHeaderProvider is null))
-                    _httpClient.Value.DefaultRequestHeaders.Authorization = await _graphQLClientOptions.AuthenticationHeaderProvider.Invoke();                
+                    _httpClient.Value.DefaultRequestHeaders.Authorization = await _graphQLClientOptions.AuthenticationHeaderProvider.Invoke().ConfigureAwait(false);                
             }
         }     
 
@@ -474,9 +475,9 @@ namespace FluentGraphQL.Client
             throw new NotImplementedException(GraphQLMethod.Mutation.ToString());
         }        
 
-        private TResponse HandleErrorResponse<TResponse>(JsonElement root, JsonSerializerOptions options)
+        private object HandleErrorResponse(JsonElement root, JsonSerializerOptions options, Type responseType)
         {
-            if (typeof(IGraphQLActionResponse).IsAssignableFrom(typeof(TResponse)))
+            if (typeof(IGraphQLActionResponse).IsAssignableFrom(responseType))
             {
                 var errors = ReadErrors(root, options);
                 var errorMessageObject = new
@@ -485,15 +486,15 @@ namespace FluentGraphQL.Client
                 };
 
                 var errorMessageString = JsonSerializer.Serialize(errorMessageObject, options);
-                return JsonSerializer.Deserialize<TResponse>(errorMessageString, options);
+                return JsonSerializer.Deserialize(errorMessageString, responseType, options);
             }
             else
                 throw new GraphQLException(ReadErrors(root, options));
         }
 
-        private string ReadJsonStringData<TResponse>(JsonElement element, string key, IGraphQLNodeConstruct graphQLNodeConstruct)
+        private string ReadJsonStringData(JsonElement element, string key, IGraphQLNodeConstruct graphQLNodeConstruct, Type responseType)
         {
-            if (!typeof(TResponse).IsSimple())
+            if (!responseType.IsSimple())
                 return ReadJsonElement(element.GetProperty(key), graphQLNodeConstruct.IsSingle);                
 
             var enumerator = element.GetProperty(key).EnumerateObject();
@@ -512,7 +513,7 @@ namespace FluentGraphQL.Client
                 if (!successful)
                     HandleInvalidSubscriptionState(rootElement, exceptionHandler);
 
-                var response = DeserializeJsonElement<TResponse>(graphQLQuery, element);
+                var response = (TResponse)DeserializeJsonElement(graphQLQuery, element, typeof(TResponse));
                 subscriptionHandler.Invoke(response);
             }
         }

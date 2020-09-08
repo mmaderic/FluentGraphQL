@@ -44,14 +44,13 @@ namespace FluentGraphQL.Client.Services
         private readonly AsyncManualResetEvent _receivedAckResponseEvent;
         private readonly AsyncManualResetEvent _terminateProtocolEvent;
         private readonly AsyncManualResetEvent _acceptRequestsEvent;
-        private readonly object _mutex;
+        private readonly AsyncManualResetEvent _senderStoppedEvent;
+        private readonly AsyncManualResetEvent _listenerStoppedEvent;
+        private readonly object _terminationMutex;
 
         private ClientWebSocket _webSocket;
         private CancellationTokenSource _webSocketCancellationSource;
         private AsyncProducerConsumerQueue<GraphQLWebSocketEnqueueRequest> _sendRequestQueue;
-
-        private bool _senderRunning;
-        private bool _listenerRunning;
 
         public GraphQLWebSocketProtocolService(
             IGraphQLSerializerOptionsProvider graphQLSerializerOptionsProvider, IGraphQLSubscriptionOptions graphQLSubscriptionOptions, IServiceProvider serviceProvider)
@@ -65,12 +64,14 @@ namespace FluentGraphQL.Client.Services
             _receivedAckResponseEvent = new AsyncManualResetEvent();
             _terminateProtocolEvent = new AsyncManualResetEvent();
             _acceptRequestsEvent = new AsyncManualResetEvent();
-            _mutex = new object();
+            _senderStoppedEvent = new AsyncManualResetEvent(true);
+            _listenerStoppedEvent = new AsyncManualResetEvent(true);
+            _terminationMutex = new object();
 
-            Task.Run(() => ProtocolStateCycleTask());
+            Task.Run(() => ProtocolLifeCycleTask());
         }
 
-        private async Task ProtocolStateCycleTask(IEnumerable<GraphQLWebSocketEnqueueRequest> sendRequests = null)
+        private async Task ProtocolLifeCycleTask(IEnumerable<GraphQLWebSocketEnqueueRequest> sendRequests = null)
         {
             _sendRequestQueue = new AsyncProducerConsumerQueue<GraphQLWebSocketEnqueueRequest>(sendRequests);
             _acceptRequestsEvent.Set();
@@ -87,7 +88,7 @@ namespace FluentGraphQL.Client.Services
                 _graphQLSubscriptionOptions.ExceptionHandler?.Invoke(terminationTask.Exception);
 
             _terminateProtocolEvent.Reset();
-            _ = ProtocolStateCycleTask(_sendRequestQueue.GetConsumingEnumerable());
+            _ = ProtocolLifeCycleTask(_sendRequestQueue.GetConsumingEnumerable());
         }
 
         public async Task<IGraphQLSubscription> StartSubscriptionAsync(IGraphQLRequest graphQLRequest, Action<byte[]> responseHandler, Action callback = null)
@@ -143,6 +144,7 @@ namespace FluentGraphQL.Client.Services
             if (_terminateProtocolEvent.IsSet)
                 return;
 
+            _receivedAckResponseEvent.Reset();
             await InitializeGraphQLDataTransferAsync();
             if (_terminateProtocolEvent.IsSet)
                 return;
@@ -192,7 +194,6 @@ namespace FluentGraphQL.Client.Services
             try
             {
                 await _receivedAckResponseEvent.WaitAsync(token);
-                _receivedAckResponseEvent.Reset();
                 cancellationTokenSource.Cancel();
             }
             catch (OperationCanceledException)
@@ -245,7 +246,7 @@ namespace FluentGraphQL.Client.Services
 
         private async Task ListenAsync(CancellationToken cancellationToken)
         {
-            _listenerRunning = true;
+            _listenerStoppedEvent.Reset();
             var options = _graphQLSerializerOptionsProvider.Provide();
 
             try
@@ -265,13 +266,13 @@ namespace FluentGraphQL.Client.Services
             } 
             finally
             {
-                _listenerRunning = false;
+                _listenerStoppedEvent.Set();
             }
         }
 
         private async Task SendRequestsAsync(CancellationToken cancellationToken)
         {
-            _senderRunning = true;
+            _senderStoppedEvent.Reset();
 
             try
             {
@@ -295,7 +296,7 @@ namespace FluentGraphQL.Client.Services
             }
             finally
             {
-                _senderRunning = false;
+                _senderStoppedEvent.Set();
             }
         }
 
@@ -368,23 +369,6 @@ namespace FluentGraphQL.Client.Services
             _webSocket = null;           
         }
 
-        private void StartSenderListenerTasks()
-        {     
-            _webSocketCancellationSource = new CancellationTokenSource();
-
-            while (_senderRunning) { }
-            Task.Run(() => SendRequestsAsync(_webSocketCancellationSource.Token));
-
-            while (_listenerRunning) { }
-            Task.Run(() => ListenAsync(_webSocketCancellationSource.Token));
-        }
-
-        private void StopSenderListenerTasks()
-        {
-            _webSocketCancellationSource?.Cancel();
-            _webSocketCancellationSource = null;
-        }
-
         private void UntrackSubscription(GraphQLSubscription subscription)
         {
             _subscriptionStore.TryRemove(subscription.Id, out GraphQLSubscription _);
@@ -392,9 +376,25 @@ namespace FluentGraphQL.Client.Services
                 RaiseTerminateProtocolEvent(WebSocketCloseStatus.NormalClosure);
         }
 
+        private void StartSenderListenerTasks()
+        {
+            _senderStoppedEvent.Wait();
+            _listenerStoppedEvent.Wait();
+
+            _webSocketCancellationSource = new CancellationTokenSource();
+
+            Task.Run(() => SendRequestsAsync(_webSocketCancellationSource.Token));
+            Task.Run(() => ListenAsync(_webSocketCancellationSource.Token));            
+        }
+
+        private void StopSenderListenerTasks()
+        {   
+            _webSocketCancellationSource.Cancel();            
+        }
+
         private void RaiseTerminateProtocolEvent(WebSocketCloseStatus closeStatus, Exception exception = null)
         {
-            lock (_mutex)
+            lock (_terminationMutex)
             {
                 if (!(exception is null))
                     _logger?.LogError(exception.Message, exception);

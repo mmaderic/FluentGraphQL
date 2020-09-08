@@ -19,6 +19,7 @@ namespace FluentGraphQL.Abstractions.Enums
     public enum GraphQLMethod
     {
         Mutation,
-        Query
+        Query,
+        Subscription
     }
 }

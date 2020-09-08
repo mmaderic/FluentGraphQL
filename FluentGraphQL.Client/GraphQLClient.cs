@@ -485,8 +485,7 @@ namespace FluentGraphQL.Client
                     ErrorMessage = string.Join(",", errors.Select(x => x.Message))
                 };
 
-                var errorMessageString = JsonSerializer.Serialize(errorMessageObject, options);
-                return JsonSerializer.Deserialize(errorMessageString, responseType, options);
+                return DeserializeActionErrorResponse(errorMessageObject, options, responseType);
             }
             else
                 throw new GraphQLException(ReadErrors(root, options));
@@ -527,6 +526,20 @@ namespace FluentGraphQL.Client
                 exceptionHandler.Invoke(exception);
             else
                 throw exception;
+        }
+
+        private object DeserializeActionErrorResponse(object errorMessageObject, JsonSerializerOptions options, Type responseType)
+        {
+            var errorMessageString = JsonSerializer.Serialize(errorMessageObject, options);
+            var defaultErrorActionResponse = (IGraphQLActionResponse)JsonSerializer.Deserialize(errorMessageString, typeof(IGraphQLActionResponse<object>), options);
+
+            var resultObjectType = responseType.GenericTypeArguments.First();
+            var errorResponseGenericDefinition = defaultErrorActionResponse.GetType().GetGenericTypeDefinition();
+
+            var errorResponseInstance = (IGraphQLActionResponse)Activator.CreateInstance(errorResponseGenericDefinition.MakeGenericType(resultObjectType));
+            errorResponseInstance.ErrorMessage = defaultErrorActionResponse.ErrorMessage;
+
+            return errorResponseInstance;
         }
     }
 }

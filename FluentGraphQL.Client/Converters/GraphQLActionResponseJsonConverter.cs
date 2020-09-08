@@ -15,8 +15,10 @@
 */
 
 using FluentGraphQL.Client.Abstractions;
+using FluentGraphQL.Client.Extensions;
 using FluentGraphQL.Client.Responses;
 using System;
+using System.Collections;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -26,6 +28,19 @@ namespace FluentGraphQL.Client.Converters
     {
         public override IGraphQLActionResponse<TResult> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+            var resultType = typeof(TResult);
+            var isSimpleType = resultType.IsSimple();
+            var isSingle = !(!isSimpleType && typeof(IEnumerable).IsAssignableFrom(resultType));
+
+            if (!isSingle)
+            {
+                var result = JsonSerializer.Deserialize<TResult>(ref reader, options);
+                return new GraphQLActionResponse<TResult>
+                {
+                    Result = result
+                };
+            }
+
             return JsonSerializer.Deserialize<GraphQLActionResponse<TResult>>(ref reader, options);
         }
 

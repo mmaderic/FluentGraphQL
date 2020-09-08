@@ -21,6 +21,7 @@ using FluentGraphQL.Builder.Constants;
 using FluentGraphQL.Builder.Constructs;
 using FluentGraphQL.Builder.Extensions;
 using FluentGraphQL.Builder.Nodes;
+using System.Collections;
 using System.Linq;
 using System.Reflection;
 
@@ -41,7 +42,11 @@ namespace FluentGraphQL.Builder.Builders
         {
             var actionType = graphQLAction.GetType();
             var responseType = typeof(TResponse);
+
             var isSimpleType = responseType.IsSimple();
+            var isSingle = !(!isSimpleType && typeof(IEnumerable).IsAssignableFrom(responseType));
+            if (!isSingle)            
+                responseType = responseType.GenericTypeArguments.First();  
 
             var headerNode = new GraphQLHeaderNode(actionType.Name);
             var selectNode = isSimpleType
@@ -61,7 +66,7 @@ namespace FluentGraphQL.Builder.Builders
             headerNode.Statements = actionType.GetProperties().AsParallel().Select(x => ConstructStatement(x)).ToList();
             return new GraphQLMethodConstruct<TResponse>(graphQLMethod, headerNode, selectNode)
             {
-                IsSingle = true
+                IsSingle = isSingle
             };
         }
 

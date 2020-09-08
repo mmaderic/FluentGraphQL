@@ -14,23 +14,12 @@
     copies or substantial portions of the Software.
 */
 
-using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-
 namespace FluentGraphQL.Client.Abstractions
 {
-    public interface IGraphQLClientOptions
+    public interface IGraphQLWebSocketRequest
     {
-        Func<Task<AuthenticationHeaderValue>> AuthenticationHeaderProvider { get; set; }
-        Func<IServiceProvider, HttpClient> HttpClientProvider { get; set; }
-
-        bool UseAdminHeader { get; set; }
-        bool UseAdminHeaderForQueries { get; set; }
-        bool UseAdminHeaderForMutations { get; set; }
-
-        string AdminHeaderName { get; set; }
-        string AdminHeaderSecret { get; set; }
+        string Id { get; set; }
+        string Type { get; set; }
+        object Payload { get; set; }
     }
 }

@@ -15,6 +15,7 @@
 */
 
 using FluentGraphQL.Builder.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -46,6 +47,9 @@ namespace FluentGraphQL.Client.Abstractions
 
         Task<IGraphQLActionResponse<TResult>> ExecuteAsync<TResult>(IGraphQLQueryExtension<TResult> graphQLQueryExtension);
         Task<IGraphQLActionResponse<TResult>> ExecuteAsync<TResult>(IGraphQLMutationExtension<TResult> graphQLMutationExtension);
+
+        Task<IGraphQLSubscription> SubscribeAsync<TEntity>(IGraphQLStandardQuery<TEntity> graphQLStandardQuery, Action<List<TEntity>> subscriptionHandler, Action<Exception> exceptionHandler = null);
+        Task<IGraphQLSubscription> SubscribeAsync<TEntity>(IGraphQLSingleQuery<TEntity> graphQLSingleQuery, Action<TEntity> subscriptionHandler, Action<Exception> exceptionHandler = null);
 
         Task<IGraphQLMultiResponse<TResponseA, TResponseB>>
             ExecuteAsync<TResponseA, TResponseB>(IGraphQLMultiConstruct<TResponseA, TResponseB> graphQLMultiConstruct);

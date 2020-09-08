@@ -14,23 +14,15 @@
     copies or substantial portions of the Software.
 */
 
-using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-
-namespace FluentGraphQL.Client.Abstractions
+namespace FluentGraphQL.Abstractions.Enums
 {
-    public interface IGraphQLClientOptions
+    public enum SubscriptionState
     {
-        Func<Task<AuthenticationHeaderValue>> AuthenticationHeaderProvider { get; set; }
-        Func<IServiceProvider, HttpClient> HttpClientProvider { get; set; }
-
-        bool UseAdminHeader { get; set; }
-        bool UseAdminHeaderForQueries { get; set; }
-        bool UseAdminHeaderForMutations { get; set; }
-
-        string AdminHeaderName { get; set; }
-        string AdminHeaderSecret { get; set; }
+        ActivationQueue,
+        Active,
+        Complete,
+        DeactivationQueue,
+        Deactivated,
+        Disposed
     }
 }

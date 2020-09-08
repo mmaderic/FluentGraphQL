@@ -15,22 +15,13 @@
 */
 
 using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace FluentGraphQL.Client.Abstractions
 {
-    public interface IGraphQLClientOptions
+    public interface IGraphQLWebSocketProtocolService
     {
-        Func<Task<AuthenticationHeaderValue>> AuthenticationHeaderProvider { get; set; }
-        Func<IServiceProvider, HttpClient> HttpClientProvider { get; set; }
-
-        bool UseAdminHeader { get; set; }
-        bool UseAdminHeaderForQueries { get; set; }
-        bool UseAdminHeaderForMutations { get; set; }
-
-        string AdminHeaderName { get; set; }
-        string AdminHeaderSecret { get; set; }
+        Task<IGraphQLSubscription> StartSubscriptionAsync(IGraphQLRequest graphQLRequest, Action<byte[]> responseHandler, Action callback = null);
+        Task CloseSubscriptionAsync(string id, Action callback = null);
     }
 }

@@ -20,6 +20,6 @@ namespace FluentGraphQL.Builder.Abstractions
 {
     public interface IGraphQLMethodConstruct : IGraphQLQueryString, IGraphQLStatement
     {  
-        GraphQLMethod Method { get; }
+        GraphQLMethod Method { get; set; }
     }
 }

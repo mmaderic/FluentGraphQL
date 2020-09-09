@@ -17,10 +17,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{DA24B3F3-3890-46C0-84BA-727FEE2BB587}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{C5212A1C-75A9-41AA-A4B7-1DFADFDB934E}"
 	ProjectSection(SolutionItems) = preProject
-		01.getting-started.md = 01.getting-started.md
-		02.options.md = 02.options.md
+		Documentation\01.getting-started.md = Documentation\01.getting-started.md
+		Documentation\02.options.md = Documentation\02.options.md
 	EndProjectSection
 EndProject
 Global
@@ -50,7 +50,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{DA24B3F3-3890-46C0-84BA-727FEE2BB587} = {02A35BFA-B5C0-47CB-A6BC-3E9A81F0A3D1}
+		{C5212A1C-75A9-41AA-A4B7-1DFADFDB934E} = {02A35BFA-B5C0-47CB-A6BC-3E9A81F0A3D1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9857689E-E274-4AE0-995E-FB6A0160AF7A}

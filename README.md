@@ -4,6 +4,10 @@
 [![NuGet](https://img.shields.io/nuget/v/FluentGraphQL.Client)](https://www.nuget.org/packages/FluentGraphQL.Client)
 [![Nuget](https://img.shields.io/nuget/dt/FluentGraphQL.Client)](https://www.nuget.org/packages/FluentGraphQL.Client)
 
+Please follow this link for more comprehensive information: [Documentation](https://github.com/mmaderic/FluentGraphQL/tree/master/Documentation)
+
+<br />
+
 ### Installing FluentGraphQL
 
 You should install [FluentGraphQL with NuGet](https://www.nuget.org/packages/FluentGraphQL.Client):
@@ -35,7 +39,7 @@ This example will demonstrate basic configuration using built in .NET Core depen
           HttpClientProvider = () =>
           {
             var httpClientFactory = x.GetRequiredService<IHttpClientFactory>();
-            return httpClientFactory.CreateClient();
+            return httpClientFactory.CreateClient("GraphQL");
           }
       };
 

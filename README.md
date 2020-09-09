@@ -10,7 +10,7 @@ Please follow this link for more comprehensive information: [Documentation](http
 
 ### Installing FluentGraphQL
 
-You should install [FluentGraphQL with NuGet](https://www.nuget.org/packages/FluentGraphQL.Client):
+[FluentGraphQL should be installed with NuGet](https://www.nuget.org/packages/FluentGraphQL.Client):
 
     Install-Package FluentGraphQL.Client
     
@@ -20,7 +20,7 @@ Or via the .NET Core command line interface:
 
 Either commands, from Package Manager Console or .NET Core CLI, will download and install FluentGraphQL.Client and all required dependencies.
 
-*If you would like to use only query builder, you can install and use FluentGraphQL.Builder as standalone library.*
+*If query builder needs to be used without the client, it can be installed as standalone library.*
 
 ### Configuring Client
 
@@ -48,12 +48,12 @@ This example will demonstrate basic configuration using built in .NET Core depen
 
 ```
 This example is explicitly using admin header in all requests by setting 'UseAdminHeader' to true. \
-In order to use 'AuthenticationHeaderValue' instead, use 'AuthenticationHeaderProvider' option. You can also override this settings by using admin header explicitly for mutations or queries exclusive. \
+In order to use 'AuthenticationHeaderValue' instead, 'AuthenticationHeaderProvider' option should be used. This settings can be overriden by using admin header explicitly for mutations or queries exclusive. \
 Please refer to the [Options](https://github.com/mmaderic/FluentGraphQL/blob/master/Documentation/02.options.md) documentation for more detailed information.
 
 *Admin header can be explicitly set at any point of time by using UseAdminHeader() client method*
 
-In order to use client, simply inject IGraphQLClient interface into your handlers/services.
+In order to use client, IGraphQLClient interface should be injected into depending handlers/services.
 
 ```
   public class MyHandler
@@ -69,7 +69,7 @@ In order to use client, simply inject IGraphQLClient interface into your handler
 
 ### Using Query builder
 
-Query, mutation and action builders are provided by the client instance. After having defined query parameters for query or mutation builders, use either *Build()* or *Select()* methods to generate query. Action builder just needs Query or Mutation method having defined.
+Query, mutation and action builders are provided by the client instance. After having defined query parameters for query or mutation builders, either *Build()* or *Select()* methods should be used in order to generate the query. Action builder needs Query or Mutation method having defined instead.
 
 ```
  var query = client.QueryBuilder<Book>().Where(x => x.Title.Equals("C++ Demystified")).Build();
@@ -84,17 +84,17 @@ Query, mutation and action builders are provided by the client instance. After h
 
 ```
 
-*Select() method allows fragmentation of results, meaning you are able to select what properties you would like to have returned from the entity. As Select returns anonymous object, it can be casted explicitly to entity type by using Cast() method.*
+*Select() method allows fragmentation of results, meaning it is possible to select which properties should be returned from the requested entity. As Select returns anonymous object, it can be casted explicitly to entity type by using Cast() method.*
 
 ### Using Client
 
-After having your GraphQL method constructs defined using builders, execution is simple.
+After having GraphQL method constructs defined, execution is simple:
 
 ```
   var response = await client.ExecuteAsync(query);
 ```
 
-Or if you would like to subscribe to defined query
+Or establishing subscription upon the defined query:
 
 ```
   var subscription = await client.SubscribeAsync(query, (response) =>
@@ -103,7 +103,7 @@ Or if you would like to subscribe to defined query
   });
 ```
 
-In order to dispose your subscription use DisposeAsync() method.
+In order to dispose subscription DisposeAsync() method should be used:
 
 ```
   await subscription.DisposeAsync(); 
@@ -111,7 +111,7 @@ In order to dispose your subscription use DisposeAsync() method.
 
 #### Execute multiple queries/mutations as single transaction
 
-After having defined multiple constructs of the same method, *(Queries cannot be combined with mutations)*, construct transaction object using 'GraphQLTransaction' static factory class
+After having defined multiple constructs of the same method, *(Queries cannot be combined with mutations)*, transaction object can be constructed using 'GraphQLTransaction' static factory class:
 
 ```
   var transaction = GraphQLTransaction.Construct(mutationA, mutationB, mutationC);

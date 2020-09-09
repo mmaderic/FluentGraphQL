@@ -9,7 +9,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentGraphQL.Builder", "Fl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentGraphQL.Abstractions", "FluentGraphQL.Abstractions\FluentGraphQL.Abstractions.csproj", "{21021F9B-0B11-4A91-A0B8-E096E291036D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentGraphQL.Tests", "FluentGraphQL.Tests\FluentGraphQL.Tests.csproj", "{B2376163-718A-44DE-80C4-DE053DC61F20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentGraphQL.Tests", "FluentGraphQL.Tests\FluentGraphQL.Tests.csproj", "{B2376163-718A-44DE-80C4-DE053DC61F20}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02A35BFA-B5C0-47CB-A6BC-3E9A81F0A3D1}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{DA24B3F3-3890-46C0-84BA-727FEE2BB587}"
+	ProjectSection(SolutionItems) = preProject
+		01.getting-started.md = 01.getting-started.md
+		02.options.md = 02.options.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +48,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DA24B3F3-3890-46C0-84BA-727FEE2BB587} = {02A35BFA-B5C0-47CB-A6BC-3E9A81F0A3D1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9857689E-E274-4AE0-995E-FB6A0160AF7A}

@@ -26,8 +26,8 @@ namespace FluentGraphQL.Client.Options
 {
     public class GraphQLOptions : IGraphQLClientOptions, IGraphQLStringFactoryOptions, IGraphQLSubscriptionOptions
     {
+        public Func<HttpClient> HttpClientProvider { get; set; }
         public Func<Task<AuthenticationHeaderValue>> AuthenticationHeaderProvider { get; set; }
-        public Func<IServiceProvider, HttpClient> HttpClientProvider { get; set; }
 
         public bool UseAdminHeader { get; set; }
         public bool UseAdminHeaderForQueries { get; set; }

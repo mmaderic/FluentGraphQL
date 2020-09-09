@@ -2,6 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>1.0.0-alpha1</Version>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Authors>Mateo Mađerić</Authors>
+    <Company>KODEM</Company>
+    <Product>FluentGraphQL</Product>
+    <Description>Client implementation to support generated GraphQL query execution as queries, mutations or subscriptions.</Description>
+    <Copyright>Copyright (c) 2020 Mateo Mađerić</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/mmaderic/FluentGraphQL</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mmaderic/FluentGraphQL</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>GraphQL, .NET, Client, Query builder, Subscriptions, Hasura</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

@@ -28,26 +28,26 @@ In order to use FluentGraphQL.Client in .NET applications, it is required to reg
 This example will demonstrate basic configuration using built in .NET Core dependency injection. 
 
 ```
-  services.AddGraphQLClient(x =>
+services.AddGraphQLClient(x =>
+{
+  var options = new GraphQLOptions
   {
-      var options = new GraphQLOptions
+      AdminHeaderName = "some-header-name",
+      AdminHeaderSecret = "my admin secret",
+      NamingStrategy = NamingStrategy.SnakeCase,
+      UseAdminHeader = true,                    
+      HttpClientProvider = () =>
       {
-          AdminHeaderName = "some-header-name",
-          AdminHeaderSecret = "my admin secret",
-          NamingStrategy = NamingStrategy.SnakeCase,
-          UseAdminHeader = true,                    
-          HttpClientProvider = () =>
-          {
-            var httpClientFactory = x.GetRequiredService<IHttpClientFactory>();
-            return httpClientFactory.CreateClient("GraphQL");
-          }
-      };
+        var httpClientFactory = x.GetRequiredService<IHttpClientFactory>();
+        return httpClientFactory.CreateClient("GraphQL");
+      }
+  };
 
-      return options;
-  });
+  return options;
+});
 
 ```
-This example is explicitly using admin header in all requests by setting 'UseAdminHeader' to true. \
+This options implementation factory is using admin header in all requests by setting 'UseAdminHeader' to true. \
 In order to use 'AuthenticationHeaderValue' instead, 'AuthenticationHeaderProvider' option should be used. This settings can be overriden by using admin header explicitly for mutations or queries exclusive. \
 Please refer to the [Options](https://github.com/mmaderic/FluentGraphQL/blob/master/Documentation/02.options.md) documentation for more detailed information.
 

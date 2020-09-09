@@ -47,7 +47,9 @@ This example will demonstrate basic configuration using built in .NET Core depen
   });
 
 ```
-This example is explicitly using admin header in all requests by setting 'UseAdminHeader' to true. In order to use 'AuthenticationHeaderValue' instead, use 'AuthenticationHeaderProvider' option. You can also override this settings by using admin header explicitly for mutations or queries exclusive.
+This example is explicitly using admin header in all requests by setting 'UseAdminHeader' to true. \
+In order to use 'AuthenticationHeaderValue' instead, use 'AuthenticationHeaderProvider' option. You can also override this settings by using admin header explicitly for mutations or queries exclusive. \
+Please refer to the [Options](https://github.com/mmaderic/FluentGraphQL/blob/master/Documentation/02.options.md) documentation for more detailed information.
 
 *Admin header can be explicitly set at any point of time by using UseAdminHeader() client method*
 

@@ -30,8 +30,8 @@ This example will demonstrate basic configuration using built in .NET Core depen
 ```
 services.AddGraphQLClient(x =>
 {
-  var options = new GraphQLOptions
-  {
+    var options = new GraphQLOptions
+    {
       AdminHeaderName = "some-header-name",
       AdminHeaderSecret = "my admin secret",
       NamingStrategy = NamingStrategy.SnakeCase,
@@ -41,9 +41,9 @@ services.AddGraphQLClient(x =>
         var httpClientFactory = x.GetRequiredService<IHttpClientFactory>();
         return httpClientFactory.CreateClient("GraphQL");
       }
-  };
+    };
 
-  return options;
+    return options;
 });
 
 ```
@@ -58,12 +58,12 @@ In order to use client, IGraphQLClient interface should be injected into dependi
 ```
 public class MyHandler
 {
-  private readonly IGraphQLClient _graphQLClient;
+    private readonly IGraphQLClient _graphQLClient;
 
-  public MyHandler(IGraphQLClient graphQLClient)
-  {
+    public MyHandler(IGraphQLClient graphQLClient)
+    {
       _graphQLClient = graphQLClient;
-  }
+    }
 }
 ```
 
@@ -72,16 +72,15 @@ public class MyHandler
 Query, mutation and action builders are provided by the client instance. After having defined query parameters for query or mutation builders, either *Build()* or *Select()* methods should be used in order to generate the query. Action builder needs Query or Mutation method having defined instead.
 
 ```
- var query = client.QueryBuilder<Book>().Where(x => x.Title.Equals("C++ Demystified")).Build();
- var mutation = client.MutationBuilder<Book>().Insert(
+var query = client.QueryBuilder<Book>().Where(x => x.Title.Equals("C++ Demystified")).Build();
+var mutation = client.MutationBuilder<Book>().Insert(
     new Book
     {
       Title = "My new book",
       ReleaseDate = DateTime.Now
     }).Build();
-    
- var action = client.ActionBuilder().Query(new MyQueryActionRequest());
 
+var action = client.ActionBuilder().Query(new MyQueryActionRequest());
 ```
 
 *Select() method allows fragmentation of results, meaning it is possible to select which properties should be returned from the requested entity. As Select returns anonymous object, it can be casted explicitly to the entity type by applying Cast() method.*
@@ -90,40 +89,34 @@ Query, mutation and action builders are provided by the client instance. After h
 
 After having GraphQL method constructs defined, execution is simple:
 
-```
-  var response = await client.ExecuteAsync(query);
-```
+    var response = await client.ExecuteAsync(query);
 
 Or establishing subscription upon the defined query:
-
 ```
 var subscription = await client.SubscribeAsync(query, (response) =>
 {
-  Console.WriteLine(response.Name);
+    Console.WriteLine(response.Name);
 });
 ```
-
 In order to dispose subscription DisposeAsync() method should be used:
 
-```
-  await subscription.DisposeAsync(); 
-```
+    await subscription.DisposeAsync(); 
 
 #### Execute multiple queries/mutations as single transaction
 
 After having defined multiple constructs of the same method, *(Queries cannot be combined with mutations)*, transaction object can be constructed using 'GraphQLTransaction' static factory class:
 
 ```
-  var transaction = GraphQLTransaction.Construct(mutationA, mutationB, mutationC);
-  var response = await client.ExecuteAsync(transaction);
+var transaction = GraphQLTransaction.Construct(mutationA, mutationB, mutationC);
+var response = await client.ExecuteAsync(transaction);
 ```
 *Actions can be used as part of transactions too, as beeing either mutation or query.*
 
 Currently transaction factory supports up to 5 distinct method constructs which will have strongly typed response. Support for larger numbers is planned for some of the upcoming releases together with the unlimited transaction execution without strongly typed response objects.
 
 ```
-  var firstResult = transactionResponse.First;
-  var secondResult = transactionResponse.Second;
+var firstResult = transactionResponse.First;
+var secondResult = transactionResponse.Second;
 ```
 
 #### Hasura GraphQL engine action response

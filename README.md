@@ -56,15 +56,15 @@ Please refer to the [Options](https://github.com/mmaderic/FluentGraphQL/blob/mas
 In order to use client, IGraphQLClient interface should be injected into depending handlers/services.
 
 ```
-  public class MyHandler
-  {
-      private readonly IGraphQLClient _graphQLClient;
+public class MyHandler
+{
+  private readonly IGraphQLClient _graphQLClient;
 
-      public MyHandler(IGraphQLClient graphQLClient)
-      {
-          _graphQLClient = graphQLClient;
-      }
+  public MyHandler(IGraphQLClient graphQLClient)
+  {
+      _graphQLClient = graphQLClient;
   }
+}
 ```
 
 ### Using Query builder
@@ -97,10 +97,10 @@ After having GraphQL method constructs defined, execution is simple:
 Or establishing subscription upon the defined query:
 
 ```
-  var subscription = await client.SubscribeAsync(query, (response) =>
-  {
-      Console.WriteLine(response.Name);
-  });
+var subscription = await client.SubscribeAsync(query, (response) =>
+{
+  Console.WriteLine(response.Name);
+});
 ```
 
 In order to dispose subscription DisposeAsync() method should be used:

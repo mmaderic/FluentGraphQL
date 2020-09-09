@@ -30,10 +30,6 @@ namespace FluentGraphQL.Client.Extensions
     {
         public static IServiceCollection AddGraphQLClient(this IServiceCollection serviceCollection, Func<IServiceProvider, GraphQLOptions> optionsFactory)
         {
-            serviceCollection.AddSingleton<IGraphQLClientOptions>(x => optionsFactory.Invoke(x));
-            serviceCollection.AddSingleton<IGraphQLStringFactoryOptions>(x => optionsFactory.Invoke(x));
-            serviceCollection.AddSingleton<IGraphQLSubscriptionOptions>(x => optionsFactory.Invoke(x));
-
             serviceCollection.TryAddSingleton<IGraphQLValueFactory, GraphQLValueFactory>();
             serviceCollection.TryAddSingleton<IGraphQLStringFactory, GraphQLStringFactory>();
             serviceCollection.TryAddSingleton<IGraphQLValueConverter, GraphQLValueConverter>();
@@ -46,6 +42,10 @@ namespace FluentGraphQL.Client.Extensions
             serviceCollection.TryAddSingleton<IGraphQLWebSocketProtocolService, GraphQLWebSocketProtocolService>();
 
             serviceCollection.AddScoped<IGraphQLClient, GraphQLClient>();
+
+            serviceCollection.AddTransient<IGraphQLClientOptions>(x => optionsFactory.Invoke(x));
+            serviceCollection.AddTransient<IGraphQLStringFactoryOptions>(x => optionsFactory.Invoke(x));
+            serviceCollection.AddTransient<IGraphQLSubscriptionOptions>(x => optionsFactory.Invoke(x));
 
             return serviceCollection;
         }

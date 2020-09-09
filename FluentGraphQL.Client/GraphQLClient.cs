@@ -49,7 +49,7 @@ namespace FluentGraphQL.Client
 
         public GraphQLClient(
            IGraphQLClientOptions graphQLClientOptions, IGraphQLStringFactory graphQLStringFactory, IGraphQLBuilderFactory graphQLBuilderFactory,           
-           IServiceProvider serviceProvider, IGraphQLWebSocketProtocolService graphQLWebSocketService, IGraphQLSerializerOptionsProvider graphQLSerializerOptionsProvider)
+           IGraphQLWebSocketProtocolService graphQLWebSocketService, IGraphQLSerializerOptionsProvider graphQLSerializerOptionsProvider)
         {
             _graphQLStringFactory = graphQLStringFactory;
             _graphQLBuilderFactory = graphQLBuilderFactory;
@@ -57,7 +57,7 @@ namespace FluentGraphQL.Client
             _graphQLSerializerOptionsProvider = graphQLSerializerOptionsProvider;
             _graphQLWebSocketService = graphQLWebSocketService;
 
-            _httpClient = new Lazy<HttpClient>(() => _graphQLClientOptions.HttpClientProvider.Invoke(serviceProvider));
+            _httpClient = new Lazy<HttpClient>(() => _graphQLClientOptions.HttpClientProvider.Invoke());
         }
 
         public IGraphQLClient UseAdminHeader()

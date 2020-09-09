@@ -24,7 +24,7 @@ Either commands, from Package Manager Console or .NET Core CLI, will download an
 
 ### Configuring Client
 
-In order to use FluentGraphQL.Client in .NET applications, it is required to register it's dependencies using some of the dependeny injection providers.
+In order to use FluentGraphQL.Client in .NET applications, it is required to register it's dependencies using some of the dependency injection providers.
 This example will demonstrate basic configuration using built in .NET Core dependency injection. 
 
 ```

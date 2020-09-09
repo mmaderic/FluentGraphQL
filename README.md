@@ -84,7 +84,7 @@ Query, mutation and action builders are provided by the client instance. After h
 
 ```
 
-*Select() method allows fragmentation of results, meaning it is possible to select which properties should be returned from the requested entity. As Select returns anonymous object, it can be casted explicitly to entity type by using Cast() method.*
+*Select() method allows fragmentation of results, meaning it is possible to select which properties should be returned from the requested entity. As Select returns anonymous object, it can be casted explicitly to the entity type by applying Cast() method.*
 
 ### Using Client
 

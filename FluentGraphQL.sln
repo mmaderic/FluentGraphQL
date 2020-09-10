@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		Documentation\01.getting-started.md = Documentation\01.getting-started.md
 		Documentation\02.options.md = Documentation\02.options.md
 		Documentation\03.defining-entities.md = Documentation\03.defining-entities.md
+		Documentation\04.generating-queries.md = Documentation\04.generating-queries.md
 	EndProjectSection
 EndProject
 Global

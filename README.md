@@ -118,7 +118,7 @@ After having defined multiple constructs of the same method, *(Queries cannot be
 var transaction = GraphQLTransaction.Construct(mutationA, mutationB, mutationC);
 var response = await client.ExecuteAsync(transaction);
 ```
-*Actions can be used as part of transactions too, as beeing either mutation or query.*
+*Actions and functions can be used as part of transactions too, as beeing either mutation or query.*
 
 Currently transaction factory supports up to 5 distinct method constructs which will have strongly typed response. Support for larger numbers is planned for some of the upcoming releases together with the unlimited transaction execution without strongly typed response objects.
 

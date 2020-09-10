@@ -1,5 +1,5 @@
 # FluentGraphQL
-> GraphQL client with query builder for .NET
+> GraphQL client with linq expression based query builder for .NET 
 
 [![NuGet](https://img.shields.io/nuget/v/FluentGraphQL.Client)](https://www.nuget.org/packages/FluentGraphQL.Client)
 [![Nuget](https://img.shields.io/nuget/dt/FluentGraphQL.Client)](https://www.nuget.org/packages/FluentGraphQL.Client)
@@ -73,6 +73,7 @@ Query, mutation, function and action builders are provided by the client instanc
 
 ```
 var query = client.QueryBuilder<Book>().Where(x => x.Title.Equals("C++ Demystified")).Build();
+
 var mutation = client.MutationBuilder<Book>().Insert(
     new Book
     {

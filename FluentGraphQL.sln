@@ -21,6 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 	ProjectSection(SolutionItems) = preProject
 		Documentation\01.getting-started.md = Documentation\01.getting-started.md
 		Documentation\02.options.md = Documentation\02.options.md
+		Documentation\03.defining-entities.md = Documentation\03.defining-entities.md
 	EndProjectSection
 EndProject
 Global

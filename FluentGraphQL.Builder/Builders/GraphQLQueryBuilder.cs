@@ -74,7 +74,7 @@ namespace FluentGraphQL.Builder.Builders
             var arguments = functionType.GetProperties();
 
             var argumentStatements = arguments.Select(x => new GraphQLValueStatement(x.Name, _graphQLValueFactory.Construct(x.GetValue(graphQLFunction))));
-            var argumentStatementObject = new GraphQLValueStatement("args", new GraphQLObjectValue(argumentStatements));
+            var argumentStatementObject = new GraphQLValueStatement(Constant.GraphQLKeyords.Args, new GraphQLObjectValue(argumentStatements));
 
             _graphQLQuery.HeaderNode.Title = functionType.Name;
             _graphQLQuery.HeaderNode.Statements.Add(argumentStatementObject);

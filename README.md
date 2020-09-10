@@ -69,7 +69,7 @@ public class MyHandler
 
 ### Using Query builder
 
-Query, mutation and action builders are provided by the client instance. After having defined query parameters for query or mutation builders, either *Build()* or *Select()* methods should be used in order to generate the query. Action builder needs Query or Mutation method having defined instead.
+Query, mutation, function and action builders are provided by the client instance. After having defined query parameters for query, mutation or function builders, either *Build()* or *Select()* methods should be used in order to generate the query. Action builder needs Query or Mutation method having defined instead.
 
 ```
 var query = client.QueryBuilder<Book>().Where(x => x.Title.Equals("C++ Demystified")).Build();
@@ -79,6 +79,13 @@ var mutation = client.MutationBuilder<Book>().Insert(
       Title = "My new book",
       ReleaseDate = DateTime.Now
     }).Build();
+
+var queryf = client.FunctionQueryBuilder(new MySqlFunctionName
+{
+    MyParamName = "some value"
+})
+.Limit(5)
+.OrderBy(x => x.Date).Build();
 
 var action = client.ActionBuilder().Query(new MyQueryActionRequest());
 ```

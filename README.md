@@ -1,5 +1,5 @@
 # FluentGraphQL
-> GraphQL client with query builder for .NET
+> GraphQL client with linq expression query builder for .NET 
 
 [![NuGet](https://img.shields.io/nuget/v/FluentGraphQL.Client)](https://www.nuget.org/packages/FluentGraphQL.Client)
 [![Nuget](https://img.shields.io/nuget/dt/FluentGraphQL.Client)](https://www.nuget.org/packages/FluentGraphQL.Client)
@@ -69,16 +69,24 @@ public class MyHandler
 
 ### Using Query builder
 
-Query, mutation and action builders are provided by the client instance. After having defined query parameters for query or mutation builders, either *Build()* or *Select()* methods should be used in order to generate the query. Action builder needs Query or Mutation method having defined instead.
+Query, mutation, function and action builders are provided by the client instance. After having defined query parameters for query, mutation or function builders, either *Build()* or *Select()* methods should be used in order to generate the query. Action builder needs Query or Mutation method having defined instead.
 
 ```
 var query = client.QueryBuilder<Book>().Where(x => x.Title.Equals("C++ Demystified")).Build();
+
 var mutation = client.MutationBuilder<Book>().Insert(
     new Book
     {
       Title = "My new book",
       ReleaseDate = DateTime.Now
     }).Build();
+
+var queryf = client.FunctionQueryBuilder(new MySqlFunctionName
+{
+    MyParamName = "some value"
+})
+.Limit(5)
+.OrderBy(x => x.Date).Build();
 
 var action = client.ActionBuilder().Query(new MyQueryActionRequest());
 ```
@@ -110,7 +118,7 @@ After having defined multiple constructs of the same method, *(Queries cannot be
 var transaction = GraphQLTransaction.Construct(mutationA, mutationB, mutationC);
 var response = await client.ExecuteAsync(transaction);
 ```
-*Actions can be used as part of transactions too, as beeing either mutation or query.*
+*Actions and functions can be used as part of transactions too, as beeing either mutation or query.*
 
 Currently transaction factory supports up to 5 distinct method constructs which will have strongly typed response. Support for larger numbers is planned for some of the upcoming releases together with the unlimited transaction execution without strongly typed response objects.
 

@@ -1,5 +1,5 @@
 # FluentGraphQL
-> GraphQL client with linq expression based query builder for .NET 
+> GraphQL client with linq expression query builder for .NET 
 
 [![NuGet](https://img.shields.io/nuget/v/FluentGraphQL.Client)](https://www.nuget.org/packages/FluentGraphQL.Client)
 [![Nuget](https://img.shields.io/nuget/dt/FluentGraphQL.Client)](https://www.nuget.org/packages/FluentGraphQL.Client)

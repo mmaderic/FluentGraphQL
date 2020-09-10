@@ -78,6 +78,12 @@ namespace FluentGraphQL.Client
             return _graphQLBuilderFactory.MutationBuilder<TEntity>();
         }
 
+        public IGraphQLFunctionQueryBuilder<TEntity> FunctionQueryBuilder<TEntity>(IGraphQLFunction<TEntity> graphQLFunction) 
+            where TEntity : IGraphQLEntity
+        {
+            return _graphQLBuilderFactory.FunctionBuilder(graphQLFunction);
+        }
+
         public IGraphQLActionBuilder ActionBuilder()
         {
             return _graphQLBuilderFactory.ActionBuilder();
@@ -540,6 +546,6 @@ namespace FluentGraphQL.Client
             errorResponseInstance.ErrorMessage = defaultErrorActionResponse.ErrorMessage;
 
             return errorResponseInstance;
-        }
+        }        
     }
 }

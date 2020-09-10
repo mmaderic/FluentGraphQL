@@ -47,6 +47,12 @@ namespace FluentGraphQL.Client.Services
             return new GraphQLMutationBuilder<TEntity>(_graphQLSelectNodeFactory, _graphQLValueFactory, _graphQLExpressionConverter);
         }
 
+        public IGraphQLFunctionQueryBuilder<TEntity> FunctionBuilder<TEntity>(IGraphQLFunction<TEntity> graphQLFunction)
+            where TEntity : IGraphQLEntity
+        {
+            return new GraphQLQueryBuilder<TEntity, TEntity>(_graphQLSelectNodeFactory, _graphQLExpressionConverter, _graphQLValueFactory).AsFunction(graphQLFunction);
+        }
+
         public IGraphQLActionBuilder ActionBuilder()
         {
             return new GraphQLActionBuilder(_graphQLSelectNodeFactory, _graphQLValueFactory);

@@ -31,6 +31,9 @@ namespace FluentGraphQL.Client.Abstractions
         IGraphQLMutationBuilder<TEntity> MutationBuilder<TEntity>()
             where TEntity : IGraphQLEntity;
 
+        IGraphQLFunctionQueryBuilder<TEntity> FunctionQueryBuilder<TEntity>(IGraphQLFunction<TEntity> graphQLFunction)
+            where TEntity : IGraphQLEntity;
+
         IGraphQLActionBuilder ActionBuilder();
 
         Task<TEntity> ExecuteAsync<TEntity>(IGraphQLSingleQuery<TEntity> graphQLQuery);

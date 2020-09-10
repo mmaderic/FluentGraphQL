@@ -28,7 +28,7 @@ using System.Linq.Expressions;
 namespace FluentGraphQL.Builder.Builders
 {
     public class GraphQLQueryBuilder<TRoot, TEntity> :
-        IGraphQLRootNodeBuilder<TRoot>,
+        IGraphQLRootNodeBuilder<TRoot>, IGraphQLFunctionQueryBuilder<TRoot>,
         IGraphQLSingleNodeBuilder<TRoot>, IGraphQLSingleNodeBuilder<TRoot, TEntity>,
         IGraphQLStandardNodeBuilder<TRoot>, IGraphQLStandardNodeBuilder<TRoot, TEntity>,
         IGraphQLSingleOrderedNodeBuilder<TRoot>, IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>,
@@ -66,6 +66,20 @@ namespace FluentGraphQL.Builder.Builders
         {
             _graphQLExpressionConverter = graphQLExpressionConverter;
             _graphQLValueFactory = graphQLValuefactory;
+        }
+
+        public GraphQLQueryBuilder<TRoot, TEntity> AsFunction(IGraphQLFunction<TRoot> graphQLFunction)
+        {
+            var functionType = graphQLFunction.GetType();
+            var arguments = functionType.GetProperties();
+
+            var argumentStatements = arguments.Select(x => new GraphQLValueStatement(x.Name, _graphQLValueFactory.Construct(x.GetValue(graphQLFunction))));
+            var argumentStatementObject = new GraphQLValueStatement("args", new GraphQLObjectValue(argumentStatements));
+
+            _graphQLQuery.HeaderNode.Title = functionType.Name;
+            _graphQLQuery.HeaderNode.Statements.Add(argumentStatementObject);
+
+            return this;
         }
 
         private GraphQLQueryBuilder<TRoot, TEntity> ByPrimaryKey(string key, object value)
@@ -545,7 +559,7 @@ namespace FluentGraphQL.Builder.Builders
             return query;
         }
 
-        IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleNodeBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
+        private GraphQLSelectedMethodConstruct<TRoot, TResult> SelectSingle<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             var query = Select(selector);
             query.IsSingle = true;
@@ -553,12 +567,14 @@ namespace FluentGraphQL.Builder.Builders
             return query;
         }
 
+        IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleNodeBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
+        {
+            return SelectSingle(selector);
+        }
+
         IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleNodeBuilder<TRoot, TEntity>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
-            var query = Select(selector);
-            query.IsSingle = true;
-
-            return query;
+            return SelectSingle(selector);
         }
 
         IGraphQLStandardSelectedQuery<TRoot, TResult> IGraphQLStandardNodeBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
@@ -569,6 +585,26 @@ namespace FluentGraphQL.Builder.Builders
         IGraphQLStandardSelectedQuery<TRoot, TResult> IGraphQLStandardNodeBuilder<TRoot, TEntity>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             return Select(selector);
-        }        
+        }
+
+        IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleOrderedNodeBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
+        {
+            return SelectSingle(selector);
+        }
+
+        IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
+        {
+            return SelectSingle(selector);
+        }
+
+        IGraphQLStandardSelectedQuery<TRoot, TResult> IGraphQLStandardOrderedNodeBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
+        {
+            return Select(selector);
+        }
+
+        IGraphQLStandardSelectedQuery<TRoot, TResult> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
+        {
+            return Select(selector);
+        }
     }
 }

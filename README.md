@@ -4,7 +4,7 @@
 [![NuGet](https://img.shields.io/nuget/v/FluentGraphQL.Client)](https://www.nuget.org/packages/FluentGraphQL.Client)
 [![Nuget](https://img.shields.io/nuget/dt/FluentGraphQL.Client)](https://www.nuget.org/packages/FluentGraphQL.Client)
 
-Please follow this link for more comprehensive information: [Documentation](https://github.com/mmaderic/FluentGraphQL/tree/master/Documentation)
+For more comprehensive information, please follow this link: [Documentation](https://github.com/mmaderic/FluentGraphQL/tree/master/Documentation)
 
 <br />
 

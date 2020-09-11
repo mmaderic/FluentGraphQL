@@ -577,16 +577,6 @@ namespace FluentGraphQL.Builder.Builders
             return SelectSingle(selector);
         }
 
-        IGraphQLStandardSelectedQuery<TRoot, TResult> IGraphQLStandardNodeBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
-        {
-            return Select(selector);
-        }
-
-        IGraphQLStandardSelectedQuery<TRoot, TResult> IGraphQLStandardNodeBuilder<TRoot, TEntity>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
-        {
-            return Select(selector);
-        }
-
         IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleOrderedNodeBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             return SelectSingle(selector);
@@ -597,17 +587,27 @@ namespace FluentGraphQL.Builder.Builders
             return SelectSingle(selector);
         }
 
+        IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleQueryBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
+        {
+            return SelectSingle(selector);
+        }
+
+        IGraphQLStandardSelectedQuery<TRoot, TResult> IGraphQLStandardNodeBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
+        {
+            return Select(selector);
+        }
+
+        IGraphQLStandardSelectedQuery<TRoot, TResult> IGraphQLStandardNodeBuilder<TRoot, TEntity>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
+        {
+            return Select(selector);
+        }
+
         IGraphQLStandardSelectedQuery<TRoot, TResult> IGraphQLStandardOrderedNodeBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             return Select(selector);
         }
 
         IGraphQLStandardSelectedQuery<TRoot, TResult> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
-        {
-            return Select(selector);
-        }
-
-        IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleQueryBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             return Select(selector);
         }

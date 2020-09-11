@@ -160,6 +160,9 @@ namespace FluentGraphQL.Builder.Converters
 
         private IGraphQLValueStatement EvaluateComparisonExpressionType(Expression left, Expression right, ExpressionType expressionType)
         {
+            if (left is UnaryExpression unaryExpression)
+                return EvaluateComparisonExpressionType(unaryExpression.Operand, right, expressionType);
+
             if (!(left is MemberExpression memberExpression))
                 throw new InvalidOperationException();
 
@@ -279,7 +282,11 @@ namespace FluentGraphQL.Builder.Converters
                     throw new InvalidOperationException();
 
                 var expressionValue = Expression.Lambda(methodCallExpression.Arguments[0]).Compile().DynamicInvoke();
-                var operatorValue = new { _eq = expressionValue };
+
+                var operatorValue = expressionValue is null
+                    ? (object) new { _is_null = true }
+                    : new { _eq = expressionValue };
+
                 var operatorGraphQLValue = _graphQLValueFactory.Construct(operatorValue);
 
                 return EvaluateMemberExpression(memberExpression, operatorGraphQLValue);
@@ -496,13 +503,28 @@ namespace FluentGraphQL.Builder.Converters
 
         private IGraphQLValueStatement EvaluateSelectBinaryExpression(BinaryExpression binaryExpression)
         {
-            if (binaryExpression.Left is MemberExpression leftMemberExpression)
-                return EvaluateMemberExpression(leftMemberExpression, null);
+            if (binaryExpression.Left is MemberExpression le && binaryExpression.Right is MemberExpression re)
+            {
+                var leftMem = EvaluateMemberExpression(le, null);
+                var rightMem = EvaluateMemberExpression(re, null);
 
-            if (binaryExpression.Right is MemberExpression rightMemberExpression)
-                return EvaluateMemberExpression(rightMemberExpression, null);
-            
-            throw new NotImplementedException();
+                return new GraphQLValueStatement(null, new GraphQLObjectValue(new[] { leftMem, rightMem }));
+            }
+
+            IGraphQLValueStatement left = null;
+            IGraphQLValueStatement right = null;
+
+            if (binaryExpression.Left is BinaryExpression lBin)
+                left = EvaluateSelectBinaryExpression(lBin);
+            else if (binaryExpression.Left is MemberExpression leftMemberExpression)
+                left = EvaluateMemberExpression(leftMemberExpression, null);
+
+            if (binaryExpression.Right is BinaryExpression rBin)
+                right = EvaluateSelectBinaryExpression(rBin);
+            else if (binaryExpression.Right is MemberExpression rightMemberExpression)
+                right = EvaluateMemberExpression(rightMemberExpression, null);
+
+            return new GraphQLValueStatement(null, new GraphQLObjectValue(new[] { left, right }));
         }
     }
 }

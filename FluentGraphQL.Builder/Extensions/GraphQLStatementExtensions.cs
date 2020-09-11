@@ -67,6 +67,9 @@ namespace FluentGraphQL.Builder.Extensions
 
         private static void ApplySelectStatementRecursive(IGraphQLValueStatement graphQLValueStatement, IGraphQLSelectNode graphQLSelectNode)
         {
+            if (graphQLValueStatement is null)
+                return;
+
             if (graphQLValueStatement.Value is IGraphQLCollectionValue collectionValue)
             {
                 if (!(graphQLValueStatement.PropertyName is null))
@@ -83,9 +86,17 @@ namespace FluentGraphQL.Builder.Extensions
             }
             else if (graphQLValueStatement.Value is IGraphQLObjectValue objectValue)
             {
-                graphQLSelectNode = (IGraphQLSelectNode)graphQLSelectNode.Get(graphQLValueStatement.PropertyName);
-                graphQLSelectNode.IsActive = true;
-                ApplySelectStatementRecursive(objectValue.PropertyValues.First(), graphQLSelectNode);
+                if (graphQLValueStatement.PropertyName is null)
+                {
+                    foreach (var item in objectValue.PropertyValues)
+                        ApplySelectStatementRecursive(item, graphQLSelectNode);
+                }
+                else
+                {
+                    graphQLSelectNode = (IGraphQLSelectNode)graphQLSelectNode.Get(graphQLValueStatement.PropertyName);
+                    graphQLSelectNode.IsActive = true;
+                    ApplySelectStatementRecursive(objectValue.PropertyValues.First(), graphQLSelectNode);
+                }
             }
             else
                 graphQLSelectNode.Get(graphQLValueStatement.PropertyName).Activate();

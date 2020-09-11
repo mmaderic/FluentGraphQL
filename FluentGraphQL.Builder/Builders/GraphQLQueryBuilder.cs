@@ -572,16 +572,6 @@ namespace FluentGraphQL.Builder.Builders
             return query;
         }
 
-        IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleNodeBuilder<TRoot, TEntity>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
-        {
-            return SelectSingle(selector);
-        }
-
-        IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleOrderedNodeBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
-        {
-            return SelectSingle(selector);
-        }
-
         IGraphQLSingleSelectedQuery<TRoot, TResult> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             return SelectSingle(selector);

@@ -466,10 +466,13 @@ namespace FluentGraphQL.Builder.Converters
                 if (argument is BinaryExpression binaryExpression)
                     return EvaluateSelectBinaryExpression(binaryExpression);
 
+                if (argument is NewExpression nestedNewExpression)
+                    return EvaluateSelectNewExpression(nestedNewExpression);
+
                 if (argument is ConditionalExpression conditionalExpression)
                     return null;
-                
-                throw new NotImplementedException();
+
+                throw new NotImplementedException();                
             }).ToArray();
 
             var objectValues = arguments.Where(x => !(x is null)).Select(x => new GraphQLObjectValue(x)).ToArray();

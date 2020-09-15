@@ -19,7 +19,7 @@ using System.Reflection;
 
 namespace FluentGraphQL.Client.Extensions
 {
-    internal static class TypeExtensions
+    public static class TypeExtensions
     {
         public static bool IsSimple(this Type type)
         {

@@ -41,25 +41,41 @@ namespace FluentGraphQL.Builder.Nodes
         public TKey Avg<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
             var statement = _graphQLExpressionConverter.Convert(keySelector);
-            return (TKey)Aggregate.Avg.PropertyValues[statement.Value.ToString()];
+            var result = Aggregate.Avg.PropertyValues[statement.PropertyName.ToString()];
+            if (result is null)
+                return default;
+
+            return (TKey)result;
         }
 
         public TKey Sum<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
             var statement = _graphQLExpressionConverter.Convert(keySelector);
-            return (TKey)Aggregate.Sum.PropertyValues[statement.Value.ToString()];
+            var result = Aggregate.Sum.PropertyValues[statement.PropertyName.ToString()];
+            if (result is null)
+                return default;
+
+            return (TKey)result;
         }
 
         public TKey Min<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
             var statement = _graphQLExpressionConverter.Convert(keySelector);
-            return (TKey)Aggregate.Min.PropertyValues[statement.Value.ToString()];
+            var result = Aggregate.Min.PropertyValues[statement.PropertyName.ToString()];
+            if (result is null)
+                return default;
+
+            return (TKey)result;
         }
 
         public TKey Max<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
             var statement = _graphQLExpressionConverter.Convert(keySelector);
-            return (TKey) Aggregate.Max.PropertyValues[statement.Value.ToString()];
+            var result = Aggregate.Max.PropertyValues[statement.PropertyName.ToString()];
+            if (result is null)
+                return default;
+
+            return (TKey)result;
         }
     }
 }

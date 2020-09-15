@@ -61,11 +61,14 @@ namespace FluentGraphQL.Builder.Abstractions
     {
         IGraphQLSingleNodeBuilder<TEntity> Where(Expression<Func<TEntity, bool>> expressionPredicate);
         IGraphQLSingleNodeBuilder<TEntity> Limit(int number, int offset = 0);
+
         IGraphQLSingleOrderedNodeBuilder<TEntity> OrderBy<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         IGraphQLSingleOrderedNodeBuilder<TEntity> OrderByDescending<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         IGraphQLSingleOrderedNodeBuilder<TEntity> OrderByNullsFirst<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         IGraphQLSingleOrderedNodeBuilder<TEntity> OrderByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        IGraphQLSingleAggregateBuilder<TEntity, TAggregate> Aggregate<TAggregate>() where TAggregate : IGraphQLEntity;
+
+        IGraphQLSingleAggregateBuilder<TEntity, TAggregate> Aggregate<TAggregate>() 
+            where TAggregate : IGraphQLEntity;
     }
 
     public interface IGraphQLSingleNodeBuilder<TRoot, TNode> : IGraphQLSingleNodeBuilderBase<TRoot>
@@ -74,11 +77,14 @@ namespace FluentGraphQL.Builder.Abstractions
     {
         IGraphQLSingleNodeBuilder<TRoot, TNode> Where(Expression<Func<TNode, bool>> expressionPredicate);
         IGraphQLSingleNodeBuilder<TRoot, TNode> Limit(int number, int offset = 0);
+
         IGraphQLSingleOrderedNodeBuilder<TRoot, TNode> OrderBy<TKey>(Expression<Func<TNode, TKey>> keySelector);
         IGraphQLSingleOrderedNodeBuilder<TRoot, TNode> OrderByDescending<TKey>(Expression<Func<TNode, TKey>> keySelector);
         IGraphQLSingleOrderedNodeBuilder<TRoot, TNode> OrderByNullsFirst<TKey>(Expression<Func<TNode, TKey>> keySelector);
         IGraphQLSingleOrderedNodeBuilder<TRoot, TNode> OrderByDescendingNullsLast<TKey>(Expression<Func<TNode, TKey>> keySelector);
-        IGraphQLSingleAggregateBuilder<TRoot, TNode, TAggregate> Aggregate<TAggregate>() where TAggregate : IGraphQLEntity;
+
+        IGraphQLSingleAggregateBuilder<TRoot, TNode, TAggregate> Aggregate<TAggregate>() 
+            where TAggregate : IGraphQLEntity;
     }
 
     public interface IGraphQLStandardNodeBuilder<TEntity> : IGraphQLStandardNodeBuilderBase<TEntity>
@@ -86,11 +92,16 @@ namespace FluentGraphQL.Builder.Abstractions
     {
         IGraphQLStandardNodeBuilder<TEntity> Where(Expression<Func<TEntity, bool>> expressionPredicate);
         IGraphQLStandardNodeBuilder<TEntity> Limit(int number, int offset = 0);
+
         IGraphQLStandardOrderedNodeBuilder<TEntity> OrderBy<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         IGraphQLStandardOrderedNodeBuilder<TEntity> OrderByDescending<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         IGraphQLStandardOrderedNodeBuilder<TEntity> OrderByNullsFirst<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         IGraphQLStandardOrderedNodeBuilder<TEntity> OrderByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector);
-        IGraphQLStandardAggregateBuilder<TEntity, TAggregate> Aggregate<TAggregate>() where TAggregate : IGraphQLEntity;
+
+        IGraphQLRootAggregateBuilder<TEntity> Aggregate();
+        IGraphQLStandardAggregateBuilder<TEntity, TAggregate> Aggregate<TAggregate>() 
+            where TAggregate : IGraphQLEntity;
+
         IGraphQLStandardSelectedQuery<TEntity, TResult> Select<TResult>(Expression<Func<TEntity, TResult>> selector);
     }
 
@@ -114,7 +125,6 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleQueryBuilder<TEntity> ById(object value);
         IGraphQLSingleQueryBuilder<TEntity> ByPrimaryKey(string key, object value);
         IGraphQLSingleQueryBuilder<TEntity> ByPrimaryKey<TPrimaryKey>(Expression<Func<TEntity, TPrimaryKey>> propertyExpression, TPrimaryKey value);
-        IGraphQLRootAggregateBuilder<TEntity> Aggregate();
     }
 
     public interface IGraphQLSingleOrderedNodeBuilder<TEntity> : IGraphQLSingleNodeBuilderBase<TEntity>

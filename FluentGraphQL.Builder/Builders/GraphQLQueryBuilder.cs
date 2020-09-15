@@ -441,7 +441,7 @@ namespace FluentGraphQL.Builder.Builders
             return (GraphQLAggregateBuilder<TRoot, TEntity, TAggregate>)builder;
         }
 
-        IGraphQLRootAggregateBuilder<TRoot> IGraphQLRootNodeBuilder<TRoot>.Aggregate()
+        IGraphQLRootAggregateBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.Aggregate()
         {
             return Aggregate<TRoot>();
         }

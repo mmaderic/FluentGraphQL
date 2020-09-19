@@ -429,6 +429,9 @@ namespace FluentGraphQL.Builder.Builders
                 if (aggregateNode is null)
                     throw new InvalidOperationException("Selected aggregate is not part of the current query node.");
 
+                if (aggregateNode.EntityType.Equals(_graphQLSelectNode.EntityType))
+                    aggregateNode.HeaderNode.Statements = _graphQLSelectNode.HeaderNode.Statements;
+
                 var aggregateBuilder = new GraphQLAggregateBuilder<TRoot, TEntity, TAggregate>(_graphQLQuery, aggregateNode, _graphQLExpressionConverter, _graphQLValueFactory)
                 {
                     _nodeBuilders = _nodeBuilders

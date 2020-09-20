@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>1.0.0-alpha10</Version>
+    <Version>1.0.0-beta.1</Version>
     <Authors>Mateo Mađerić</Authors>
     <Company>KODEM</Company>
     <Product>FluentGraphQL</Product>

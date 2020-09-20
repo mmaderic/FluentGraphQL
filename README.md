@@ -2,6 +2,7 @@
 > GraphQL client with linq expression query builder for .NET 
 
 [![NuGet](https://img.shields.io/nuget/v/FluentGraphQL.Client)](https://www.nuget.org/packages/FluentGraphQL.Client)
+[![Tests Actions Status](https://github.com/mmaderic/FluentGraphQL/workflows/Tests/badge.svg)](https://github.com/mmaderic/FluentGraphQL/actions)
 [![Nuget](https://img.shields.io/nuget/dt/FluentGraphQL.Client)](https://www.nuget.org/packages/FluentGraphQL.Client)
 
 For more comprehensive information, please follow this link: [Documentation](https://github.com/mmaderic/FluentGraphQL/tree/master/Documentation)

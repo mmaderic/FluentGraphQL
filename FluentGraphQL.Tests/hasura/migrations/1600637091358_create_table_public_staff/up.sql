@@ -1,0 +1,2 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE TABLE "public"."staff"("id" uuid NOT NULL DEFAULT gen_random_uuid(), "first_name" text NOT NULL, "last_name" text NOT NULL, "email" text NOT NULL, "phone" text, "active" boolean NOT NULL, "store_id" uuid NOT NULL, "manager_id" uuid NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("store_id") REFERENCES "public"."store"("id") ON UPDATE cascade ON DELETE cascade, UNIQUE ("email"));

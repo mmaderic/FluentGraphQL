@@ -1,0 +1,1 @@
+CREATE TABLE "public"."stock"("store_id" uuid NOT NULL, "product_id" uuid NOT NULL, "quantity" integer NOT NULL, PRIMARY KEY ("store_id","product_id") , FOREIGN KEY ("store_id") REFERENCES "public"."store"("id") ON UPDATE cascade ON DELETE cascade, FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON UPDATE cascade ON DELETE cascade);

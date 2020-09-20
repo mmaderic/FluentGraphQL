@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -29,5 +29,13 @@
   <ItemGroup>
     <ProjectReference Include="..\FluentGraphQL.Client\FluentGraphQL.Client.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Tests\" />
+  </ItemGroup>
+
+  <PropertyGroup>
+	<Nullable>enable</Nullable>
+  </PropertyGroup>
 
 </Project>

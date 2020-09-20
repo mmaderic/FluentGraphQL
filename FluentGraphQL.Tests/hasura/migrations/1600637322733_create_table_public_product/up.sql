@@ -1,0 +1,2 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE TABLE "public"."product"("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" text NOT NULL, "brand_id" uuid NOT NULL, "category_id" uuid NOT NULL, "model_year" integer NOT NULL, "price" numeric NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("category_id") REFERENCES "public"."category"("id") ON UPDATE cascade ON DELETE cascade, FOREIGN KEY ("brand_id") REFERENCES "public"."brand"("id") ON UPDATE cascade ON DELETE cascade);

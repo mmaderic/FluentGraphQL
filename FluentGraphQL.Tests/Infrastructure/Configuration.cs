@@ -5,13 +5,13 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http;
 
-namespace FluentGraphQL.Tests
+namespace FluentGraphQL.Tests.Infrastructure
 {
-    public class Setup
+    public static class Configuration
     {
-        public IServiceProvider ServiceProvider { get; } 
+        public static IServiceProvider ServiceProvider { get; } 
 
-        public Setup()
+        static Configuration()
         {
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddGraphQLClient(x => new GraphQLOptions

@@ -23,14 +23,10 @@ jobs:
       run: docker-compose -f docker-compose.yml up -d
     - name: Display container status
       run: docker-compose ps
-    - name: Display docker logs
-      run: docker-compose logs 
     - name: Wait for hasura migrations
       uses: jakejarvis/wait-action@master
       with:
         time: '15s'
-    - name: Display hasura logs
-      run: docker-compose logs hasura
     - name: Run tests
       run: dotnet test --no-restore --verbosity normal
     - name: Display hasura logs

@@ -9,6 +9,6 @@ namespace FluentGraphQL.Tests.Entities
         public Guid Id { get; set; }
         public string Name { get; set; } = null!;
 
-        ICollection<Product> Products { get; set; } = null!;
+        public ICollection<Product> Products { get; set; } = null!;
     }
 }

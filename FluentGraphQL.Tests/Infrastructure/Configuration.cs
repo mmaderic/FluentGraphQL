@@ -19,7 +19,7 @@ namespace FluentGraphQL.Tests.Infrastructure
                 UseAdminHeader = true,
                 AdminHeaderName = "x-hasura-admin-secret",
                 AdminHeaderSecret = "admin",
-                WebSocketEndpoint = "ws://hasura:8080/v1/graphql",
+                WebSocketEndpoint = "ws://localhost:8080/v1/graphql",
                 NamingStrategy = NamingStrategy.SnakeCase,
                 HttpClientProvider = () => new HttpClient { BaseAddress = new Uri("http://localhost:8080/v1/graphql") }
             });

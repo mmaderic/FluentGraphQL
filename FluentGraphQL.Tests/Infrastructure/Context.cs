@@ -2,15 +2,25 @@
 using FluentGraphQL.Client.Extensions;
 using FluentGraphQL.Tests.Entities;
 using Microsoft.Extensions.DependencyInjection;
+using Nito.AsyncEx;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace FluentGraphQL.Tests.Infrastructure
 {
-    public class Context : IDisposable
+    [CollectionDefinition("Context collection")]
+    public class DatabaseCollection : ICollectionFixture<Context>
+    {
+        // This class has no code, and is never created. Its purpose is simply
+        // to be the place to apply [CollectionDefinition] and all the
+        // ICollectionFixture<> interfaces.
+    }
+
+    public class Context : IAsyncLifetime
     {
         public static class Categories
         {
@@ -65,31 +75,51 @@ namespace FluentGraphQL.Tests.Infrastructure
         }
 
         public IGraphQLClient GraphQLClient { get; }
-        private bool _disposed;
+        private static readonly AsyncLock _initializationMutex;
+        private static bool _initialized;
+
+        static Context()
+        {
+            _initializationMutex = new AsyncLock();
+        }
 
         public Context()
         {
             GraphQLClient = Configuration.ServiceProvider.GetRequiredService<IGraphQLClient>();
-            ClearDatabase();
-
-            var task1 = InsertCategories();
-            var task2 = InsertBrands();
-            var task3 = InsertOrderStatuses();
-            var task4 = InsertStores();
-
-            Task.WaitAll(task1, task2, task3, task4);
-
-            var task5 = InsertStaff();
-            var task6 = InsertProducts();
-
-            Task.WaitAll(task5, task6);
-
-            var task7 = InsertStock();
-
-            Task.WaitAll(task7);
         }
 
-        private void ClearDatabase()
+        public async Task InitializeAsync()
+        {
+            var key = await _initializationMutex.LockAsync();
+            if (_initialized)
+                return;
+
+            try
+            {
+                await ClearDatabaseAsync();
+
+                var task1 = InsertCategories();
+                var task2 = InsertBrands();
+                var task3 = InsertOrderStatuses();
+                var task4 = InsertStores();
+
+                await Task.WhenAll(task1, task2, task3, task4);
+
+                var task5 = InsertStaff();
+                var task6 = InsertProducts();
+
+                await Task.WhenAll(task5, task6);
+                await InsertStock();
+
+                _initialized = true;
+            }
+            finally
+            {
+                key.Dispose();
+            }
+        }
+
+        private async Task ClearDatabaseAsync()
         {
             var deleteBrandsMutation = GraphQLClient.MutationBuilder<Brand>().DeleteAll().Return(x => x.Id);
             var deleteCategoriesMutation = GraphQLClient.MutationBuilder<Category>().DeleteAll().Return(x => x.Id);
@@ -99,13 +129,15 @@ namespace FluentGraphQL.Tests.Infrastructure
             var deleteProductsMutation = GraphQLClient.MutationBuilder<Product>().DeleteAll().Return(x => x.Id);
             var deleteStocksMutation = GraphQLClient.MutationBuilder<Stock>().DeleteAll().Return(x => x.ProductId);
 
-            GraphQLClient.ExecuteAsync(deleteStocksMutation).Wait();
-            GraphQLClient.ExecuteAsync(deleteProductsMutation).Wait();
-            GraphQLClient.ExecuteAsync(deleteStaffMutation).Wait();
-            GraphQLClient.ExecuteAsync(deleteStoresMutation).Wait();
-            GraphQLClient.ExecuteAsync(deleteOrderStatusesMutation).Wait();
-            GraphQLClient.ExecuteAsync(deleteCategoriesMutation).Wait();
-            GraphQLClient.ExecuteAsync(deleteBrandsMutation).Wait();
+            var task1 = GraphQLClient.ExecuteAsync(deleteStocksMutation);
+            var task2 = GraphQLClient.ExecuteAsync(deleteProductsMutation);
+            var task3 = GraphQLClient.ExecuteAsync(deleteStaffMutation);
+            var task4 = GraphQLClient.ExecuteAsync(deleteStoresMutation);
+            var task5 = GraphQLClient.ExecuteAsync(deleteOrderStatusesMutation);
+            var task6 = GraphQLClient.ExecuteAsync(deleteCategoriesMutation);
+            var task7 = GraphQLClient.ExecuteAsync(deleteBrandsMutation);
+
+            await Task.WhenAll(task1, task2, task3, task4, task5, task6, task7);
         }
 
         private Guid MapId(Guid id, string name, IEnumerable<dynamic> collection)
@@ -886,23 +918,11 @@ namespace FluentGraphQL.Tests.Infrastructure
             });
 
             await Task.WhenAll(tasks);
-        }
+        } 
 
-        protected virtual void Dispose(bool disposing)
+        public Task DisposeAsync()
         {
-            if (!_disposed)
-            {
-                if (disposing)
-                    ClearDatabase();
-
-                _disposed = true;
-            }
-        }
-      
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            return Task.CompletedTask;
         }
     }
 }

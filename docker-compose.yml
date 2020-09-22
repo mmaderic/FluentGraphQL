@@ -17,9 +17,10 @@ services:
             - ./FluentGraphQL.Tests/hasura/migrations:/hasura-migrations
             - ./FluentGraphQL.Tests/hasura/metadata:/hasura-metadata
         environment:
-            HASURA_GRAPHQL_DATABASE_URL: postgres://admin:admin@postgres:5432/fluent_graphql
+            HASURA_GRAPHQL_DATABASE_URL: postgres://admin:admin@127.0.0.1:5432/fluent_graphql
             HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
             HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
+            HASURA_GRAPHQL_NO_OF_RETRIES: 3
         env_file:
             - ./FluentGraphQL.Tests/hasura/.env
     postgres:

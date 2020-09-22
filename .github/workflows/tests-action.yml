@@ -21,9 +21,21 @@ jobs:
       run: dotnet restore
     - name: Build
       run: docker-compose -f docker-compose.yml up -d --build --force-recreate
+    - name: Sleep for 5 seconds
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '5s'
     - name: Check running containers
       run: docker-compose ps
+    - name: Sleep for 5 seconds
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '5s'
     - name: Display docker logs
       run: docker-compose logs 
+    - name: Sleep for 5 seconds
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '5s'
     - name: Run tests
       run: dotnet test --no-restore --verbosity normal

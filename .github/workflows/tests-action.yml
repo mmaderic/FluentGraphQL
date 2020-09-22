@@ -23,7 +23,7 @@ jobs:
       run: docker-compose -f docker-compose.yml up -d --build --force-recreate
     - name: Check running containers
       run: docker-compose ps
-    - name: Display hasura logs
-      run: docker-compose logs hasura
-    - name: Test
+    - name: Display docker logs
+      run: docker-compose logs 
+    - name: Run tests
       run: dotnet test --no-restore --verbosity normal

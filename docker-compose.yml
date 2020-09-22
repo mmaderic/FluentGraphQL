@@ -1,39 +1,35 @@
-﻿version: "3"
+﻿version: "3.6"
 
-services:    
-    tests:
-        build:
-            context: .
-            dockerfile: ./FluentGraphQL.Tests/.Dockerfile
-        depends_on:
-            - "hasura"
-    hasura:
-        image: hasura/graphql-engine:v1.3.2
-        ports:
-            - "127.0.0.1:8080:8080"
-        depends_on:
-            - "postgres"
-        volumes:
-            - ./FluentGraphQL.Tests/hasura/migrations:/hasura-migrations
-            - ./FluentGraphQL.Tests/hasura/metadata:/hasura-metadata
-        environment:
-            HASURA_GRAPHQL_DATABASE_URL: postgres://admin:admin@127.0.0.1:5432/fluent_graphql
-            HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
-            HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
-            HASURA_GRAPHQL_NO_OF_RETRIES: 3
-        env_file:
-            - ./FluentGraphQL.Tests/hasura/.env
-    postgres:
-        image: postgres:12.2
-        ports:
-            - "127.0.0.1:5432:5432"
-        environment:
-            POSTGRES_USER: admin
-            POSTGRES_PASSWORD: admin
-            POSTGRES_DB: fluent_graphql
-        volumes:
-            - db-data:/var/lib/postgresql/data
-
+services:
+  postgres:
+    image: postgres:12
+    restart: always
+    volumes:
+    - db_data:/var/lib/postgresql/data
+    environment:
+        POSTGRES_USER: admin
+        POSTGRES_PASSWORD: admin
+  hasura:
+    image: hasura/graphql-engine:v1.3.2.cli-migrations-v2
+    ports:
+    - "8080:8080"
+    depends_on:
+    - "postgres"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://admin:admin@postgres:5432/postgres
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      HASURA_GRAPHQL_ADMIN_SECRET: admin
+    volumes:
+        - ./FluentGraphQL.Tests/hasura/migrations:/hasura-migrations
+        - ./FluentGraphQL.Tests/hasura/metadata:/hasura-metadata
+  tests:
+    build:
+        context: .
+        dockerfile: ./FluentGraphQL.Tests/.Dockerfile
+    depends_on:
+    - "hasura"
 volumes:
-    db-data:
-        driver: local
+  db_data:

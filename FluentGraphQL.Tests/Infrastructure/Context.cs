@@ -70,7 +70,6 @@ namespace FluentGraphQL.Tests.Infrastructure
         public Context()
         {
             GraphQLClient = Configuration.ServiceProvider.GetRequiredService<IGraphQLClient>();
-            Task.Delay(5000).Wait();
             ClearDatabase();
 
             var task1 = InsertCategories();

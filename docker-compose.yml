@@ -3,6 +3,8 @@
 services:
   postgres:
     image: postgres:12
+    ports:
+    - "5432:5432"
     restart: always
     volumes:
     - db_data:/var/lib/postgresql/data
@@ -22,6 +24,8 @@ services:
       HASURA_GRAPHQL_DEV_MODE: "true"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       HASURA_GRAPHQL_ADMIN_SECRET: admin
+      HASURA_GRAPHQL_MIGRATIONS_SERVER_TIMEOUT: 60
+      HASURA_GRAPHQL_NO_OF_RETRIES: 30
     volumes:
         - ./FluentGraphQL.Tests/hasura/migrations:/hasura-migrations
         - ./FluentGraphQL.Tests/hasura/metadata:/hasura-metadata

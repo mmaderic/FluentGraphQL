@@ -272,16 +272,14 @@ namespace FluentGraphQL.Client
 
         private async Task<string> ExecuteRequestAsync(IGraphQLRequest graphQLRequest, GraphQLMethod graphQLMethod)
         {
-            var task1 = ConfigureAuthenticationHeader(graphQLMethod);
-            var task2 = BuildRequestStringContent(graphQLRequest);
-
-            await Task.WhenAll(task1, task2).ConfigureAwait(false);
-
+            var stringContent = new StringContent(graphQLRequest.ToString(), Encoding.UTF8, "application/json");
             var httpRequestMessage = new HttpRequestMessage
             {
-                Content = task2.Result,
+                Content = stringContent,
                 Method = HttpMethod.Post
             };
+
+            await ConfigureAuthenticationHeader(graphQLMethod, httpRequestMessage).ConfigureAwait(false);
 
             var response = await _httpClient.Value.SendAsync(httpRequestMessage).ConfigureAwait(false);
             var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -310,19 +308,13 @@ namespace FluentGraphQL.Client
 
             return JsonSerializer.Deserialize<GraphQLError[]>(errors.GetRawText(), options);
         }
-
-        private Task<StringContent> BuildRequestStringContent(IGraphQLRequest graphQLRequest)
+ 
+        private async Task ConfigureAuthenticationHeader(GraphQLMethod method, HttpRequestMessage httpRequestMessage)
         {
-            var payload = graphQLRequest.ToString();
-            return Task.FromResult(new StringContent(payload, Encoding.UTF8, "application/json"));
-        }
-
-        private async Task ConfigureAuthenticationHeader(GraphQLMethod method)
-        {
-            _httpClient.Value.DefaultRequestHeaders.Clear();
-
-            void AddAdminHeader() =>             
-                _httpClient.Value.DefaultRequestHeaders.Add(_graphQLClientOptions.AdminHeaderName, _graphQLClientOptions.AdminHeaderSecret);            
+            void AddAdminHeader()
+            {
+                httpRequestMessage.Headers.Add(_graphQLClientOptions.AdminHeaderName, _graphQLClientOptions.AdminHeaderSecret);
+            }
 
             if (_graphQLClientOptions.UseAdminHeader)            
                 AddAdminHeader();
@@ -345,7 +337,7 @@ namespace FluentGraphQL.Client
                     AddAdminHeader();
 
                 else if (!(_graphQLClientOptions.AuthenticationHeaderProvider is null))
-                    _httpClient.Value.DefaultRequestHeaders.Authorization = await _graphQLClientOptions.AuthenticationHeaderProvider.Invoke().ConfigureAwait(false);                
+                    httpRequestMessage.Headers.Authorization = await _graphQLClientOptions.AuthenticationHeaderProvider.Invoke().ConfigureAwait(false);                
             }
         }     
 

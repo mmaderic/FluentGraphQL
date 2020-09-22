@@ -30,10 +30,6 @@
     <ProjectReference Include="..\FluentGraphQL.Client\FluentGraphQL.Client.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Tests\" />
-  </ItemGroup>
-
   <PropertyGroup>
 	<Nullable>enable</Nullable>
   </PropertyGroup>

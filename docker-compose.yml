@@ -29,11 +29,5 @@ services:
     volumes:
         - ./FluentGraphQL.Tests/hasura/migrations:/hasura-migrations
         - ./FluentGraphQL.Tests/hasura/metadata:/hasura-metadata
-  tests:
-    build:
-        context: .
-        dockerfile: ./FluentGraphQL.Tests/.Dockerfile
-    depends_on:
-    - "hasura"
 volumes:
   db_data:

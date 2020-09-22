@@ -21,7 +21,7 @@ namespace FluentGraphQL.Tests.Infrastructure
                 AdminHeaderSecret = "admin",
                 WebSocketEndpoint = "ws://localhost:8080/v1/graphql",
                 NamingStrategy = NamingStrategy.SnakeCase,
-                HttpClientProvider = () => new HttpClient { BaseAddress = new Uri("http://localhost:8080/v1/graphql") }
+                HttpClientProvider = () => new HttpClient { BaseAddress = new Uri("http://hasura:8080/v1/graphql") }
             });
 
             ServiceProvider = serviceCollection.BuildServiceProvider();

@@ -21,23 +21,17 @@ jobs:
       run: dotnet restore
     - name: Build
       run: docker-compose -f docker-compose.yml up -d
-    - name: Sleep for 5 seconds
-      uses: jakejarvis/wait-action@master
-      with:
-        time: '5s'
-    - name: Check running containers
+    - name: Display container status
       run: docker-compose ps
-    - name: Sleep for 5 seconds
-      uses: jakejarvis/wait-action@master
-      with:
-        time: '5s'
     - name: Display docker logs
       run: docker-compose logs 
-    - name: Sleep for 30 seconds
+    - name: Wait for hasura migrations
       uses: jakejarvis/wait-action@master
       with:
-        time: '30s'
+        time: '15s'
     - name: Display hasura logs
       run: docker-compose logs hasura
     - name: Run tests
       run: dotnet test --no-restore --verbosity normal
+    - name: Display hasura logs
+      run: docker-compose logs hasura

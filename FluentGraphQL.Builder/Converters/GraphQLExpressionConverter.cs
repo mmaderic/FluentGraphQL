@@ -21,6 +21,7 @@ using FluentGraphQL.Builder.Constants;
 using FluentGraphQL.Builder.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -83,6 +84,12 @@ namespace FluentGraphQL.Builder.Converters
 
             if (expression is MemberExpression memberExpression)
                 return EvaluateMemberExpression(memberExpression, null);
+
+            if (expression is MethodCallExpression methodCallExpression)
+                return EvaluateSelectMethodCallExpression(methodCallExpression);
+
+            if (expression is InvocationExpression invocationExpression)
+                return EvaluateSelectInvocationExpression(invocationExpression);
 
             throw new NotImplementedException();
         }
@@ -455,7 +462,28 @@ namespace FluentGraphQL.Builder.Converters
 
         private IGraphQLValueStatement EvaluateSelectNewExpression(NewExpression newExpression)
         {
-            var arguments = newExpression.Arguments.Select(argument =>
+            return EvaluateSelectExpressionArguments(newExpression.Arguments);
+        }
+
+        private IGraphQLValueStatement EvaluateSelectInvocationExpression(InvocationExpression invocationExpression)
+        {
+            return EvaluateSelectExpressionArguments(invocationExpression.Arguments);
+        }
+
+        private IGraphQLValueStatement EvaluateSelectMethodCallExpression(MethodCallExpression methodCallExpression)
+        {
+            var methodName = methodCallExpression.Method.Name;
+            var category = methodName.EvaluateMethodCallCategory();
+
+            if (category?.Equals(typeof(Constant.SupportedMethodCalls)) == true)
+                return EvaluateSupportedMethodCallExpression(methodName, methodCallExpression);
+            
+            return EvaluateSelectExpressionArguments(methodCallExpression.Arguments);
+        }
+
+        private IGraphQLValueStatement EvaluateSelectExpressionArguments(ReadOnlyCollection<Expression> expressionArguments)
+        {
+            var arguments = expressionArguments.Select(argument =>
             {
                 if (argument is MemberExpression memberExpression)
                     return EvaluateMemberExpression(memberExpression, null);
@@ -472,36 +500,11 @@ namespace FluentGraphQL.Builder.Converters
                 if (argument is ConditionalExpression conditionalExpression)
                     return null;
 
-                throw new NotImplementedException();                
+                throw new NotImplementedException();
             }).ToArray();
 
             var objectValues = arguments.Where(x => !(x is null)).Select(x => new GraphQLObjectValue(x)).ToArray();
             return new GraphQLValueStatement(null, new GraphQLCollectionValue(objectValues));
-        }
-
-        private IGraphQLValueStatement EvaluateSelectMethodCallExpression(MethodCallExpression methodCallExpression)
-        {
-            if (methodCallExpression.Object is MemberExpression memberExpression)
-                return EvaluateMemberExpression(memberExpression, null);
-
-            var methodName = methodCallExpression.Method.Name;
-            var category = methodName.EvaluateMethodCallCategory();
-
-            if (category?.Equals(typeof(Constant.SupportedMethodCalls)) == true)
-                return EvaluateSupportedMethodCallExpression(methodName, methodCallExpression);
-
-            if (!(category is null) || methodCallExpression.Arguments.Count != 1)
-                throw new NotImplementedException();  
-
-            var expression = methodCallExpression.Arguments[0];
-
-            if (expression is MemberExpression argumentMemberExpression)
-                return EvaluateMemberExpression(argumentMemberExpression, null);
-
-            if (expression is MethodCallExpression argumentMethodCallExpression)
-                return EvaluateSelectMethodCallExpression(argumentMethodCallExpression);
-
-            throw new NotImplementedException(); 
         }
 
         private IGraphQLValueStatement EvaluateSelectBinaryExpression(BinaryExpression binaryExpression)

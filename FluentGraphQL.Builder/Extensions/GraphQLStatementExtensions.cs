@@ -99,7 +99,7 @@ namespace FluentGraphQL.Builder.Extensions
                 }
             }
             else
-                graphQLSelectNode.Get(graphQLValueStatement.PropertyName).Activate();
+                graphQLSelectNode.Get(graphQLValueStatement.PropertyName)?.Activate();
         }
 
         private static object FindGraphQLValueStatement(IEnumerable<IGraphQLStatement> statements, string key)

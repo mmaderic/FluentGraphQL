@@ -37,7 +37,7 @@ jobs:
       uses: jakejarvis/wait-action@master
       with:
         time: '30s'
-    -name: Display hasura logs
+    - name: Display hasura logs
       run: docker-compose logs hasura
     - name: Run tests
       run: dotnet test --no-restore --verbosity normal

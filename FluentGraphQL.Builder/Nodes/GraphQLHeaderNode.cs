@@ -27,11 +27,21 @@ namespace FluentGraphQL.Builder.Nodes
         public int HierarchyLevel { get; set; }
         public List<IGraphQLStatement> Statements { get; set; }
 
-        public GraphQLHeaderNode(string title, int hierarchyLevel = 1)
+        private GraphQLHeaderNode()
+        {
+            Statements = new List<IGraphQLStatement>();
+        }
+
+        public GraphQLHeaderNode(string title, int hierarchyLevel = 1) : this()
         {
             Title = title;
             HierarchyLevel = hierarchyLevel;
-            Statements = new List<IGraphQLStatement>();
+        }
+
+        public GraphQLHeaderNode(string title, string suffix, int hierarchyLevel = 1) 
+            : this(title, hierarchyLevel)
+        {
+            Suffix = suffix;
         }
 
         public override string ToString()

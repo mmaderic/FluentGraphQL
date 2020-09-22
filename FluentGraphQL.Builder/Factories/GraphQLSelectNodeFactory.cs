@@ -33,103 +33,135 @@ namespace FluentGraphQL.Builder.Factories
         private class StatementContainer
         {
             public IEnumerable<IGraphQLPropertyStatement> PropertyStatements { get; set; }
-            public IEnumerable<IGraphQLSelectNode> NestedObjectStatements { get; set; }
-            public IEnumerable<IGraphQLSelectNode> NestedCollectionStatements { get; set; }
-            public IEnumerable<IGraphQLSelectNode> NestedAggregateContainers { get; set; }           
+            public IEnumerable<SelectNodeMetadata> NestedObjectStatements { get; set; }
+            public IEnumerable<SelectNodeMetadata> NestedCollectionStatements { get; set; }
+            public IEnumerable<SelectNodeMetadata> NestedAggregateContainers { get; set; }     
+            
+            public StatementContainer()
+            {
+                PropertyStatements = Enumerable.Empty<IGraphQLPropertyStatement>();
+                NestedObjectStatements = Enumerable.Empty<SelectNodeMetadata>();
+                NestedCollectionStatements = Enumerable.Empty<SelectNodeMetadata>();
+                NestedAggregateContainers = Enumerable.Empty<SelectNodeMetadata>();
+            }
+        }  
+        
+        private class SelectNodeMetadata
+        {
+            public Guid Id { get; set; }
+            public string Name { get; set; }
+            public Type Type { get; set; }
+            public int Level { get; set; }
+            public string Title { get; set; }
+            public string Suffix { get; set; }
+            public bool IsCollection{ get; set; }
+            public bool IsActive { get; set; }
+            public StatementContainer Container { get; set; }            
+
+            public SelectNodeMetadata(
+                string name, Type type, int level, string title, bool isCollection, bool isActive, StatementContainer container)
+            {
+                Id = Guid.NewGuid();
+                Name = name;
+                Type = type;
+                Level = level;
+                Title = title;
+                IsCollection = isCollection;
+                IsActive = isActive;
+                Container = container;
+            }
+
+            public override string ToString()
+            {
+                return Name;
+            }
         }
 
         public virtual IGraphQLSelectNode Construct(Type type)
         {
-            var selectNode = ConstructRecursive(type);
-            var rootAggregateContainer = typeof(IGraphQLAggregateContainerNode<>).MakeGenericType(type);
-            var rootAggregateNode = ConstructRecursive(rootAggregateContainer);
+            var selectNodePath = new List<SelectNodeMetadata>();
+            var rootAggregatePath = new List<SelectNodeMetadata>();
 
-            rootAggregateNode.HeaderNode.Title = type.Name;
-            rootAggregateNode.HeaderNode.Suffix = Constant.GraphQLKeyords.Aggregate;
+            var selectNodesList = new List<GraphQLSelectNode>();
+            var rootAggregateNodesList = new List<GraphQLSelectNode>();
+
+            var rootAggregateContainer = typeof(IGraphQLAggregateContainerNode<>).MakeGenericType(type);
+
+            var selectNodeMetadata = ConstructMetadata(type, selectNodePath);
+            var rootAggregateNodeMetadata = ConstructMetadata(rootAggregateContainer, rootAggregatePath);
+
+            rootAggregateNodeMetadata.Title = type.Name;
+            rootAggregateNodeMetadata.Suffix = Constant.GraphQLKeyords.Aggregate;
+
+            var selectNode = BuildSelectNode(selectNodeMetadata, selectNodesList);
+            var rootAggregateNode = BuildSelectNode(rootAggregateNodeMetadata, rootAggregateNodesList);
 
             ((List<IGraphQLSelectNode>)selectNode.AggregateContainerNodes).Add(rootAggregateNode);
 
             return selectNode;
         }
 
-        private IGraphQLSelectNode ConstructRecursive(Type type, int hierarchyLevel = 1, List<Type> parentTypes = null, bool isCollectionNode = false, string explicitNodeName = null)
+        private SelectNodeMetadata ConstructMetadata(Type type, List<SelectNodeMetadata> path, int level = 1, bool isCollection = false, string propertyName = null)
         {
-            if (parentTypes is null)
-                parentTypes = new List<Type>();
+            var isAggregateContainer = typeof(IGraphQLAggregateContainerNode).IsAssignableFrom(type);
+            var entityType = isAggregateContainer ? type.GetGenericArguments().First() : type;
+            var title = propertyName is null ? type.Root().Name : propertyName;
+            var name = $"{entityType.Name}.{title}";
+           
+            var circuit = path.FirstOrDefault(x => x.Name == name); 
+            if (!(circuit is null))
+                return null;            
 
-            var nodeName = explicitNodeName is null
-                ? type.Root().Name
-                : explicitNodeName;
+            var container = new StatementContainer();
+            var metadata = new SelectNodeMetadata(name, entityType, level, title, isCollection, !isAggregateContainer, container);
+            path.Add(metadata);
+
+            BuildStatementsContainer(container, type, level, path);
+
+            return metadata;
+        }
+
+        private void BuildStatementsContainer(StatementContainer container, Type type, int level, List<SelectNodeMetadata> path)
+        {
+            if (type.Equals(typeof(IGraphQLAggregateClauseNode)))
+                return;
 
             var properties = type.IsInterface
                 ? type.GetInterfaces().SelectMany(x => x.GetProperties()).Concat(type.GetProperties())
                 : type.GetProperties();
 
-            var isAggregateContainer = typeof(IGraphQLAggregateContainerNode).IsAssignableFrom(type);
-            var entityType = isAggregateContainer ? type.GetGenericArguments().First() : type;
-            var headerNode = new GraphQLHeaderNode(nodeName, hierarchyLevel);
-
-            var container = !type.Equals(typeof(IGraphQLAggregateClauseNode))
-                ? BuildNestedStatementsContainer(properties, type, parentTypes, hierarchyLevel, isAggregateContainer)
-                : null;
-
-            return BuildSelectNode(headerNode, container, entityType, isCollectionNode, !isAggregateContainer);
-        }
-
-        private StatementContainer BuildNestedStatementsContainer(IEnumerable<PropertyInfo> properties, Type type, List<Type> parentTypes, int hierarchyLevel, bool isAggregateContainer)
-        {
             var simpleProperties = properties.Where(x => IsSimpleProperty(x)).ToArray();
             var complexProperties = properties.Except(simpleProperties).ToArray();
             var CollectionProperties = complexProperties.Where(x => IsCollectionProperty(x)).ToArray();
             var AggregateContainerProperties = complexProperties.Except(CollectionProperties).Where(x => IsAggregateContainerProperty(x)).ToArray();
             var ObjectProperties = complexProperties.Except(CollectionProperties.Union(AggregateContainerProperties)).ToArray();
 
-            var parentTypeArgument = isAggregateContainer && parentTypes.Any() ? parentTypes.Last() : type;
-            parentTypes.Add(parentTypeArgument);
-
-            var container = new StatementContainer();
             Parallel.Invoke(
                 () => container.PropertyStatements = ConstructPropertyStatements(simpleProperties),
-                () => container.NestedObjectStatements = ConstructNestedObjectSelectNodes(ObjectProperties, hierarchyLevel, parentTypes),
-                () => container.NestedCollectionStatements = ConstructNestedCollectionSelectNodes(CollectionProperties, hierarchyLevel, parentTypes),
-                () => container.NestedAggregateContainers = ConstructAggregateContainerSelectNodes(AggregateContainerProperties, hierarchyLevel, parentTypes)
+                () => container.NestedObjectStatements = ConstructNestedObjectSelectNodes(ObjectProperties, level, path),
+                () => container.NestedCollectionStatements = ConstructNestedCollectionSelectNodes(CollectionProperties, level, path),
+                () => container.NestedAggregateContainers = ConstructAggregateContainerSelectNodes(AggregateContainerProperties, level, path)
             );
-
-            return container;
-        }
-
-        private IEnumerable<IGraphQLSelectNode> ConstructNestedObjectSelectNodes(
-            IEnumerable<PropertyInfo> propertyInfos, int hierarchyLevel, List<Type> parentTypes)
-        {
-            return propertyInfos.Where(x => !parentTypes.Contains(x.PropertyType))
-                .Select(x => 
-                {
-                    var useExplicitName = 
-                        x.PropertyType.Equals(typeof(IGraphQLAggregateNode)) ||
-                        x.PropertyType.Equals(typeof(IGraphQLAggregateClauseNode));
-
-                    var explicitName = useExplicitName ? x.Name : null;
-                    return ConstructRecursive(x.PropertyType, hierarchyLevel + 1, new List<Type>(parentTypes), false, explicitName);
-                }).ToArray();
-        }
-
-        private IEnumerable<IGraphQLSelectNode> ConstructNestedCollectionSelectNodes(
-            IEnumerable<PropertyInfo> propertyInfos, int hierarchyLevel, List<Type> parentTypes)
-        {
-            return propertyInfos.Where(x => !parentTypes.Contains(x.PropertyType.GetGenericArguments().First()))
-                .Select(x => ConstructRecursive(x.PropertyType.GetGenericArguments().First(), hierarchyLevel + 1, new List<Type>(parentTypes), true, x.Name)).ToArray();
         }
 
         private IEnumerable<IGraphQLPropertyStatement> ConstructPropertyStatements(IEnumerable<PropertyInfo> propertyInfos)
         {
             return propertyInfos.Select(x => new GraphQLPropertyStatement(x.Name)).ToArray();
+        }       
+
+        private IEnumerable<SelectNodeMetadata> ConstructNestedObjectSelectNodes(IEnumerable<PropertyInfo> propertyInfos, int level, List<SelectNodeMetadata> path)
+        {
+            return propertyInfos.Select(x => ConstructMetadata(x.PropertyType, new List<SelectNodeMetadata>(path), level + 1, false, x.Name)).ToArray();
         }
 
-        private IEnumerable<IGraphQLSelectNode> ConstructAggregateContainerSelectNodes(
-            IEnumerable<PropertyInfo> propertyInfos, int hierarchyLevel, List<Type> parentTypes)
+        private IEnumerable<SelectNodeMetadata> ConstructNestedCollectionSelectNodes(IEnumerable<PropertyInfo> propertyInfos, int level, List<SelectNodeMetadata> path)
         {
-            return propertyInfos.Where(x => !parentTypes.Contains(x.PropertyType))
-                .Select(x => ConstructRecursive(x.PropertyType, hierarchyLevel + 1, new List<Type>(parentTypes), false, x.Name)).ToList();
+            return propertyInfos.Select(x => ConstructMetadata(x.PropertyType.GetGenericArguments().First(), new List<SelectNodeMetadata>(path), level + 1, true, x.Name)).ToArray();
+        }
+
+        private IEnumerable<SelectNodeMetadata> ConstructAggregateContainerSelectNodes(IEnumerable<PropertyInfo> propertyInfos, int level, List<SelectNodeMetadata> path)
+        {
+            return propertyInfos.Select(x => ConstructMetadata(x.PropertyType, new List<SelectNodeMetadata>(path), level + 1, false, x.Name)).ToArray();
         }
 
         private bool IsSimpleProperty(PropertyInfo propertyInfo)
@@ -157,28 +189,23 @@ namespace FluentGraphQL.Builder.Factories
                 propertyInfo.PropertyType.GetGenericTypeDefinition().Equals(typeof(IGraphQLAggregateContainerNode<>));
         }
 
-        private IGraphQLSelectNode BuildSelectNode(IGraphQLHeaderNode headerNode, StatementContainer container, Type entityType, bool isCollectionNode, bool isActive)
+        private IGraphQLSelectNode BuildSelectNode(SelectNodeMetadata metadata, List<GraphQLSelectNode> nodes)
         {
-            var childSelectNodes = !(container is null)
-                ? container.NestedObjectStatements.Union(container.NestedCollectionStatements)
-                : new List<IGraphQLSelectNode>();
+            if (metadata is null)
+                return null;
 
-            var propertyStatements = container?.PropertyStatements is null
-                ? new List<IGraphQLPropertyStatement>()
-                : container?.PropertyStatements;
+            var headerNode = new GraphQLHeaderNode(metadata.Title, metadata.Suffix, metadata.Level);
+            var node = new GraphQLSelectNode(headerNode, metadata.Container.PropertyStatements, metadata.Type, metadata.IsCollection, metadata.IsActive);
+            nodes.Add(node);
 
-            var nestedAggregateContainers = container?.NestedAggregateContainers is null
-                ? new List<IGraphQLSelectNode>()
-                : container?.NestedAggregateContainers;
+            var nestedAggregateContainers = metadata.Container.NestedAggregateContainers.Select(x => BuildSelectNode(x, nodes)).Where(x => !(x is null)).ToList();
+            var childSelectNodes = metadata.Container.NestedObjectStatements.Select(x => BuildSelectNode(x, nodes))
+                    .Union(metadata.Container.NestedCollectionStatements.Select(x => BuildSelectNode(x, nodes))).Where(x => !(x is null)).ToArray();
 
-            return new GraphQLSelectNode(
-                headerNode,
-                propertyStatements,
-                childSelectNodes,
-                nestedAggregateContainers,
-                entityType,
-                isCollectionNode,
-                isActive);
-        }        
+            node.ChildSelectNodes = childSelectNodes;
+            node.AggregateContainerNodes = nestedAggregateContainers;
+
+            return node;
+        }     
     }
 }

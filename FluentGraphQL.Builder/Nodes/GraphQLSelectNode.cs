@@ -32,15 +32,18 @@ namespace FluentGraphQL.Builder.Nodes
         public Type EntityType { get; set; }
         public bool IsActive { get; set; }
 
+        private GraphQLSelectNode()
+        {
+            ChildSelectNodes = Enumerable.Empty<IGraphQLSelectNode>();
+            AggregateContainerNodes = Enumerable.Empty<IGraphQLSelectNode>();
+        }
+
         public GraphQLSelectNode(
-            IGraphQLHeaderNode headerNode, IEnumerable<IGraphQLPropertyStatement> propertyStatements,
-            IEnumerable<IGraphQLSelectNode> childSelectNodes, IEnumerable<IGraphQLSelectNode> aggregateContainerNodes,
-            Type entityType, bool isCollectionNode = false, bool active = true)
+            IGraphQLHeaderNode headerNode, IEnumerable<IGraphQLPropertyStatement> propertyStatements,           
+            Type entityType, bool isCollectionNode = false, bool active = true) : this()
         {
             HeaderNode = headerNode;
             PropertyStatements = propertyStatements;
-            ChildSelectNodes = childSelectNodes;
-            AggregateContainerNodes = aggregateContainerNodes;
             IsCollectionNode = isCollectionNode;
             EntityType = entityType;
 
@@ -51,44 +54,18 @@ namespace FluentGraphQL.Builder.Nodes
 
         public GraphQLSelectNode(
             IGraphQLPropertyStatement propertyStatement, Type entityType, bool isCollectionNode = false, bool active = true) :
-            this(null, new[] { propertyStatement }, Enumerable.Empty<IGraphQLSelectNode>(), Enumerable.Empty<IGraphQLSelectNode>(), entityType, isCollectionNode, active)
+            this(null, new[] { propertyStatement }, entityType, isCollectionNode, active)
         {  
         }
 
-        public void ActivateNode<TNode>()
+        public virtual void ActivateNode<TNode>()
         {
             GetChildNode<TNode>().Activate();
         }
 
-        public void ActivateProperty(string propertyName)
+        public virtual void ActivateProperty(string propertyName)
         {
             PropertyStatements.First(x => x.PropertyName.Equals(propertyName)).Activate();
-        }
-
-        public virtual IGraphQLSelectNode GetChildNode<TEntity>()
-        {
-            if (EntityType.Equals(typeof(TEntity)))
-                return this;
-
-            return ChildSelectNodes.Select(x => x.GetChildNode<TEntity>()).FirstOrDefault(x => !(x is null));
-        }
-
-        public virtual string ToString(IGraphQLStringFactory graphQLStringFactory)
-        {            
-            return graphQLStringFactory.Construct(this);
-        }
-
-        public override string ToString()
-        {
-            return HeaderNode.Title.ToString();
-        }
-
-        public IGraphQLSelectNode GetChildNode(string name)
-        {
-            if (HeaderNode.Title.Equals(name))
-                return this;
-
-            return ChildSelectNodes.Select(x => x.GetChildNode(name)).FirstOrDefault(x => !(x is null));
         }
 
         public IGraphQLSelectStatement Get(string statementName)
@@ -100,10 +77,36 @@ namespace FluentGraphQL.Builder.Nodes
             return ChildSelectNodes.FirstOrDefault(x => x.HeaderNode.Title.Equals(statementName));
         }
 
+        public virtual string ToString(IGraphQLStringFactory graphQLStringFactory)
+        {
+            return graphQLStringFactory.Construct(this);
+        }
+
+        public override string ToString()
+        {
+            return HeaderNode.Title.ToString();
+        }        
+
+        public virtual IGraphQLSelectNode GetChildNode<TEntity>()
+        {
+            if (EntityType.Equals(typeof(TEntity)))
+                return this;          
+
+            return ChildSelectNodes.Select(x => x.GetChildNode<TEntity>()).FirstOrDefault(x => !(x is null));
+        }
+
+        public IGraphQLSelectNode GetChildNode(string name)
+        {
+            if (HeaderNode.Title.Equals(name))
+                return this;
+
+            return ChildSelectNodes.Select(x => x.GetChildNode(name)).FirstOrDefault(x => !(x is null));
+        }
+
         public bool HasAggregateContainer()
         {
             if (AggregateContainerNodes.Any(x => x.IsActive))
-                return true;
+                return true;           
 
             return ChildSelectNodes.Any(x => x.HasAggregateContainer());
         }
@@ -116,10 +119,10 @@ namespace FluentGraphQL.Builder.Nodes
         }
 
         public void Deactivate()
-        {
+        {  
             IsActive = false;
             Parallel.ForEach(PropertyStatements, (item) => { item.Deactivate(); });
             Parallel.ForEach(ChildSelectNodes, (item) => { item.Deactivate(); });
-        }
+        }        
     }
 }

@@ -46,10 +46,7 @@ namespace FluentGraphQL.Builder.Nodes
             PropertyStatements = propertyStatements;
             IsCollectionNode = isCollectionNode;
             EntityType = entityType;
-
-            if (!active)
-                Deactivate();
-            else IsActive = true;
+            IsActive = active;
         }
 
         public GraphQLSelectNode(
@@ -90,7 +87,11 @@ namespace FluentGraphQL.Builder.Nodes
         public virtual IGraphQLSelectNode GetChildNode<TEntity>()
         {
             if (EntityType.Equals(typeof(TEntity)))
-                return this;          
+                return this;
+
+            var firstLevel = ChildSelectNodes.FirstOrDefault(x => x.EntityType.Equals(typeof(TEntity)));
+            if (!(firstLevel is null))
+                return firstLevel;
 
             return ChildSelectNodes.Select(x => x.GetChildNode<TEntity>()).FirstOrDefault(x => !(x is null));
         }
@@ -99,6 +100,10 @@ namespace FluentGraphQL.Builder.Nodes
         {
             if (HeaderNode.Title.Equals(name))
                 return this;
+
+            var firstLevel = ChildSelectNodes.FirstOrDefault(x => x.HeaderNode.Title.Equals(name));
+            if (!(firstLevel is null))
+                return firstLevel;
 
             return ChildSelectNodes.Select(x => x.GetChildNode(name)).FirstOrDefault(x => !(x is null));
         }
@@ -123,6 +128,6 @@ namespace FluentGraphQL.Builder.Nodes
             IsActive = false;
             Parallel.ForEach(PropertyStatements, (item) => { item.Deactivate(); });
             Parallel.ForEach(ChildSelectNodes, (item) => { item.Deactivate(); });
-        }        
+        }  
     }
 }

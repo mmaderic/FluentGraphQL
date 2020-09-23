@@ -385,6 +385,9 @@ namespace FluentGraphQL.Client
                 foreach (var item in list)
                     listInstance.Add(selectableConstruct.InvokeSelector(item));
 
+                if (value is IGraphQLMutationReturningResponse mutationResponse)
+                    ((IGraphQLMutationReturningResponse)listInstance).AffectedRows = mutationResponse.AffectedRows;
+
                 return (TResponse)listInstance;
             }
             else

@@ -110,10 +110,11 @@ namespace FluentGraphQL.Builder.Factories
            
             var circuit = path.FirstOrDefault(x => x.Name == name); 
             if (!(circuit is null))
-                return null;            
+                return null;
 
+            var active = IsInitiallyActiveNode(type, path);
             var container = new StatementContainer();
-            var metadata = new SelectNodeMetadata(name, entityType, level, title, isCollection, !isAggregateContainer, container);
+            var metadata = new SelectNodeMetadata(name, entityType, level, title, isCollection, active, container);
             path.Add(metadata);
 
             BuildStatementsContainer(container, type, level, path);
@@ -177,6 +178,14 @@ namespace FluentGraphQL.Builder.Factories
                 !typeof(IGraphQLAggregateClauseNode).IsAssignableFrom(type);
         }
 
+        private bool IsInitiallyActiveNode(Type type, List<SelectNodeMetadata> path)
+        {
+            return
+                !typeof(IGraphQLAggregateContainerNode).IsAssignableFrom(type) &&
+                !typeof(IGraphQLAggregateNode).IsAssignableFrom(type) &&
+                !typeof(IGraphQLAggregateClauseNode).IsAssignableFrom(type);
+        }
+
         private bool IsCollectionProperty(PropertyInfo propertyInfo)
         {
             return propertyInfo.PropertyType.IsGenericType &&
@@ -191,7 +200,7 @@ namespace FluentGraphQL.Builder.Factories
 
         private IGraphQLSelectNode BuildSelectNode(SelectNodeMetadata metadata, List<GraphQLSelectNode> nodes)
         {
-            if (metadata is null)
+            if (metadata is null || metadata.Type.Equals(typeof(IGraphQLAggregateClauseNode)))
                 return null;
 
             var headerNode = new GraphQLHeaderNode(metadata.Title, metadata.Suffix, metadata.Level);
@@ -204,6 +213,8 @@ namespace FluentGraphQL.Builder.Factories
 
             node.ChildSelectNodes = childSelectNodes;
             node.AggregateContainerNodes = nestedAggregateContainers;
+            if (!metadata.IsActive)
+                node.Deactivate();
 
             return node;
         }     

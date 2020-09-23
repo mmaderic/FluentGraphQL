@@ -18,9 +18,13 @@ using System.Collections.Generic;
 
 namespace FluentGraphQL.Client.Abstractions
 {
-    public interface IGraphQLMutationReturningResponse<TReturn> : IList<TReturn>
+    public interface IGraphQLMutationReturningResponse
     {
         int AffectedRows { get; set; }
+    }
+
+    public interface IGraphQLMutationReturningResponse<TReturn> : IGraphQLMutationReturningResponse, IList<TReturn>
+    {
         List<TReturn> Returning { get; set; }
     }
 }

@@ -105,7 +105,7 @@ namespace FluentGraphQL.Tests.Tests
             Assert.Equal(Context.OrderStatuses.Completed.Name, completed.Name);
             Assert.Equal(Context.OrderStatuses.Pending.Name, pending.Name);
             Assert.Equal(Context.OrderStatuses.Processing.Name, processing.Name);
-            Assert.Equal(Context.OrderStatuses.Rejected.Name, rejected.Name); 
+            Assert.Equal(Context.OrderStatuses.Rejected.Name, rejected.Name);
         }
 
         [Fact]
@@ -176,6 +176,45 @@ namespace FluentGraphQL.Tests.Tests
 
             Assert.Equal(Context.Employees.Stipe.FirstName, stipe.FirstName);
             Assert.Equal(Context.Employees.Stipe.ManagerId, stipe.ManagerId);
+        }
+
+        [Fact]
+        public async Task ProductTest()
+        {
+            var productQ = _graphQLClient.QueryBuilder<Product>()
+                .Aggregate()
+                    .Count()
+                .Build();
+
+            var productR = await _graphQLClient.ExecuteAsync(productQ);
+            var count = productR.Aggregate.Count;
+
+            Assert.Equal(60, count);
+        }
+
+        [Fact]
+        public async Task StockTest()
+        {
+            var stockQA = _graphQLClient.QueryBuilder<Stock>()
+                .Where(x => x.StoreId == Context.Stores.Zadar.Id)
+                .Aggregate()
+                    .Count()
+                .Build();
+
+            var stockQB = _graphQLClient.QueryBuilder<Stock>()
+                .Where(x => x.StoreId == Context.Stores.Zagreb.Id)
+                .Aggregate()
+                    .Count()
+                .Build();
+
+            var stockRA = await _graphQLClient.ExecuteAsync(stockQA);
+            var stockRB = await _graphQLClient.ExecuteAsync(stockQB);
+
+            var countA = stockRA.Aggregate.Count;
+            var countB = stockRB.Aggregate.Count;
+
+            Assert.Equal(60, countA);
+            Assert.Equal(60, countB);
         }
     }
 }

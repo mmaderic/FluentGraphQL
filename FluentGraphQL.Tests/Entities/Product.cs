@@ -1,5 +1,6 @@
 ﻿using FluentGraphQL.Builder.Abstractions;
 using System;
+using System.Collections.Generic;
 
 namespace FluentGraphQL.Tests.Entities
 {
@@ -14,5 +15,7 @@ namespace FluentGraphQL.Tests.Entities
 
         public Brand Brand { get; set; } = null!;
         public Category Category { get; set; } = null!;
+
+        public ICollection<Stock> Stocks { get; set; } = null!;
     }
 }

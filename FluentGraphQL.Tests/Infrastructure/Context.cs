@@ -94,6 +94,7 @@ namespace FluentGraphQL.Tests.Infrastructure
             if (_initialized)
                 return;
 
+
             try
             {
                 await ClearDatabaseAsync();
@@ -128,16 +129,20 @@ namespace FluentGraphQL.Tests.Infrastructure
             var deleteStaffMutation = GraphQLClient.MutationBuilder<Staff>().DeleteAll().Return(x => x.Id);
             var deleteProductsMutation = GraphQLClient.MutationBuilder<Product>().DeleteAll().Return(x => x.Id);
             var deleteStocksMutation = GraphQLClient.MutationBuilder<Stock>().DeleteAll().Return(x => x.ProductId);
+            var deleteOrdersMutation = GraphQLClient.MutationBuilder<Order>().DeleteAll().Return(x => x.Id);
+            var deleteCustomersMutation = GraphQLClient.MutationBuilder<Customer>().DeleteAll().Return(x => x.Id);
 
-            var task1 = GraphQLClient.ExecuteAsync(deleteStocksMutation);
-            var task2 = GraphQLClient.ExecuteAsync(deleteProductsMutation);
-            var task3 = GraphQLClient.ExecuteAsync(deleteStaffMutation);
-            var task4 = GraphQLClient.ExecuteAsync(deleteStoresMutation);
-            var task5 = GraphQLClient.ExecuteAsync(deleteOrderStatusesMutation);
-            var task6 = GraphQLClient.ExecuteAsync(deleteCategoriesMutation);
-            var task7 = GraphQLClient.ExecuteAsync(deleteBrandsMutation);
+            var task1 = GraphQLClient.ExecuteAsync(deleteCustomersMutation);
+            var task2 = GraphQLClient.ExecuteAsync(deleteOrdersMutation);
+            var task3 = GraphQLClient.ExecuteAsync(deleteStocksMutation);
+            var task4 = GraphQLClient.ExecuteAsync(deleteProductsMutation);
+            var task5 = GraphQLClient.ExecuteAsync(deleteStaffMutation);
+            var task6 = GraphQLClient.ExecuteAsync(deleteStoresMutation);
+            var task7 = GraphQLClient.ExecuteAsync(deleteOrderStatusesMutation);
+            var task8 = GraphQLClient.ExecuteAsync(deleteCategoriesMutation);
+            var task9 = GraphQLClient.ExecuteAsync(deleteBrandsMutation);
 
-            await Task.WhenAll(task1, task2, task3, task4, task5, task6, task7);
+            await Task.WhenAll(task1, task2, task3, task4, task5, task6, task7, task8, task9);
         }
 
         private Guid MapId(Guid id, string name, IEnumerable<dynamic> collection)

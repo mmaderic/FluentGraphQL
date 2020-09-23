@@ -20,6 +20,6 @@ namespace FluentGraphQL.Tests.Entities
         public Staff Staff { get; set; } = null!;
         public Store Store { get; set; } = null!;
 
-        ICollection<OrderItem> OrderItems { get; set; } = null!;
+        public ICollection<OrderItem> OrderItems { get; set; } = null!;
     }
 }

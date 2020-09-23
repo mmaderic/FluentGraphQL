@@ -86,6 +86,14 @@
   - name: category
     using:
       foreign_key_constraint_on: category_id
+  array_relationships:
+  - name: stocks
+    using:
+      foreign_key_constraint_on:
+        column: product_id
+        table:
+          schema: public
+          name: stock
 - table:
     schema: public
     name: staff

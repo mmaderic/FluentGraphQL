@@ -83,6 +83,7 @@ namespace FluentGraphQL.Tests.Tests
 
             var confirmationQuery = _graphQLClient.QueryBuilder<Order>()
                 .ByPrimaryKey(x => x.Id, result.First)
+                .Include(x => x.OrderItems)
                 .Build();
 
             var confirmationResult = await _graphQLClient.ExecuteAsync(confirmationQuery);

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace FluentGraphQL.Tests.Infrastructure
 {
@@ -75,6 +76,7 @@ namespace FluentGraphQL.Tests.Infrastructure
         }
 
         public IGraphQLClient GraphQLClient { get; }
+        private readonly IMessageSink _diagnosticMessageSink;
         private static readonly AsyncLock _initializationMutex;
         private static bool _initialized;
 
@@ -83,8 +85,9 @@ namespace FluentGraphQL.Tests.Infrastructure
             _initializationMutex = new AsyncLock();
         }
 
-        public Context()
+        public Context(IMessageSink diagnosticMessageSink)
         {
+            _diagnosticMessageSink = diagnosticMessageSink;
             GraphQLClient = Configuration.ServiceProvider.GetRequiredService<IGraphQLClient>();
         }
 
@@ -93,7 +96,6 @@ namespace FluentGraphQL.Tests.Infrastructure
             var key = await _initializationMutex.LockAsync();
             if (_initialized)
                 return;
-
 
             try
             {

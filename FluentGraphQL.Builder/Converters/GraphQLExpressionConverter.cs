@@ -114,6 +114,12 @@ namespace FluentGraphQL.Builder.Converters
             if (expression is ConstantExpression constantExpression)
                 return new GraphQLValueStatement(null, _graphQLValueFactory.Construct(constantExpression.Value));
 
+            if (expression is NewArrayExpression newArrayExpression)
+                return EvaluateNewArrayExpression(newArrayExpression);
+
+            if (expression is NewExpression newExpression)
+                return EvaluateSelectNewExpression(newExpression);
+
             throw new NotImplementedException();
         }
 
@@ -365,6 +371,8 @@ namespace FluentGraphQL.Builder.Converters
                 case Constant.ExtensionMethodCalls.LessThan:
                     operatorValue = EvaluateComparisonExpressionType(memberExpression, methodCallExpression, ExpressionType.LessThan);
                     break;
+                case Constant.ExtensionMethodCalls.Include:
+                    return EvaluateSelectExtensionMethodCallExpression(Constant.ExtensionMethodCalls.Include, methodCallExpression);
                 default:
                     throw new InvalidOperationException();
             };
@@ -477,11 +485,14 @@ namespace FluentGraphQL.Builder.Converters
 
             if (category?.Equals(typeof(Constant.SupportedMethodCalls)) == true)
                 return EvaluateSupportedMethodCallExpression(methodName, methodCallExpression);
+
+            if (category?.Equals(typeof(Constant.ExtensionMethodCalls)) == true)
+                return EvaluateSelectExtensionMethodCallExpression(methodName, methodCallExpression);
             
             return EvaluateSelectExpressionArguments(methodCallExpression.Arguments);
         }
 
-        private IGraphQLValueStatement EvaluateSelectExpressionArguments(ReadOnlyCollection<Expression> expressionArguments)
+        private IGraphQLValueStatement EvaluateSelectExpressionArguments(IEnumerable<Expression> expressionArguments)
         {
             var arguments = expressionArguments.Select(argument =>
             {
@@ -499,6 +510,9 @@ namespace FluentGraphQL.Builder.Converters
 
                 if (argument is ConditionalExpression conditionalExpression)
                     return null;
+
+                if (argument is UnaryExpression unaryExpression)
+                    return EvaluateUnaryExpression(unaryExpression);
 
                 throw new NotImplementedException();
             }).ToArray();
@@ -531,6 +545,42 @@ namespace FluentGraphQL.Builder.Converters
                 right = EvaluateMemberExpression(rightMemberExpression, null);
 
             return new GraphQLValueStatement(null, new GraphQLObjectValue(new[] { left, right }));
+        }
+
+        private IGraphQLValueStatement EvaluateSelectExtensionMethodCallExpression(string methodName, MethodCallExpression methodCallExpression)
+        {
+            if (methodName.Equals(Constant.ExtensionMethodCalls.Include))
+            {
+                if (methodCallExpression.Arguments.Count != 2)
+                    throw new InvalidOperationException();
+
+                var memberStatement = EvaluateMemberExpression((MemberExpression)methodCallExpression.Arguments[0], null);
+                var argumentStatement = EvaluateSelectExpressionArguments(methodCallExpression.Arguments.Skip(1));
+
+                return new GraphQLValueStatement($"{memberStatement.PropertyName}<graphql-include>", argumentStatement.Value);
+            }
+
+            throw new NotImplementedException(methodName);
+        }
+
+        private IGraphQLValueStatement EvaluateNewArrayExpression(NewArrayExpression newArrayExpression)
+        {
+            var memberExpressions = newArrayExpression.Expressions.Where(x => x is MemberExpression);
+            var memberExpressionStatements = memberExpressions
+                .Select(x =>
+                {
+                    var memberExpression = (MemberExpression)x;
+                    var statement = EvaluateMemberExpression(memberExpression, null);
+                    return statement;
+                    var root = memberExpression.Expression.Type.Name;
+
+                    return new GraphQLValueStatement(root, new GraphQLObjectValue(statement));
+                });
+
+            var expressionArguments = newArrayExpression.Expressions.Except(memberExpressions);
+            var expressionArgumentStatements = EvaluateSelectExpressionArguments(expressionArguments);
+
+            return new GraphQLValueStatement(null, new GraphQLObjectValue(memberExpressionStatements.Append(expressionArgumentStatements).ToArray()));
         }
     }
 }

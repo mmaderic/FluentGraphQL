@@ -51,6 +51,13 @@ namespace FluentGraphQL.Builder.Extensions
             ApplySelectStatementRecursive(graphQLValueStatement, graphQLSelectNode);
         }
 
+        public static void ApplyIncludeStatement(this IGraphQLValueStatement graphQLValueStatement, IGraphQLSelectNode graphQLSelectNode)
+        {
+            graphQLSelectNode.IsActive = true;
+
+            ApplySelectStatementRecursive(graphQLValueStatement, graphQLSelectNode, activateProperties: true);
+        }
+
         public static IEnumerable<IGraphQLValueStatement> ReplaceAt(this IEnumerable<IGraphQLValueStatement> collection, int index, IGraphQLValueStatement newItem)
         {
             var currentIndex = 0;
@@ -65,7 +72,7 @@ namespace FluentGraphQL.Builder.Extensions
             }
         }
 
-        private static void ApplySelectStatementRecursive(IGraphQLValueStatement graphQLValueStatement, IGraphQLSelectNode graphQLSelectNode)
+        private static void ApplySelectStatementRecursive(IGraphQLValueStatement graphQLValueStatement, IGraphQLSelectNode graphQLSelectNode, bool activateProperties = false)
         {
             if (graphQLValueStatement is null)
                 return;
@@ -74,14 +81,21 @@ namespace FluentGraphQL.Builder.Extensions
             {
                 if (!(graphQLValueStatement.PropertyName is null))
                 {
-                    graphQLSelectNode = (IGraphQLSelectNode)graphQLSelectNode.Get(graphQLValueStatement.PropertyName);
+                    var propertyName = graphQLValueStatement.PropertyName;
+                    var includeStatement = propertyName.Contains("<graphql-include>");
+                    if (includeStatement)
+                        propertyName = propertyName.Replace("<graphql-include>", "");
+
+                    graphQLSelectNode = (IGraphQLSelectNode)graphQLSelectNode.Get(propertyName);
                     graphQLSelectNode.IsActive = true;
+                    if (activateProperties || includeStatement)
+                        graphQLSelectNode.Activate(recursive: false);
                 }
 
                 foreach (var item in collectionValue.CollectionItems)
                 {
                     var objectValue = (IGraphQLObjectValue)item;
-                    ApplySelectStatementRecursive(objectValue.PropertyValues.First(), graphQLSelectNode);
+                    ApplySelectStatementRecursive(objectValue.PropertyValues.First(), graphQLSelectNode, activateProperties);
                 }
             }
             else if (graphQLValueStatement.Value is IGraphQLObjectValue objectValue)
@@ -89,17 +103,25 @@ namespace FluentGraphQL.Builder.Extensions
                 if (graphQLValueStatement.PropertyName is null)
                 {
                     foreach (var item in objectValue.PropertyValues)
-                        ApplySelectStatementRecursive(item, graphQLSelectNode);
+                        ApplySelectStatementRecursive(item, graphQLSelectNode, activateProperties);
                 }
                 else
                 {
-                    graphQLSelectNode = (IGraphQLSelectNode)graphQLSelectNode.Get(graphQLValueStatement.PropertyName);
+                    var propertyName = graphQLValueStatement.PropertyName;
+                    var includeStatement = propertyName.Contains("<graphql-include>");
+                    if (includeStatement)
+                        propertyName = propertyName.Replace("<graphql-include>", "");
+
+                    graphQLSelectNode = (IGraphQLSelectNode)graphQLSelectNode.Get(propertyName);
                     graphQLSelectNode.IsActive = true;
-                    ApplySelectStatementRecursive(objectValue.PropertyValues.First(), graphQLSelectNode);
+                    if (activateProperties || includeStatement)
+                        graphQLSelectNode.Activate(recursive: false);
+
+                    ApplySelectStatementRecursive(objectValue.PropertyValues.First(), graphQLSelectNode, activateProperties);
                 }
             }
             else
-                graphQLSelectNode.Get(graphQLValueStatement.PropertyName)?.Activate();
+                graphQLSelectNode.Get(graphQLValueStatement.PropertyName)?.Activate(recursive: false);
         }
 
         private static object FindGraphQLValueStatement(IEnumerable<IGraphQLStatement> statements, string key)

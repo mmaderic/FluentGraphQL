@@ -33,12 +33,12 @@ namespace FluentGraphQL.Builder.Atoms
             return graphQLStringFactory.Construct(this);
         }
 
-        public void Activate()
+        public void Activate(bool recursive = true)
         {
             IsActive = true;
         }
 
-        public void Deactivate()
+        public void Deactivate(bool recursive = true)
         {
             IsActive = false;
         }

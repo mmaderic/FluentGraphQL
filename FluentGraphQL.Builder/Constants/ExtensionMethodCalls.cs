@@ -30,6 +30,7 @@ namespace FluentGraphQL.Builder.Constants
             public const string NotLikeInsensitive = "NotLikeInsensitive";
             public const string Similar = "Similar";
             public const string NotSimilar = "NotSimilar";
+            public const string Include = "Include";
         }
     }
 }

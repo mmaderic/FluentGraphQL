@@ -14,7 +14,11 @@
     copies or substantial portions of the Software.
 */
 
+using FluentGraphQL.Builder.Abstractions;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace FluentGraphQL.Client.Extensions
 {
@@ -68,6 +72,18 @@ namespace FluentGraphQL.Client.Extensions
         public static bool NotSimilar(this string a, string b)
         {
             return default;
+        }
+
+        public static IEnumerable<TEntity> Include<TEntity, TNode>(this IEnumerable<TEntity> collection, Expression<Func<TEntity, TNode>> nodeSelector)
+            where TEntity : IGraphQLEntity
+        {
+            return collection;
+        }
+
+        public static TEntity Include<TEntity, TNode>(this TEntity entity, Expression<Func<TEntity, TNode>> nodeSelector)
+            where TEntity : IGraphQLEntity
+        {
+            return entity;
         }
     }
 }

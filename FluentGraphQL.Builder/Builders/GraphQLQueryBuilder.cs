@@ -604,5 +604,32 @@ namespace FluentGraphQL.Builder.Builders
         {
             return Select(selector);
         }
+
+        private GraphQLQueryBuilder<TRoot, TEntity> Include<TNode>(Expression<Func<TRoot, TNode>> expression)
+        {
+            var expressionStatement = _graphQLExpressionConverter.ConvertSelectExpression(expression);
+            expressionStatement.ApplyIncludeStatement(_graphQLSelectNode);
+            return this;
+        }
+
+        IGraphQLSingleQueryBuilder<TRoot> IGraphQLSingleQueryBuilder<TRoot>.Include<TNode>(Expression<Func<TRoot, TNode>> node)
+        {
+            return Include(node);
+        }
+
+        IGraphQLSingleQueryBuilder<TRoot> IGraphQLSingleQueryBuilder<TRoot>.Include<TNode>(Expression<Func<TRoot, IEnumerable<TNode>>> node)
+        {
+            return Include(node);
+        }
+
+        IGraphQLStandardQueryBuilder<TRoot> IGraphQLStandardQueryBuilder<TRoot>.Include<TNode>(Expression<Func<TRoot, TNode>> node)
+        {
+            return Include(node);
+        }
+
+        IGraphQLStandardQueryBuilder<TRoot> IGraphQLStandardQueryBuilder<TRoot>.Include<TNode>(Expression<Func<TRoot, IEnumerable<TNode>>> node)
+        {
+            return Include(node);
+        }
     }
 }

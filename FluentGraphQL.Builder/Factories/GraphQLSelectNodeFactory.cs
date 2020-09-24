@@ -32,18 +32,18 @@ namespace FluentGraphQL.Builder.Factories
     {
         private class StatementContainer
         {
-            public IEnumerable<IGraphQLPropertyStatement> PropertyStatements { get; set; }
+            public IEnumerable<GraphQLPropertyStatement> PropertyStatements { get; set; }
             public IEnumerable<SelectNodeMetadata> NestedObjectStatements { get; set; }
             public IEnumerable<SelectNodeMetadata> NestedCollectionStatements { get; set; }
             public IEnumerable<SelectNodeMetadata> NestedAggregateContainers { get; set; }     
             
             public StatementContainer()
             {
-                PropertyStatements = Enumerable.Empty<IGraphQLPropertyStatement>();
+                PropertyStatements = Enumerable.Empty<GraphQLPropertyStatement>();
                 NestedObjectStatements = Enumerable.Empty<SelectNodeMetadata>();
                 NestedCollectionStatements = Enumerable.Empty<SelectNodeMetadata>();
                 NestedAggregateContainers = Enumerable.Empty<SelectNodeMetadata>();
-            }
+            }           
         }  
         
         private class SelectNodeMetadata
@@ -56,7 +56,7 @@ namespace FluentGraphQL.Builder.Factories
             public string Suffix { get; set; }
             public bool IsCollection{ get; set; }
             public bool IsActive { get; set; }
-            public StatementContainer Container { get; set; }            
+            public StatementContainer Container { get; set; }   
 
             public SelectNodeMetadata(
                 string name, Type type, int level, string title, bool isCollection, bool isActive, StatementContainer container)
@@ -69,7 +69,7 @@ namespace FluentGraphQL.Builder.Factories
                 IsCollection = isCollection;
                 IsActive = isActive;
                 Container = container;
-            }
+            }            
 
             public override string ToString()
             {
@@ -108,7 +108,7 @@ namespace FluentGraphQL.Builder.Factories
             var title = propertyName is null ? type.Root().Name : propertyName;
             var name = $"{entityType.Name}.{title}";
            
-            var circuit = path.FirstOrDefault(x => x.Name == name); 
+            var circuit = path.FirstOrDefault(x => x.Name == name);
             if (!(circuit is null))
                 return null;
 
@@ -145,7 +145,7 @@ namespace FluentGraphQL.Builder.Factories
             );
         }
 
-        private IEnumerable<IGraphQLPropertyStatement> ConstructPropertyStatements(IEnumerable<PropertyInfo> propertyInfos)
+        private IEnumerable<GraphQLPropertyStatement> ConstructPropertyStatements(IEnumerable<PropertyInfo> propertyInfos)
         {
             return propertyInfos.Select(x => new GraphQLPropertyStatement(x.Name)).ToArray();
         }       
@@ -183,7 +183,9 @@ namespace FluentGraphQL.Builder.Factories
             return
                 !typeof(IGraphQLAggregateContainerNode).IsAssignableFrom(type) &&
                 !typeof(IGraphQLAggregateNode).IsAssignableFrom(type) &&
-                !typeof(IGraphQLAggregateClauseNode).IsAssignableFrom(type);
+                !typeof(IGraphQLAggregateClauseNode).IsAssignableFrom(type) &&
+                !(typeof(IGraphQLEntity).IsAssignableFrom(type) && path.Count > 0)
+;
         }
 
         private bool IsCollectionProperty(PropertyInfo propertyInfo)

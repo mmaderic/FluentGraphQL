@@ -18,7 +18,7 @@ namespace FluentGraphQL.Builder.Abstractions
 {
     public interface IGraphQLSelectStatement
     {
-        void Activate();
-        void Deactivate();
+        void Activate(bool recursive = true);
+        void Deactivate(bool recursive = true);
     }
 }

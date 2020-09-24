@@ -116,18 +116,22 @@ namespace FluentGraphQL.Builder.Nodes
             return ChildSelectNodes.Any(x => x.HasAggregateContainer());
         }
 
-        public void Activate()
+        public void Activate(bool recursive = true)
         {
             IsActive = true;
             Parallel.ForEach(PropertyStatements, (item) => { item.Activate(); });
-            Parallel.ForEach(ChildSelectNodes, (item) => { item.Activate(); });
+
+            if (recursive)
+                Parallel.ForEach(ChildSelectNodes, (item) => { item.Activate(); });
         }
 
-        public void Deactivate()
+        public void Deactivate(bool recursive = true)
         {  
             IsActive = false;
             Parallel.ForEach(PropertyStatements, (item) => { item.Deactivate(); });
-            Parallel.ForEach(ChildSelectNodes, (item) => { item.Deactivate(); });
+
+            if (recursive)
+                Parallel.ForEach(ChildSelectNodes, (item) => { item.Deactivate(); });
         }  
     }
 }

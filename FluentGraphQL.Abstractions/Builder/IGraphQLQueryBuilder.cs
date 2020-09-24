@@ -30,6 +30,12 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleQuery<TEntity> Build();
         IGraphQLRootAggregateBuilder<TEntity> Aggregate();
         IGraphQLSingleSelectedQuery<TEntity, TResult> Select<TResult>(Expression<Func<TEntity, TResult>> selector);
+
+        IGraphQLSingleQueryBuilder<TEntity> Include<TNode>(Expression<Func<TEntity, TNode>> node)
+            where TNode : IGraphQLEntity;
+
+        IGraphQLSingleQueryBuilder<TEntity> Include<TNode>(Expression<Func<TEntity, IEnumerable<TNode>>> node)
+            where TNode : IGraphQLEntity;
     }
 
     public interface IGraphQLStandardQueryBuilderBase<TEntity> : IGraphQLQueryBuilder
@@ -42,6 +48,12 @@ namespace FluentGraphQL.Builder.Abstractions
        where TEntity : IGraphQLEntity
     {
         IGraphQLSingleNodeBuilder<TEntity> Single(Expression<Func<TEntity, bool>> expressionPredicate = null);
+
+        IGraphQLStandardQueryBuilder<TEntity> Include<TNode>(Expression<Func<TEntity, TNode>> node)
+            where TNode : IGraphQLEntity;
+
+        IGraphQLStandardQueryBuilder<TEntity> Include<TNode>(Expression<Func<TEntity, IEnumerable<TNode>>> node)
+            where TNode : IGraphQLEntity;
     }
 
     public interface IGraphQLSingleNodeBuilderBase<TEntity> : IGraphQLSingleQueryBuilder<TEntity>

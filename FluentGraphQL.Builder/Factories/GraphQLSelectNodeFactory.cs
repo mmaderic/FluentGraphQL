@@ -117,16 +117,14 @@ namespace FluentGraphQL.Builder.Factories
             var metadata = new SelectNodeMetadata(name, entityType, level, title, isCollection, active, container);
             path.Add(metadata);
 
-            BuildStatementsContainer(container, type, level, path);
+            if (!type.Equals(typeof(IGraphQLAggregateClauseNode)))
+                BuildStatementsContainer(container, type, level, path);
 
             return metadata;
         }
 
         private void BuildStatementsContainer(StatementContainer container, Type type, int level, List<SelectNodeMetadata> path)
         {
-            if (type.Equals(typeof(IGraphQLAggregateClauseNode)))
-                return;
-
             var properties = type.IsInterface
                 ? type.GetInterfaces().SelectMany(x => x.GetProperties()).Concat(type.GetProperties())
                 : type.GetProperties();
@@ -202,7 +200,7 @@ namespace FluentGraphQL.Builder.Factories
 
         private IGraphQLSelectNode BuildSelectNode(SelectNodeMetadata metadata, List<GraphQLSelectNode> nodes)
         {
-            if (metadata is null || metadata.Type.Equals(typeof(IGraphQLAggregateClauseNode)))
+            if (metadata is null)
                 return null;
 
             var headerNode = new GraphQLHeaderNode(metadata.Title, metadata.Suffix, metadata.Level);
@@ -215,10 +213,14 @@ namespace FluentGraphQL.Builder.Factories
 
             node.ChildSelectNodes = childSelectNodes;
             node.AggregateContainerNodes = nestedAggregateContainers;
+
             if (!metadata.IsActive)
                 node.Deactivate();
 
+            if (metadata.Type.Equals(typeof(IGraphQLAggregateClauseNode)))
+                node.PropertyStatements = new List<IGraphQLPropertyStatement>();
+
             return node;
-        }     
+        }  
     }
 }

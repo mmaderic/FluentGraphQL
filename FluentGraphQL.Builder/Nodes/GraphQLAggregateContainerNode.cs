@@ -45,7 +45,7 @@ namespace FluentGraphQL.Builder.Nodes
             if (result is null)
                 return default;
 
-            return (TKey)result;
+            return (TKey)ConvertValue(result, default(TKey));
         }
 
         public TKey Sum<TKey>(Expression<Func<TEntity, TKey>> keySelector)
@@ -55,7 +55,7 @@ namespace FluentGraphQL.Builder.Nodes
             if (result is null)
                 return default;
 
-            return (TKey)result;
+            return (TKey)ConvertValue(result, default(TKey));
         }
 
         public TKey Min<TKey>(Expression<Func<TEntity, TKey>> keySelector)
@@ -65,7 +65,7 @@ namespace FluentGraphQL.Builder.Nodes
             if (result is null)
                 return default;
 
-            return (TKey)result;
+            return (TKey)ConvertValue(result, default(TKey));
         }
 
         public TKey Max<TKey>(Expression<Func<TEntity, TKey>> keySelector)
@@ -75,7 +75,29 @@ namespace FluentGraphQL.Builder.Nodes
             if (result is null)
                 return default;
 
-            return (TKey)result;
+            return (TKey)ConvertValue(result, default(TKey));
+        }
+
+        private object ConvertValue(object value, object type)
+        {
+            switch (type)
+            {
+                case string _: return value;
+                case double _: return value;
+
+                case sbyte _: return Convert.ToSByte(value);
+                case byte _: return Convert.ToByte(value);
+                case short _: return Convert.ToInt16(value);
+                case ushort _: return Convert.ToUInt16(value);
+                case int _: return Convert.ToInt32(value);
+                case uint _: return Convert.ToUInt32(value);
+                case long _: return Convert.ToInt64(value);
+                case ulong _: return Convert.ToUInt64(value);
+                case float _: return Convert.ToSingle(value);
+                case decimal _: return Convert.ToDecimal(value);
+            }
+
+            throw new NotImplementedException(type.GetType().Name);
         }
     }
 }

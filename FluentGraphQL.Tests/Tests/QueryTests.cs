@@ -337,5 +337,19 @@ namespace FluentGraphQL.Tests.Tests
             Assert.Null(orderItem.Order);
             Assert.Null(orderItem.Product.Category);
         }
+
+        [Fact]
+        public async Task AggregateContainerTests()
+        {
+            var query = _graphQLClient.QueryBuilder<Product>()
+                .Aggregate()
+                    .Max(x => x.Price)
+                .Build();
+
+            var result = await _graphQLClient.ExecuteAsync(query);
+            var maxPrice = result.Max(x => x.Price);
+
+            Assert.Equal(10293.07M, maxPrice);
+        }
     }
 }

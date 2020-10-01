@@ -21,7 +21,6 @@ using FluentGraphQL.Builder.Constants;
 using FluentGraphQL.Builder.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -566,16 +565,7 @@ namespace FluentGraphQL.Builder.Converters
         private IGraphQLValueStatement EvaluateNewArrayExpression(NewArrayExpression newArrayExpression)
         {
             var memberExpressions = newArrayExpression.Expressions.Where(x => x is MemberExpression);
-            var memberExpressionStatements = memberExpressions
-                .Select(x =>
-                {
-                    var memberExpression = (MemberExpression)x;
-                    var statement = EvaluateMemberExpression(memberExpression, null);
-                    return statement;
-                    var root = memberExpression.Expression.Type.Name;
-
-                    return new GraphQLValueStatement(root, new GraphQLObjectValue(statement));
-                });
+            var memberExpressionStatements = memberExpressions.Select(x => EvaluateMemberExpression((MemberExpression)x, null));
 
             var expressionArguments = newArrayExpression.Expressions.Except(memberExpressions);
             var expressionArgumentStatements = EvaluateSelectExpressionArguments(expressionArguments);

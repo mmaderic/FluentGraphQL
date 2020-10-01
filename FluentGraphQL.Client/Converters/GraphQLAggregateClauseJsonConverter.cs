@@ -48,8 +48,8 @@ namespace FluentGraphQL.Client.Converters
                 reader.Read();
 
                 object propertyValue;
-                if (reader.TokenType == JsonTokenType.Number)
-                    propertyValue = JsonSerializer.Deserialize<int>(ref reader, options);
+                if (reader.TokenType == JsonTokenType.Number)                
+                    propertyValue = JsonSerializer.Deserialize<double>(ref reader, options);                
                 else if (reader.TokenType == JsonTokenType.String)
                     propertyValue = JsonSerializer.Deserialize<string>(ref reader, options);
                 else if (reader.TokenType == JsonTokenType.Null)

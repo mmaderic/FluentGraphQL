@@ -16,6 +16,7 @@
 
 using FluentGraphQL.Builder.Abstractions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FluentGraphQL.Builder.Nodes
 {
@@ -30,6 +31,15 @@ namespace FluentGraphQL.Builder.Nodes
         private GraphQLHeaderNode()
         {
             Statements = new List<IGraphQLStatement>();
+        }
+
+        private GraphQLHeaderNode(GraphQLHeaderNode copy)
+        {
+            Title = copy.Title;
+            Prefix = copy.Prefix;
+            Suffix = copy.Suffix;
+            HierarchyLevel = copy.HierarchyLevel;
+            Statements = copy.Statements.Select(x => x.DeepCopy()).ToList();
         }
 
         public GraphQLHeaderNode(string title, int hierarchyLevel = 1) : this()
@@ -57,6 +67,16 @@ namespace FluentGraphQL.Builder.Nodes
         public string KeyString(IGraphQLStringFactory graphQLStringFactory)
         {
             return graphQLStringFactory.Construct($"{Prefix}{Title}{Suffix}");
+        }
+
+        public IGraphQLHeaderNode DeepCopy()
+        {
+            return new GraphQLHeaderNode(this);
+        }
+
+        IGraphQLStatement IGraphQLStatement.DeepCopy()
+        {
+            return new GraphQLHeaderNode(this);
         }
     }
 }

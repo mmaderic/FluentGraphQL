@@ -30,6 +30,10 @@ namespace FluentGraphQL.Builder.Constructs
 
         public string QueryString { get; set; }
 
+        protected GraphQLMethodConstruct()
+        {
+        }
+
         protected GraphQLMethodConstruct(GraphQLMethod graphQLMethod, IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode) 
         {
             Method = graphQLMethod;
@@ -56,6 +60,8 @@ namespace FluentGraphQL.Builder.Constructs
         {
             return graphQLStringFactory.Construct(this);      
         }
+
+        public abstract IGraphQLStatement DeepCopy();
     }
 
     internal class GraphQLMethodConstruct<TEntity> : GraphQLMethodConstruct, 
@@ -63,8 +69,21 @@ namespace FluentGraphQL.Builder.Constructs
         IGraphQLReturnSingleMutation<TEntity>, IGraphQLReturnMultipleMutation<TEntity>,
         IGraphQLQueryExtension<TEntity>, IGraphQLMutationExtension<TEntity>
     {
+        private GraphQLMethodConstruct(GraphQLMethodConstruct copy)
+        {
+            IsSingle = copy.IsSingle;
+            QueryString = copy.QueryString;
+            HeaderNode = (IGraphQLHeaderNode)copy.HeaderNode.DeepCopy();
+            SelectNode = (IGraphQLSelectNode)copy.SelectNode.DeepCopy();
+        }
+
         public GraphQLMethodConstruct(GraphQLMethod graphQLMethod, IGraphQLHeaderNode graphQLHeaderNode, IGraphQLSelectNode graphQLSelectNode) 
             : base(graphQLMethod, graphQLHeaderNode, graphQLSelectNode) 
-        { }        
+        { }
+
+        public override IGraphQLStatement DeepCopy()
+        {
+            return new GraphQLMethodConstruct<TEntity>(this);
+        }
     }    
 }

@@ -308,7 +308,7 @@ namespace FluentGraphQL.Builder.Builders
             foreach (var selector in selectors)
             {
                 var propertyStatement = new GraphQLPropertyStatement(selector.PropertyName);
-                ((List<IGraphQLPropertyStatement>)methodNode.PropertyStatements).Add(propertyStatement);
+                methodNode.PropertyStatements = methodNode.PropertyStatements.Append(propertyStatement);
             }
 
             return this;

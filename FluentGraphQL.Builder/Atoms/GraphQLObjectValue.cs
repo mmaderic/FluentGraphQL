@@ -24,6 +24,11 @@ namespace FluentGraphQL.Builder.Atoms
     {
         public IEnumerable<IGraphQLValueStatement> PropertyValues { get; set; }
 
+        private GraphQLObjectValue(GraphQLObjectValue copy)
+        {
+            PropertyValues = copy.PropertyValues.Select(x => (IGraphQLValueStatement) x.DeepCopy()).ToArray();
+        }
+
         public GraphQLObjectValue(IGraphQLValueStatement propertyValue)
         {
             PropertyValues = new[] { propertyValue };
@@ -42,6 +47,16 @@ namespace FluentGraphQL.Builder.Atoms
         public bool IsNull()
         {
             return PropertyValues is null || !PropertyValues.Any();
+        }
+
+        public IGraphQLValue DeepCopy()
+        {
+            return new GraphQLObjectValue(this);
+        }
+
+        IGraphQLStatement IGraphQLStatement.DeepCopy()
+        {
+            return new GraphQLObjectValue(this);
         }
     }
 }

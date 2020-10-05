@@ -38,6 +38,19 @@ namespace FluentGraphQL.Builder.Nodes
             AggregateContainerNodes = Enumerable.Empty<IGraphQLSelectNode>();
         }
 
+        private GraphQLSelectNode(GraphQLSelectNode copy)
+        {
+            Parallel.Invoke(
+                () => HeaderNode = (IGraphQLHeaderNode) copy.HeaderNode.DeepCopy(),
+                () => PropertyStatements = copy.PropertyStatements.Select(x => (IGraphQLPropertyStatement) x.DeepCopy()).ToArray(),
+                () => ChildSelectNodes = copy.ChildSelectNodes.Select(x => (IGraphQLSelectNode) x.DeepCopy()).ToArray(),
+                () => AggregateContainerNodes = copy.AggregateContainerNodes.Select(x => (IGraphQLSelectNode) x.DeepCopy()).ToList());
+      
+            IsCollectionNode = copy.IsCollectionNode;
+            EntityType = copy.EntityType;
+            IsActive = copy.IsActive;
+        }
+
         public GraphQLSelectNode(
             IGraphQLHeaderNode headerNode, IEnumerable<IGraphQLPropertyStatement> propertyStatements,           
             Type entityType, bool isCollectionNode = false, bool active = true) : this()
@@ -132,6 +145,11 @@ namespace FluentGraphQL.Builder.Nodes
 
             if (recursive)
                 Parallel.ForEach(ChildSelectNodes, (item) => { item.Deactivate(); });
-        }  
+        }
+
+        public IGraphQLStatement DeepCopy()
+        {
+            return new GraphQLSelectNode(this);
+        }
     }
 }

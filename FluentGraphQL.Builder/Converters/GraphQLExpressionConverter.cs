@@ -306,14 +306,47 @@ namespace FluentGraphQL.Builder.Converters
 
             if (methodName.Equals(Constant.SupportedMethodCalls.Select))
             {
-                if (!(methodCallExpression.Arguments[1] is LambdaExpression lambdaExpression && lambdaExpression.Body is NewExpression newExpression))
-                    throw new NotImplementedException();
+                var expression = methodCallExpression.Arguments[1];
+                if (expression is LambdaExpression lambdaExpression)
+                    expression = lambdaExpression.Body;
 
                 var expressionTarget = EvaluateExpression(methodCallExpression.Arguments[0]);
-                var selectExpression = EvaluateSelectNewExpression(newExpression);
-                selectExpression.PropertyName = expressionTarget.PropertyName;
 
-                return selectExpression;
+                IGraphQLValueStatement ProcessStatement(IGraphQLValueStatement graphQLValueStatement)
+                {
+                    if (!(expressionTarget.Value is null))
+                    {
+                        var propertyName = (expressionTarget.Value as GraphQLObjectValue).PropertyValues.Single().PropertyName;
+                        graphQLValueStatement.Value = new GraphQLObjectValue(new GraphQLValueStatement(graphQLValueStatement.PropertyName, graphQLValueStatement.Value));
+                        graphQLValueStatement.PropertyName = propertyName;
+                    }
+
+                    return new GraphQLValueStatement(expressionTarget.PropertyName, new GraphQLObjectValue(graphQLValueStatement));
+                }
+
+                if (expression is NewExpression newExpression)
+                {
+                    var selectStatement = EvaluateSelectNewExpression(newExpression);
+                    return ProcessStatement(selectStatement);
+                }
+
+                if (expression is MemberExpression memberExpression)
+                {
+                    var memberStatement = EvaluateMemberExpression(memberExpression, null);
+                    return ProcessStatement(memberStatement);
+                }
+
+                if (expression is MethodCallExpression selectMethodCallExpression)
+                {
+                    var methodStatement = EvaluateSelectMethodCallExpression(selectMethodCallExpression);
+                    return ProcessStatement(methodStatement);
+                }
+
+                if(expression is UnaryExpression unaryExpression)
+                {
+                    var unaryStatement = EvaluateUnaryExpression(unaryExpression);
+                    return ProcessStatement(unaryStatement);
+                }
             }
 
             throw new NotImplementedException(methodName);
@@ -555,6 +588,11 @@ namespace FluentGraphQL.Builder.Converters
 
                 var memberStatement = EvaluateMemberExpression((MemberExpression)methodCallExpression.Arguments[0], null);
                 var argumentStatement = EvaluateSelectExpressionArguments(methodCallExpression.Arguments.Skip(1));
+                if (!(memberStatement.Value is null))
+                {
+                    var propertyName = (memberStatement.Value as GraphQLObjectValue).PropertyValues.Single().PropertyName;
+                    argumentStatement.Value = new GraphQLObjectValue(new GraphQLValueStatement(propertyName, argumentStatement.Value));
+                }
 
                 return new GraphQLValueStatement($"{memberStatement.PropertyName}<graphql-include>", argumentStatement.Value);
             }

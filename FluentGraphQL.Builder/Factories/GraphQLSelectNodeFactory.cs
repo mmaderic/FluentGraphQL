@@ -231,6 +231,20 @@ namespace FluentGraphQL.Builder.Factories
                 node.PropertyStatements = new List<IGraphQLPropertyStatement>();
 
             return node;
-        }  
+        }
+
+        public IGraphQLSelectNode Get(Type type)
+        {
+            var exists = _masterSelectNodeCache.TryGetValue(type.TypeHandle, out IGraphQLSelectNode master);
+            if (!exists)
+            {
+                if (typeof(IGraphQLEntity).IsAssignableFrom(type))
+                    return Construct(type);
+
+                return null;
+            }
+
+            return (IGraphQLSelectNode) master.DeepCopy();
+        }
     }
 }

@@ -40,6 +40,7 @@ namespace FluentGraphQL.Builder.Builders
         protected readonly IGraphQLSelectNode _graphQLSelectNode;
         protected readonly IGraphQLExpressionConverter _graphQLExpressionConverter;
         protected readonly IGraphQLValueFactory _graphQLValueFactory;
+        protected readonly IGraphQLSelectNodeFactory _graphQLSelectNodeFactory;
 
         protected Dictionary<RuntimeTypeHandle, IGraphQLQueryBuilder> _nodeBuilders;
         private Dictionary<RuntimeTypeHandle, IGraphQLQueryBuilder> _aggregateBuilders;
@@ -49,6 +50,7 @@ namespace FluentGraphQL.Builder.Builders
             : this(graphQLExpressionConverter, graphQLValueFactory)
         {
             var selectNode = graphQLSelectNodeFactory.Construct(typeof(TEntity));
+            _graphQLSelectNodeFactory = graphQLSelectNodeFactory;
             _graphQLQuery = new GraphQLMethodConstruct<TEntity>(GraphQLMethod.Query, selectNode.HeaderNode, selectNode);
             _graphQLSelectNode = selectNode;
         }
@@ -298,7 +300,7 @@ namespace FluentGraphQL.Builder.Builders
         private GraphQLQueryBuilder<TRoot, TEntity> DistinctOn<TNode, TKey>(Expression<Func<TNode, TKey>> keySelector)
         {
             var distinctSelector = _graphQLExpressionConverter.Convert(keySelector);
-            var distinctStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.DistinctOn, distinctSelector.Value);
+            var distinctStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.DistinctOn, new GraphQLObjectValue(distinctSelector));
             var orderByStatement = _graphQLSelectNode.HeaderNode.Statements.Find<GraphQLValueStatement>(Constant.GraphQLKeyords.OrderBy);
             var oderByIndex = _graphQLSelectNode.HeaderNode.Statements.IndexOf(orderByStatement);
 
@@ -559,7 +561,7 @@ namespace FluentGraphQL.Builder.Builders
         private GraphQLSelectedMethodConstruct<TRoot, TResult> Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             var expressionStatement = _graphQLExpressionConverter.ConvertSelectExpression(selector); 
-            expressionStatement.ApplySelectStatement(_graphQLQuery.SelectNode);
+            expressionStatement.ApplySelectStatement(_graphQLQuery.SelectNode, _graphQLSelectNodeFactory);
             
             var selectorFunc = selector.Compile();
             var query = new GraphQLSelectedMethodConstruct<TRoot, TResult>(GraphQLMethod.Query, _graphQLQuery.HeaderNode, _graphQLQuery.SelectNode, selectorFunc);
@@ -608,7 +610,7 @@ namespace FluentGraphQL.Builder.Builders
         private GraphQLQueryBuilder<TRoot, TEntity> Include<TNode>(Expression<Func<TRoot, TNode>> expression)
         {
             var expressionStatement = _graphQLExpressionConverter.ConvertSelectExpression(expression);
-            expressionStatement.ApplyIncludeStatement(_graphQLSelectNode);
+            expressionStatement.ApplyIncludeStatement(_graphQLSelectNode, _graphQLSelectNodeFactory);
             return this;
         }
 

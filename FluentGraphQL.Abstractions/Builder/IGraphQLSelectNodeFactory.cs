@@ -21,5 +21,6 @@ namespace FluentGraphQL.Builder.Abstractions
     public interface IGraphQLSelectNodeFactory
     {
         IGraphQLSelectNode Construct(Type type);
+        IGraphQLSelectNode Get(Type type);
     }
 }

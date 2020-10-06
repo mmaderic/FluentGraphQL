@@ -6,10 +6,12 @@ using Nito.AsyncEx;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace FluentGraphQL.Tests.Infrastructure
 {
@@ -76,7 +78,8 @@ namespace FluentGraphQL.Tests.Infrastructure
         }
 
         public IGraphQLClient GraphQLClient { get; }
-        private readonly IMessageSink _diagnosticMessageSink;
+        public IMessageSink DiagnosticMessageSink { get; }
+
         private static readonly AsyncLock _initializationMutex;
         private static bool _initialized;
 
@@ -87,7 +90,7 @@ namespace FluentGraphQL.Tests.Infrastructure
 
         public Context(IMessageSink diagnosticMessageSink)
         {
-            _diagnosticMessageSink = diagnosticMessageSink;
+            DiagnosticMessageSink = diagnosticMessageSink;
             GraphQLClient = Configuration.ServiceProvider.GetRequiredService<IGraphQLClient>();
         }
 
@@ -907,7 +910,9 @@ namespace FluentGraphQL.Tests.Infrastructure
             var products = await GraphQLClient.ExecuteAsync(productQuery);
             var tasks = new ConcurrentBag<Task>();
 
-            Parallel.ForEach(products, (product) =>
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            foreach(var product in products)
             {
                 foreach (var store in stores)
                 {
@@ -922,7 +927,12 @@ namespace FluentGraphQL.Tests.Infrastructure
 
                     tasks.Add(GraphQLClient.ExecuteAsync(insertStockMutation));
                 }
-            });
+            }
+            stopwatch.Stop();
+            var elapsed = stopwatch.ElapsedMilliseconds;
+
+            var message = new DiagnosticMessage($"Elapsed time: {elapsed}");
+            DiagnosticMessageSink.OnMessage(message);
 
             await Task.WhenAll(tasks);
         } 

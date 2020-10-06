@@ -43,19 +43,21 @@ namespace FluentGraphQL.Builder.Extensions
             return (TStatement) _finders[finderKey].Invoke(statements, key);
         }
 
-        public static void ApplySelectStatement(this IGraphQLValueStatement graphQLValueStatement, IGraphQLSelectNode graphQLSelectNode)
+        public static void ApplySelectStatement(
+            this IGraphQLValueStatement graphQLValueStatement, IGraphQLSelectNode graphQLSelectNode, IGraphQLSelectNodeFactory graphQLSelectNodeFactory)
         {
             graphQLSelectNode.Deactivate();
             graphQLSelectNode.IsActive = true;
 
-            ApplySelectStatementRecursive(graphQLValueStatement, graphQLSelectNode);
+            ApplySelectStatementRecursive(graphQLValueStatement, graphQLSelectNode, graphQLSelectNodeFactory);
         }
 
-        public static void ApplyIncludeStatement(this IGraphQLValueStatement graphQLValueStatement, IGraphQLSelectNode graphQLSelectNode)
+        public static void ApplyIncludeStatement(
+            this IGraphQLValueStatement graphQLValueStatement, IGraphQLSelectNode graphQLSelectNode, IGraphQLSelectNodeFactory graphQLSelectNodeFactory)
         {
             graphQLSelectNode.IsActive = true;
 
-            ApplySelectStatementRecursive(graphQLValueStatement, graphQLSelectNode, activateProperties: true);
+            ApplySelectStatementRecursive(graphQLValueStatement, graphQLSelectNode, graphQLSelectNodeFactory, activateProperties: true);
         }
 
         public static IEnumerable<IGraphQLValueStatement> ReplaceAt(this IEnumerable<IGraphQLValueStatement> collection, int index, IGraphQLValueStatement newItem)
@@ -72,7 +74,8 @@ namespace FluentGraphQL.Builder.Extensions
             }
         }
 
-        private static void ApplySelectStatementRecursive(IGraphQLValueStatement graphQLValueStatement, IGraphQLSelectNode graphQLSelectNode, bool activateProperties = false)
+        private static void ApplySelectStatementRecursive(
+            IGraphQLValueStatement graphQLValueStatement, IGraphQLSelectNode graphQLSelectNode, IGraphQLSelectNodeFactory graphQLSelectNodeFactory, bool activateProperties = false)
         {
             if (graphQLValueStatement is null)
                 return;
@@ -86,7 +89,14 @@ namespace FluentGraphQL.Builder.Extensions
                     if (includeStatement)
                         propertyName = propertyName.Replace("<graphql-include>", "");
 
-                    graphQLSelectNode = (IGraphQLSelectNode)graphQLSelectNode.Get(propertyName);
+                    var childNode = (IGraphQLSelectNode)graphQLSelectNode.Get(propertyName);
+                    if (childNode is null)
+                    {
+                        childNode = GetCircuitedNode(graphQLSelectNode, propertyName, graphQLSelectNodeFactory);
+                        graphQLSelectNode.ChildSelectNodes = graphQLSelectNode.ChildSelectNodes.Append(childNode);
+                    }
+
+                    graphQLSelectNode = childNode;
                     graphQLSelectNode.IsActive = true;
                     if (activateProperties || includeStatement)
                         graphQLSelectNode.Activate(recursive: false);
@@ -95,7 +105,7 @@ namespace FluentGraphQL.Builder.Extensions
                 foreach (var item in collectionValue.CollectionItems)
                 {
                     var objectValue = (IGraphQLObjectValue)item;
-                    ApplySelectStatementRecursive(objectValue.PropertyValues.First(), graphQLSelectNode, activateProperties);
+                    ApplySelectStatementRecursive(objectValue.PropertyValues.First(), graphQLSelectNode, graphQLSelectNodeFactory, activateProperties);
                 }
             }
             else if (graphQLValueStatement.Value is IGraphQLObjectValue objectValue)
@@ -103,7 +113,7 @@ namespace FluentGraphQL.Builder.Extensions
                 if (graphQLValueStatement.PropertyName is null)
                 {
                     foreach (var item in objectValue.PropertyValues)
-                        ApplySelectStatementRecursive(item, graphQLSelectNode, activateProperties);
+                        ApplySelectStatementRecursive(item, graphQLSelectNode, graphQLSelectNodeFactory, activateProperties);
                 }
                 else
                 {
@@ -112,16 +122,53 @@ namespace FluentGraphQL.Builder.Extensions
                     if (includeStatement)
                         propertyName = propertyName.Replace("<graphql-include>", "");
 
-                    graphQLSelectNode = (IGraphQLSelectNode)graphQLSelectNode.Get(propertyName);
+                    var childNode = (IGraphQLSelectNode)graphQLSelectNode.Get(propertyName);
+                    if (childNode is null)
+                    {
+                        childNode = GetCircuitedNode(graphQLSelectNode, propertyName, graphQLSelectNodeFactory);
+                        graphQLSelectNode.ChildSelectNodes = graphQLSelectNode.ChildSelectNodes.Append(childNode);
+                    }
+
+                    graphQLSelectNode = childNode;
                     graphQLSelectNode.IsActive = true;
                     if (activateProperties || includeStatement)
                         graphQLSelectNode.Activate(recursive: false);
 
-                    ApplySelectStatementRecursive(objectValue.PropertyValues.First(), graphQLSelectNode, activateProperties);
+                    ApplySelectStatementRecursive(objectValue.PropertyValues.First(), graphQLSelectNode, graphQLSelectNodeFactory, activateProperties);
                 }
             }
             else
-                graphQLSelectNode.Get(graphQLValueStatement.PropertyName)?.Activate(recursive: false);
+            {
+                var selectStatement = graphQLSelectNode.Get(graphQLValueStatement.PropertyName);
+                if (!(selectStatement is null))
+                    selectStatement.Activate(recursive: false);
+                else
+                {
+                    var circuitedNode = GetCircuitedNode(graphQLSelectNode, graphQLValueStatement.PropertyName, graphQLSelectNodeFactory);
+                    if (!(circuitedNode is null))
+                    {
+                        graphQLSelectNode.ChildSelectNodes = graphQLSelectNode.ChildSelectNodes.Append(circuitedNode);
+                        circuitedNode.Activate(recursive: false);
+                    }
+                }
+            }                
+        }
+
+        private static IGraphQLSelectNode GetCircuitedNode(IGraphQLSelectNode graphQLSelectNode, string propertyName, IGraphQLSelectNodeFactory graphQLSelectNodeFactory)
+        {
+            var fullSelectNode = graphQLSelectNodeFactory.Get(graphQLSelectNode.EntityType);
+            var requestedNode = fullSelectNode?.GetChildNode(propertyName);
+            if (!(requestedNode is null))
+            {
+                fullSelectNode.Deactivate();
+                requestedNode.SetHierarchyLevel(graphQLSelectNode.HeaderNode.HierarchyLevel);
+                foreach (var node in requestedNode.ChildSelectNodes)
+                    node.SetHierarchyLevel(requestedNode.HeaderNode.HierarchyLevel);
+
+                return requestedNode;
+            }
+
+            return null;
         }
 
         private static object FindGraphQLValueStatement(IEnumerable<IGraphQLStatement> statements, string key)

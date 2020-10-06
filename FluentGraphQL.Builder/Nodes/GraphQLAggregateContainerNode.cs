@@ -82,7 +82,7 @@ namespace FluentGraphQL.Builder.Nodes
         {
             switch (type)
             {
-                case string _: return value;
+                case null: return value;
                 case double _: return value;
 
                 case sbyte _: return Convert.ToSByte(value);

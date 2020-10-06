@@ -24,6 +24,11 @@ namespace FluentGraphQL.Builder.Atoms
     {
         public IEnumerable<IGraphQLValue> CollectionItems { get; set; }
 
+        private GraphQLCollectionValue(GraphQLCollectionValue copy)
+        {
+            CollectionItems = copy.CollectionItems.Select(x => (IGraphQLValue) x.DeepCopy()).ToArray();
+        }
+
         public GraphQLCollectionValue(IEnumerable<IGraphQLValue> collectionItems)
         {
             CollectionItems = collectionItems;
@@ -38,5 +43,10 @@ namespace FluentGraphQL.Builder.Atoms
         {
             return CollectionItems is null || !CollectionItems.Any();
         }
+
+        public IGraphQLStatement DeepCopy()
+        {
+            return new GraphQLCollectionValue(this);
+        }       
     }
 }

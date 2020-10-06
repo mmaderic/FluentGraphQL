@@ -32,9 +32,10 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSelectNode GetChildNode<TEntity>();
         IGraphQLSelectNode GetChildNode(string name);
         IGraphQLSelectStatement Get(string statementName);
-      
+
         void ActivateNode<TNode>();
         void ActivateProperty(string propertyName);
+        void SetHierarchyLevel(int parentLevel);
         bool HasAggregateContainer();
     }
 }

@@ -38,6 +38,19 @@ namespace FluentGraphQL.Builder.Nodes
             AggregateContainerNodes = Enumerable.Empty<IGraphQLSelectNode>();
         }
 
+        private GraphQLSelectNode(GraphQLSelectNode copy)
+        {
+            Parallel.Invoke(
+                () => HeaderNode = (IGraphQLHeaderNode) copy.HeaderNode.DeepCopy(),
+                () => PropertyStatements = copy.PropertyStatements.Select(x => (IGraphQLPropertyStatement) x.DeepCopy()).ToArray(),
+                () => ChildSelectNodes = copy.ChildSelectNodes.Select(x => (IGraphQLSelectNode) x.DeepCopy()).ToArray(),
+                () => AggregateContainerNodes = copy.AggregateContainerNodes.Select(x => (IGraphQLSelectNode) x.DeepCopy()).ToArray());
+      
+            IsCollectionNode = copy.IsCollectionNode;
+            EntityType = copy.EntityType;
+            IsActive = copy.IsActive;
+        }
+
         public GraphQLSelectNode(
             IGraphQLHeaderNode headerNode, IEnumerable<IGraphQLPropertyStatement> propertyStatements,           
             Type entityType, bool isCollectionNode = false, bool active = true) : this()
@@ -55,12 +68,12 @@ namespace FluentGraphQL.Builder.Nodes
         {  
         }
 
-        public virtual void ActivateNode<TNode>()
+        public void ActivateNode<TNode>()
         {
             GetChildNode<TNode>().Activate();
         }
 
-        public virtual void ActivateProperty(string propertyName)
+        public void ActivateProperty(string propertyName)
         {
             PropertyStatements.First(x => x.PropertyName.Equals(propertyName)).Activate();
         }
@@ -74,7 +87,7 @@ namespace FluentGraphQL.Builder.Nodes
             return ChildSelectNodes.FirstOrDefault(x => x.HeaderNode.Title.Equals(statementName));
         }
 
-        public virtual string ToString(IGraphQLStringFactory graphQLStringFactory)
+        public string ToString(IGraphQLStringFactory graphQLStringFactory)
         {
             return graphQLStringFactory.Construct(this);
         }
@@ -84,7 +97,7 @@ namespace FluentGraphQL.Builder.Nodes
             return HeaderNode.Title.ToString();
         }        
 
-        public virtual IGraphQLSelectNode GetChildNode<TEntity>()
+        public IGraphQLSelectNode GetChildNode<TEntity>()
         {
             if (EntityType.Equals(typeof(TEntity)))
                 return this;
@@ -132,6 +145,18 @@ namespace FluentGraphQL.Builder.Nodes
 
             if (recursive)
                 Parallel.ForEach(ChildSelectNodes, (item) => { item.Deactivate(); });
-        }  
+        }
+
+        public IGraphQLStatement DeepCopy()
+        {
+            return new GraphQLSelectNode(this);
+        }
+
+        public void SetHierarchyLevel(int parentLevel)
+        {
+            HeaderNode.HierarchyLevel = parentLevel + 1;
+            foreach (var node in ChildSelectNodes)
+                node.SetHierarchyLevel(HeaderNode.HierarchyLevel);
+        }
     }
 }

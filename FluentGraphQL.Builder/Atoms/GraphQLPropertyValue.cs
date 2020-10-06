@@ -23,6 +23,11 @@ namespace FluentGraphQL.Builder.Atoms
     {
         public string ValueLiteral { get; set; }
 
+        private GraphQLPropertyValue(GraphQLPropertyValue copy)
+        {
+            ValueLiteral = copy.ValueLiteral;
+        }
+
         public GraphQLPropertyValue(string valueLiteral)
         {
             ValueLiteral = valueLiteral;
@@ -41,6 +46,11 @@ namespace FluentGraphQL.Builder.Atoms
         public bool IsNull()
         {
             return ValueLiteral is null || ValueLiteral.Equals(Constant.GraphQLKeyords.Null);
+        }
+
+        public IGraphQLStatement DeepCopy()
+        {
+            return new GraphQLPropertyValue(this);
         }
     }
 }

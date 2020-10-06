@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using System;
 
 namespace FluentGraphQL.Tests.Tests
 {
@@ -336,20 +337,151 @@ namespace FluentGraphQL.Tests.Tests
 
             Assert.Null(orderItem.Order);
             Assert.Null(orderItem.Product.Category);
+
+            var queryD = _graphQLClient.QueryBuilder<Stock>()
+                .Select(x => new
+                {
+                    Id = x.StoreId,
+                    Product = x.Product.Id,
+                    Customers = x.Product.OrderItems.Select(y => new
+                    {
+                        y.Order.Customer.Email
+                    })
+                });
+
+            var resultD = await _graphQLClient.ExecuteAsync(queryD);
+            var stock = resultD.Single(x => x.Id == Context.Stores.Zadar.Id && x.Product == product.Id);
+
+            Assert.Contains(stock.Customers, x => x.Email == "GHI@email.com");
+
+            var queryE = _graphQLClient.QueryBuilder<Store>()
+                .Select(x => new
+                {
+                    Store = x.Name,
+                    Sellers = x.Orders.Select(y => new
+                    {
+                        Employee = y.OrderStatus.Orders.Select(z => z.Staff.FirstName)
+                    })
+                });
+
+            var resultE = await _graphQLClient.ExecuteAsync(queryE);
+            var store = resultE.Single(x => x.Store == Context.Stores.Zadar.Name);
+            var employees = store.Sellers.SelectMany(x => x.Employee);
+
+            Assert.Contains(employees, x => x == "Stipe");
+
+            var queryF = _graphQLClient.QueryBuilder<Store>()
+                .Select(x => new
+                {
+                    Store = x.Name,
+                    Sellers = x.Orders.Select(y => y.OrderStatus.Orders.Select(z => z.Staff.FirstName))
+                });
+
+            var resultF = await _graphQLClient.ExecuteAsync(queryF);
+            var store2 = resultF.Single(x => x.Store == Context.Stores.Zadar.Name);
+            var sellers = store2.Sellers.SelectMany(x => x);
+
+            Assert.Contains(sellers, x => x == "Stipe");
+            Assert.Equal(queryE.QueryString, queryF.QueryString);
+
+            var queryG = _graphQLClient.QueryBuilder<Store>()
+                .Select(x => new
+                {
+                    x.Name,
+                    Orders = x.Orders.Select(y => y.OrderStatus.Orders.Select(z => z.Staff.FirstName))
+                }).Cast();
+
+            var resultG = await _graphQLClient.ExecuteAsync(queryG);
+            var store3 = resultG.Single(x => x.Name == Context.Stores.Zadar.Name);
+            var staff = store3.Orders.SelectMany(x => x.OrderStatus.Orders).Select(x => x.Staff.FirstName);
+
+            Assert.Contains(staff, x => x == "Stipe");
+            Assert.Equal(queryF.QueryString, queryG.QueryString);
+
+            var queryH = _graphQLClient.QueryBuilder<Brand>()
+                .Select(x => new
+                {
+                    x.Name,
+                    Products = x.Products.Select(y => y.Category.Select(z => z.Name))
+                }).Cast();
+
+            var resultH = await _graphQLClient.ExecuteAsync(queryH);
+            var brand = resultH.First();
+            
+            Assert.Equal(Guid.Empty, brand.Id);
+            Assert.NotNull(brand.Name);
+            Assert.NotNull(brand.Products);
+
+            var product2 = brand.Products.First();
+         
+            Assert.Equal(Guid.Empty, product2.Id);
+            Assert.Null(product2.Name);
+            Assert.Null(product2.OrderItems);
+            Assert.NotNull(product2.Category);
+            Assert.Equal(Guid.Empty, product2.Category.Id);
+            Assert.NotNull(product2.Category.Name);
+
+            var queryI = _graphQLClient.QueryBuilder<Staff>()
+                .ByPrimaryKey(x => x.Id, Context.Employees.Domagoj.Id)
+                .Select(x => x.Manager.Select(y => new
+                {
+                    y!.FirstName,
+                    y!.LastName
+                })).Cast();
+
+            var resultI = await _graphQLClient.ExecuteAsync(queryI);
+
+            Assert.Null(resultI.LastName);
+            Assert.Null(resultI.LastName);
+            Assert.Null(resultI.Store);
+            Assert.NotNull(resultI.Manager);
+            Assert.NotNull(resultI.Manager!.FirstName);
+            Assert.NotNull(resultI.Manager!.LastName);
+            Assert.Null(resultI.Manager.Email);
         }
 
         [Fact]
         public async Task AggregateContainerTests()
         {
-            var query = _graphQLClient.QueryBuilder<Product>()
+            var queryA = _graphQLClient.QueryBuilder<Product>()
                 .Aggregate()
                     .Max(x => x.Price)
                 .Build();
 
-            var result = await _graphQLClient.ExecuteAsync(query);
-            var maxPrice = result.Max(x => x.Price);
+            var resultA = await _graphQLClient.ExecuteAsync(queryA);
+            var maxPrice = resultA.Max(x => x.Price);
 
             Assert.Equal(10293.07M, maxPrice);
+
+            var queryB = _graphQLClient.QueryBuilder<Product>()
+                .Aggregate()
+                    .Max<object>(x => new object[] { x.ModelYear, x.Price })
+                .Build();
+
+            var resultB = await _graphQLClient.ExecuteAsync(queryB);
+            var maxYear = resultB.Max(x => x.ModelYear);
+            var maxPrice2 = resultB.Max(x => x.Price);
+
+            Assert.Equal(10293.07M, maxPrice2);
+            Assert.Equal(2020, maxYear);
+
+            var queryC = _graphQLClient.QueryBuilder<Staff>()
+                .Aggregate()
+                    .Max(x => x.FirstName)
+                    .Min(x => x.LastName)
+                .Build();
+
+            var resultC = await _graphQLClient.ExecuteAsync(queryC);
+
+            Assert.Equal("Stipe", resultC.Max(x => x.FirstName));
+            Assert.Equal("Babić", resultC.Min(X => X.LastName));
+
+            var queryD = _graphQLClient.QueryBuilder<Store>()
+                .Aggregate<Order>()
+                    .Max(x => x.CreatedAt)
+                .Build();
+
+            var resultD = await _graphQLClient.ExecuteAsync(queryD);
         }
     }
 }

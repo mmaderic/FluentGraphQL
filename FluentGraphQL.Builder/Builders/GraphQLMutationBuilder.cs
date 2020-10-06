@@ -102,7 +102,7 @@ namespace FluentGraphQL.Builder.Builders
                 if (selectNode is null)
                     selectNode = _graphQLSelectNode;
 
-                expressionStatement.ApplySelectStatement(selectNode);
+                expressionStatement.ApplySelectStatement(selectNode, _graphQLSelectNodeFactory);
 
                 return new GraphQLSelectedMethodConstruct<TEntity, TReturn>(GraphQLMethod.Mutation, _graphQLSelectNode.HeaderNode, _graphQLSelectNode, returnExpression.Compile());
             }

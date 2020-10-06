@@ -21,6 +21,7 @@ using FluentGraphQL.Builder.Extensions;
 using FluentGraphQL.Builder.Nodes;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -77,28 +78,38 @@ namespace FluentGraphQL.Builder.Factories
             }
         }
 
+        private static readonly ConcurrentDictionary<RuntimeTypeHandle, IGraphQLSelectNode> _masterSelectNodeCache;
+
+        static GraphQLSelectNodeFactory()
+        {
+            _masterSelectNodeCache = new ConcurrentDictionary<RuntimeTypeHandle, IGraphQLSelectNode>();
+        }
+
         public virtual IGraphQLSelectNode Construct(Type type)
         {
-            var selectNodePath = new List<SelectNodeMetadata>();
-            var rootAggregatePath = new List<SelectNodeMetadata>();
+            var key = type.TypeHandle;
+            var exists = _masterSelectNodeCache.TryGetValue(key, out IGraphQLSelectNode selectNode);
+            if (!exists)
+            {
+                var selectNodePath = new List<SelectNodeMetadata>();
+                var rootAggregatePath = new List<SelectNodeMetadata>();
+                var rootAggregateContainer = typeof(IGraphQLAggregateContainerNode<>).MakeGenericType(type);
 
-            var selectNodesList = new List<GraphQLSelectNode>();
-            var rootAggregateNodesList = new List<GraphQLSelectNode>();
+                var selectNodeMetadata = ConstructMetadata(type, selectNodePath);
+                var rootAggregateNodeMetadata = ConstructMetadata(rootAggregateContainer, rootAggregatePath);
 
-            var rootAggregateContainer = typeof(IGraphQLAggregateContainerNode<>).MakeGenericType(type);
+                rootAggregateNodeMetadata.Title = type.Name;
+                rootAggregateNodeMetadata.Suffix = Constant.GraphQLKeyords.Aggregate;
 
-            var selectNodeMetadata = ConstructMetadata(type, selectNodePath);
-            var rootAggregateNodeMetadata = ConstructMetadata(rootAggregateContainer, rootAggregatePath);
+                selectNode = BuildSelectNode(selectNodeMetadata);
+                var rootAggregateNode = BuildSelectNode(rootAggregateNodeMetadata);
 
-            rootAggregateNodeMetadata.Title = type.Name;
-            rootAggregateNodeMetadata.Suffix = Constant.GraphQLKeyords.Aggregate;
+                ((List<IGraphQLSelectNode>)selectNode.AggregateContainerNodes).Add(rootAggregateNode);
 
-            var selectNode = BuildSelectNode(selectNodeMetadata, selectNodesList);
-            var rootAggregateNode = BuildSelectNode(rootAggregateNodeMetadata, rootAggregateNodesList);
+                _masterSelectNodeCache.TryAdd(key, selectNode);
+            }
 
-            ((List<IGraphQLSelectNode>)selectNode.AggregateContainerNodes).Add(rootAggregateNode);
-
-            return selectNode;
+            return (IGraphQLSelectNode) selectNode.DeepCopy();
         }
 
         private SelectNodeMetadata ConstructMetadata(Type type, List<SelectNodeMetadata> path, int level = 1, bool isCollection = false, string propertyName = null)
@@ -198,18 +209,17 @@ namespace FluentGraphQL.Builder.Factories
                 propertyInfo.PropertyType.GetGenericTypeDefinition().Equals(typeof(IGraphQLAggregateContainerNode<>));
         }
 
-        private IGraphQLSelectNode BuildSelectNode(SelectNodeMetadata metadata, List<GraphQLSelectNode> nodes)
+        private IGraphQLSelectNode BuildSelectNode(SelectNodeMetadata metadata)
         {
             if (metadata is null)
                 return null;
 
             var headerNode = new GraphQLHeaderNode(metadata.Title, metadata.Suffix, metadata.Level);
             var node = new GraphQLSelectNode(headerNode, metadata.Container.PropertyStatements, metadata.Type, metadata.IsCollection, metadata.IsActive);
-            nodes.Add(node);
 
-            var nestedAggregateContainers = metadata.Container.NestedAggregateContainers.Select(x => BuildSelectNode(x, nodes)).Where(x => !(x is null)).ToList();
-            var childSelectNodes = metadata.Container.NestedObjectStatements.Select(x => BuildSelectNode(x, nodes))
-                    .Union(metadata.Container.NestedCollectionStatements.Select(x => BuildSelectNode(x, nodes))).Where(x => !(x is null)).ToArray();
+            var nestedAggregateContainers = metadata.Container.NestedAggregateContainers.Select(x => BuildSelectNode(x)).Where(x => !(x is null)).ToList();
+            var childSelectNodes = metadata.Container.NestedObjectStatements.Select(x => BuildSelectNode(x))
+                    .Union(metadata.Container.NestedCollectionStatements.Select(x => BuildSelectNode(x))).Where(x => !(x is null)).ToArray();
 
             node.ChildSelectNodes = childSelectNodes;
             node.AggregateContainerNodes = nestedAggregateContainers;
@@ -221,6 +231,20 @@ namespace FluentGraphQL.Builder.Factories
                 node.PropertyStatements = new List<IGraphQLPropertyStatement>();
 
             return node;
-        }  
+        }
+
+        public IGraphQLSelectNode Get(Type type)
+        {
+            var exists = _masterSelectNodeCache.TryGetValue(type.TypeHandle, out IGraphQLSelectNode master);
+            if (!exists)
+            {
+                if (typeof(IGraphQLEntity).IsAssignableFrom(type))
+                    return Construct(type);
+
+                return null;
+            }
+
+            return (IGraphQLSelectNode) master.DeepCopy();
+        }
     }
 }

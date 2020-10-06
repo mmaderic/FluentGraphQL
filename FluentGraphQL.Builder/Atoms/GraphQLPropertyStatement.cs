@@ -23,6 +23,12 @@ namespace FluentGraphQL.Builder.Atoms
         public string PropertyName { get; set; }
         public bool IsActive { get; set; } = true;
 
+        private GraphQLPropertyStatement(GraphQLPropertyStatement copy)
+        {
+            PropertyName = copy.PropertyName;
+            IsActive = copy.IsActive;
+        }
+
         public GraphQLPropertyStatement(string propertyName)
         {
             PropertyName = propertyName;
@@ -41,6 +47,11 @@ namespace FluentGraphQL.Builder.Atoms
         public void Deactivate(bool recursive = true)
         {
             IsActive = false;
+        }
+
+        public IGraphQLStatement DeepCopy()
+        {
+            return new GraphQLPropertyStatement(this);
         }
     }
 }

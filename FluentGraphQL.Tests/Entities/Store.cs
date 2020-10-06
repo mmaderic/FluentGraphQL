@@ -18,5 +18,7 @@ namespace FluentGraphQL.Tests.Entities
         public ICollection<Order> Orders { get; set; } = null!;
         public ICollection<Staff> Staff { get; set; } = null!;
         public ICollection<Stock> Stocks { get; set; } = null!;
+
+        public IGraphQLAggregateContainerNode<Order> OrdersAggregate { get; set; } = null!;
     }
 }

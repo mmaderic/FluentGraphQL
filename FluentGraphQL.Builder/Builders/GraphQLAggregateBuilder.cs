@@ -308,7 +308,7 @@ namespace FluentGraphQL.Builder.Builders
             foreach (var selector in selectors)
             {
                 var propertyStatement = new GraphQLPropertyStatement(selector.PropertyName);
-                ((List<IGraphQLPropertyStatement>)methodNode.PropertyStatements).Add(propertyStatement);
+                methodNode.PropertyStatements = methodNode.PropertyStatements.Append(propertyStatement);
             }
 
             return this;
@@ -445,7 +445,7 @@ namespace FluentGraphQL.Builder.Builders
         IGraphQLSingleSelectedQuery<IGraphQLAggregateContainerNode<TRoot>, IGraphQLAggregateContainerNode<TResult>> IGraphQLRootAggregateNodesBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             var expressionStatement = _graphQLExpressionConverter.ConvertSelectExpression(selector);
-            expressionStatement.ApplySelectStatement(_graphQLAggregateNodes);
+            expressionStatement.ApplySelectStatement(_graphQLAggregateNodes, _graphQLSelectNodeFactory);
 
             var selectorFunc = selector.Compile();
             var aggregateSelectorFunc = new Func<IGraphQLAggregateContainerNode<TRoot>, IGraphQLAggregateContainerNode<TResult>>((aggregateContainer) =>

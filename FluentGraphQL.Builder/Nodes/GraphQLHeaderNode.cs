@@ -69,12 +69,7 @@ namespace FluentGraphQL.Builder.Nodes
             return graphQLStringFactory.Construct($"{Prefix}{Title}{Suffix}");
         }
 
-        public IGraphQLHeaderNode DeepCopy()
-        {
-            return new GraphQLHeaderNode(this);
-        }
-
-        IGraphQLStatement IGraphQLStatement.DeepCopy()
+        public IGraphQLStatement DeepCopy()
         {
             return new GraphQLHeaderNode(this);
         }

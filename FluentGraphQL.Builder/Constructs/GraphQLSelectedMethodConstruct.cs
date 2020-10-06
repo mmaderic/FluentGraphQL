@@ -34,7 +34,7 @@ namespace FluentGraphQL.Builder.Constructs
             IsSelected = true;
         }
 
-        private GraphQLSelectedMethodConstruct<TEntity, TResult> AsNamed()
+        private GraphQLSelectedMethodConstruct<TEntity, TResult> Cast()
         {
             IsSelected = false;
             return this;
@@ -42,22 +42,22 @@ namespace FluentGraphQL.Builder.Constructs
 
         IGraphQLStandardQuery<TEntity> IGraphQLStandardSelectedQuery<TEntity, TResult>.Cast()
         {
-            return AsNamed();
+            return Cast();
         }
 
         IGraphQLSingleQuery<TEntity> IGraphQLSingleSelectedQuery<TEntity, TResult>.Cast()
         {
-            return AsNamed();
+            return Cast();
         }
 
         IGraphQLReturnSingleMutation<TEntity> IGraphQLSelectedReturnSingleMutation<TEntity, TResult>.Cast()
         {
-            return AsNamed();
+            return Cast();
         }
 
         IGraphQLReturnMultipleMutation<TEntity> IGraphQLSelectedReturnMultipleMutation<TEntity, TResult>.Cast()
         {
-            return AsNamed();
+            return Cast();
         }
 
         public object InvokeSelector(object @object)

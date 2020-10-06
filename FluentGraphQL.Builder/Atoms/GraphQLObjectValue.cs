@@ -49,12 +49,7 @@ namespace FluentGraphQL.Builder.Atoms
             return PropertyValues is null || !PropertyValues.Any();
         }
 
-        public IGraphQLValue DeepCopy()
-        {
-            return new GraphQLObjectValue(this);
-        }
-
-        IGraphQLStatement IGraphQLStatement.DeepCopy()
+        public IGraphQLStatement DeepCopy()
         {
             return new GraphQLObjectValue(this);
         }

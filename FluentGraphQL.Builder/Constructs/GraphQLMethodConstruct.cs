@@ -21,14 +21,11 @@ namespace FluentGraphQL.Builder.Constructs
 {
     internal abstract class GraphQLMethodConstruct : IGraphQLQuery, IGraphQLMutation
     {
-        public bool IsSingle { get; set; }
-
         public IGraphQLHeaderNode HeaderNode { get; set; }
         public IGraphQLSelectNode SelectNode { get; set; }
-
         public GraphQLMethod Method { get; set; }
-
         public string QueryString { get; set; }
+        public bool IsSingle { get; set; }
 
         protected GraphQLMethodConstruct()
         {

@@ -17,5 +17,6 @@ namespace FluentGraphQL.Tests.Entities
         public Category Category { get; set; } = null!;
 
         public ICollection<Stock> Stocks { get; set; } = null!;
+        public ICollection<OrderItem> OrderItems { get; set; } = null!;
     }
 }

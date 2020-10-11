@@ -16,7 +16,7 @@
 
 namespace FluentGraphQL.Builder.Abstractions
 {   
-    public interface IGraphQLQueryExtension<TResponse> : IGraphQLSingleQuery<TResponse>
+    public interface IGraphQLQueryExtension<TResponse> : IGraphQLObjectQuery<TResponse>
     {
     }
 }

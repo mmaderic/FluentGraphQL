@@ -38,9 +38,36 @@ namespace FluentGraphQL.Builder.Converters
             _graphQLStringFactory = graphQLStringFactory;
         }
 
-        public virtual IGraphQLValueStatement Convert<TEntity>(Expression<Func<TEntity, bool>> expressionPredicate)
+        public IGraphQLValueStatement Convert(Expression expression)
         {
-            return EvaluateExpression(expressionPredicate.Body);
+            if (expression is LambdaExpression lambdaExpression)
+                return Convert(lambdaExpression.Body);
+
+            if (expression is UnaryExpression unaryExpression)
+                return EvaluateUnaryExpression(unaryExpression);
+
+            if (expression is BinaryExpression binaryExpression)
+                return EvaluateBinaryExpression(binaryExpression);
+
+            if (expression is MethodCallExpression methodCallExpression)
+                return EvaluateMethodCallExpression(methodCallExpression);
+
+            if (expression is MemberExpression memberExpression)
+                return EvaluateMemberExpression(memberExpression, null);
+
+            if (expression is ConstantExpression constantExpression)
+                return new GraphQLValueStatement(null, _graphQLValueFactory.Construct(constantExpression.Value));
+
+            if (expression is NewArrayExpression newArrayExpression)
+                return EvaluateNewArrayExpression(newArrayExpression);
+
+            if (expression is NewExpression newExpression)
+                return EvaluateSelectNewExpression(newExpression);
+
+            if (expression is MemberInitExpression memberInitExpression)
+                return EvaluateSelectMemberInitExpression(memberInitExpression);
+
+            throw new NotImplementedException();
         }
 
         public virtual IGraphQLValueStatement Convert<TEntity, TKey>(Expression<Func<TEntity, TKey>> keySelector, OrderByDirection orderByDirection)
@@ -61,17 +88,12 @@ namespace FluentGraphQL.Builder.Converters
             var expression = keySelectors.Body;
 
             if (expression is NewArrayExpression newArrayExpression)
-                return newArrayExpression.Expressions.Select(x => EvaluateExpression(x)).ToArray();
+                return newArrayExpression.Expressions.Select(x => Convert(x)).ToArray();
 
             if (expression is ListInitExpression listInitExpression)
-                return listInitExpression.Initializers.Select(x => EvaluateExpression(x.Arguments.First())).ToArray();
+                return listInitExpression.Initializers.Select(x => Convert(x.Arguments.First())).ToArray();
 
             throw new NotImplementedException();
-        }
-
-        public IGraphQLValueStatement Convert<TEntity, TKey>(Expression<Func<TEntity, TKey>> keySelector)
-        {
-            return EvaluateExpression(keySelector.Body);
         }
 
         public IGraphQLValueStatement ConvertSelectExpression<TEntity, TKey>(Expression<Func<TEntity, TKey>> selector)
@@ -93,35 +115,6 @@ namespace FluentGraphQL.Builder.Converters
             throw new NotImplementedException();
         }
 
-        public IGraphQLValueStatement EvaluateExpression(Expression expression)
-        {
-            if (expression is UnaryExpression unaryExpression)
-                return EvaluateUnaryExpression(unaryExpression);
-
-            if (expression is BinaryExpression binaryExpression)            
-                return EvaluateBinaryExpression(binaryExpression);
-
-            if (expression is MethodCallExpression methodCallExpression)
-               return EvaluateMethodCallExpression(methodCallExpression);
-
-            if (expression is LambdaExpression lambdaExpression)
-                return EvaluateExpression(lambdaExpression.Body);
-
-            if (expression is MemberExpression memberExpression)
-                return EvaluateMemberExpression(memberExpression, null);         
-
-            if (expression is ConstantExpression constantExpression)
-                return new GraphQLValueStatement(null, _graphQLValueFactory.Construct(constantExpression.Value));
-
-            if (expression is NewArrayExpression newArrayExpression)
-                return EvaluateNewArrayExpression(newArrayExpression);
-
-            if (expression is NewExpression newExpression)
-                return EvaluateSelectNewExpression(newExpression);
-
-            throw new NotImplementedException();
-        }
-
         private IGraphQLValueStatement EvaluateUnaryExpression(UnaryExpression unaryExpression)
         {
             switch (unaryExpression.NodeType)
@@ -129,9 +122,9 @@ namespace FluentGraphQL.Builder.Converters
                 case ExpressionType.Not:
                     return EvaluateNotExpressionType(unaryExpression.Operand);
                 case ExpressionType.Quote:
-                    return EvaluateExpression(unaryExpression.Operand);
+                    return Convert(unaryExpression.Operand);
                 case ExpressionType.Convert:
-                    return EvaluateExpression(unaryExpression.Operand);
+                    return Convert(unaryExpression.Operand);
                 default:
                     throw new NotImplementedException();
             };
@@ -164,7 +157,7 @@ namespace FluentGraphQL.Builder.Converters
 
         private IGraphQLValueStatement EvaluateNotExpressionType(Expression expression)
         {
-            var valueStatement = EvaluateExpression(expression);
+            var valueStatement = Convert(expression);
             var logicalOperator = _graphQLStringFactory.Construct(LogicalOperator.Not);
 
             return new GraphQLValueStatement(logicalOperator, new GraphQLObjectValue(valueStatement));
@@ -241,8 +234,8 @@ namespace FluentGraphQL.Builder.Converters
                     throw new InvalidOperationException();
             };
 
-            var leftEvaluated = new GraphQLObjectValue(EvaluateExpression(left));
-            var rightEvaluated = new GraphQLObjectValue(EvaluateExpression(right));
+            var leftEvaluated = new GraphQLObjectValue(Convert(left));
+            var rightEvaluated = new GraphQLObjectValue(Convert(right));
 
             return new GraphQLValueStatement(logicalOperator, new GraphQLCollectionValue(new[] { leftEvaluated, rightEvaluated }));
         }
@@ -283,7 +276,7 @@ namespace FluentGraphQL.Builder.Converters
                     throw new NotImplementedException();
 
                 var genericExpressionBody = (Expression) genericExpressionType.GetProperty("Body").GetValue(methodCallExpression.Arguments[1]);
-                var expressionValue = new GraphQLObjectValue(EvaluateExpression(genericExpressionBody));
+                var expressionValue = new GraphQLObjectValue(Convert(genericExpressionBody));
 
                 return EvaluateMemberExpression(memberExpression, expressionValue);
             }
@@ -304,13 +297,13 @@ namespace FluentGraphQL.Builder.Converters
                 return EvaluateMemberExpression(memberExpression, operatorGraphQLValue);
             }
 
-            if (methodName.Equals(Constant.SupportedMethodCalls.Select))
+            if (methodName.Equals(Constant.SupportedMethodCalls.Select) || methodName.Equals(Constant.SupportedMethodCalls.SelectMany))
             {
                 var expression = methodCallExpression.Arguments[1];
                 if (expression is LambdaExpression lambdaExpression)
                     expression = lambdaExpression.Body;
 
-                var expressionTarget = EvaluateExpression(methodCallExpression.Arguments[0]);
+                var expressionTarget = Convert(methodCallExpression.Arguments[0]);
 
                 IGraphQLValueStatement ProcessStatement(IGraphQLValueStatement graphQLValueStatement)
                 {
@@ -342,10 +335,16 @@ namespace FluentGraphQL.Builder.Converters
                     return ProcessStatement(methodStatement);
                 }
 
-                if(expression is UnaryExpression unaryExpression)
+                if (expression is UnaryExpression unaryExpression)
                 {
                     var unaryStatement = EvaluateUnaryExpression(unaryExpression);
                     return ProcessStatement(unaryStatement);
+                }
+
+                if (expression is MemberInitExpression memberInitExpression)
+                {
+                    var memberInitStatement = EvaluateSelectMemberInitExpression(memberInitExpression);
+                    return ProcessStatement(memberInitStatement);
                 }
             }
 
@@ -478,7 +477,7 @@ namespace FluentGraphQL.Builder.Converters
                 throw new InvalidOperationException();
 
             var direction = _graphQLValueFactory.Construct(orderByDirection);
-            var propertyName = EvaluateExpression(arguments.First()).PropertyName.ToString();
+            var propertyName = Convert(arguments.First()).PropertyName.ToString();
 
             var directionObjectValue = new GraphQLObjectValue(new GraphQLValueStatement(propertyName, direction));
             var methodStatement = new GraphQLValueStatement(methodName, directionObjectValue);           
@@ -602,13 +601,23 @@ namespace FluentGraphQL.Builder.Converters
 
         private IGraphQLValueStatement EvaluateNewArrayExpression(NewArrayExpression newArrayExpression)
         {
-            var memberExpressions = newArrayExpression.Expressions.Where(x => x is MemberExpression);
-            var memberExpressionStatements = memberExpressions.Select(x => EvaluateMemberExpression((MemberExpression)x, null));
+            var memberExpressions = newArrayExpression.Expressions.Where(x => x is MemberExpression || x is UnaryExpression);
+            var memberExpressionStatements = memberExpressions.Select(x => Convert(x));
 
             var expressionArguments = newArrayExpression.Expressions.Except(memberExpressions);
-            var expressionArgumentStatements = EvaluateSelectExpressionArguments(expressionArguments);
+            if (expressionArguments.Any())
+            {
+                var expressionArgumentStatements = EvaluateSelectExpressionArguments(expressionArguments);
+                memberExpressionStatements = memberExpressionStatements.Append(expressionArgumentStatements).ToArray();
+            }
 
-            return new GraphQLValueStatement(null, new GraphQLObjectValue(memberExpressionStatements.Append(expressionArgumentStatements).ToArray()));
+            return new GraphQLValueStatement(null, new GraphQLObjectValue(memberExpressionStatements));
+        }
+
+        private IGraphQLValueStatement EvaluateSelectMemberInitExpression(MemberInitExpression memberInitExpression)
+        {
+            var memberAssignments = memberInitExpression.Bindings.Select(x => (MemberAssignment)x);
+            return EvaluateSelectExpressionArguments(memberAssignments.Select(x => x.Expression));
         }
     }
 }

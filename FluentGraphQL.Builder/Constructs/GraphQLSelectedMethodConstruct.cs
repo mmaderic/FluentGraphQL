@@ -40,22 +40,22 @@ namespace FluentGraphQL.Builder.Constructs
             return this;
         }
 
-        IGraphQLStandardQuery<TEntity> IGraphQLStandardSelectedQuery<TEntity, TResult>.Cast()
+        IGraphQLArrayQuery<TEntity> IGraphQLStandardSelectedQuery<TEntity, TResult>.Cast()
         {
             return Cast();
         }
 
-        IGraphQLSingleQuery<TEntity> IGraphQLSingleSelectedQuery<TEntity, TResult>.Cast()
+        IGraphQLObjectQuery<TEntity> IGraphQLSingleSelectedQuery<TEntity, TResult>.Cast()
         {
             return Cast();
         }
 
-        IGraphQLReturnSingleMutation<TEntity> IGraphQLSelectedReturnSingleMutation<TEntity, TResult>.Cast()
+        IGraphQLObjectMutation<TEntity> IGraphQLSelectedReturnSingleMutation<TEntity, TResult>.Cast()
         {
             return Cast();
         }
 
-        IGraphQLReturnMultipleMutation<TEntity> IGraphQLSelectedReturnMultipleMutation<TEntity, TResult>.Cast()
+        IGraphQLArrayMutation<TEntity> IGraphQLSelectedReturnMultipleMutation<TEntity, TResult>.Cast()
         {
             return Cast();
         }

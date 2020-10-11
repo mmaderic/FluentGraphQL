@@ -70,7 +70,7 @@ namespace FluentGraphQL.Builder.Nodes
 
         public void ActivateNode<TNode>()
         {
-            GetChildNode<TNode>().Activate();
+            FindNode<TNode>().Activate();
         }
 
         public void ActivateProperty(string propertyName)
@@ -97,7 +97,7 @@ namespace FluentGraphQL.Builder.Nodes
             return HeaderNode.Title.ToString();
         }        
 
-        public IGraphQLSelectNode GetChildNode<TEntity>()
+        public IGraphQLSelectNode FindNode<TEntity>()
         {
             if (EntityType.Equals(typeof(TEntity)))
                 return this;
@@ -106,7 +106,7 @@ namespace FluentGraphQL.Builder.Nodes
             if (!(firstLevel is null))
                 return firstLevel;
 
-            return ChildSelectNodes.Select(x => x.GetChildNode<TEntity>()).FirstOrDefault(x => !(x is null));
+            return ChildSelectNodes.Select(x => x.FindNode<TEntity>()).FirstOrDefault(x => !(x is null));
         }
 
         public IGraphQLSelectNode GetChildNode(string name)
@@ -119,15 +119,7 @@ namespace FluentGraphQL.Builder.Nodes
                 return firstLevel;
 
             return ChildSelectNodes.Select(x => x.GetChildNode(name)).FirstOrDefault(x => !(x is null));
-        }
-
-        public bool HasAggregateContainer()
-        {
-            if (AggregateContainerNodes.Any(x => x.IsActive))
-                return true;           
-
-            return ChildSelectNodes.Any(x => x.HasAggregateContainer());
-        }
+        }      
 
         public void Activate(bool recursive = true)
         {

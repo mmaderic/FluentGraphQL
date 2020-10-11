@@ -86,10 +86,10 @@ namespace FluentGraphQL.Client.Extensions
             return entity;
         }
 
-        public static TEntity Select<TEntity, TNode>(this TEntity entity, Expression<Func<TEntity, TNode>> nodeSelector)
+        public static TResult Select<TEntity, TResult>(this TEntity entity, Expression<Func<TEntity, TResult>> nodeSelector)
             where TEntity : IGraphQLEntity
         {
-            return entity;
+            return nodeSelector.Compile().Invoke(entity);
         }
     }
 }

@@ -20,6 +20,6 @@ namespace FluentGraphQL.Builder.Abstractions
 {
     public interface IGraphQLCollectionValue : IGraphQLValue
     {
-        IEnumerable<IGraphQLValue> CollectionItems { get; set; }
+        IEnumerable<IGraphQLStatement> CollectionItems { get; set; }
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Xunit;
 using System;
 
-namespace FluentGraphQL.Tests.Tests
+namespace FluentGraphQL.Tests
 {
     [Collection("Context collection")]
     public class QueryTests
@@ -60,7 +60,7 @@ namespace FluentGraphQL.Tests.Tests
                 .Single(x => x.ManagerId == null && x.StoreId == Context.Stores.Zagreb.Id)
                 .Build();
 
-            var resultA = await _graphQLClient.ExecuteAsync(queryA);   
+            var resultA = await _graphQLClient.ExecuteAsync(queryA);
             var resultB = await _graphQLClient.ExecuteAsync(queryB);
 
             Assert.Equal(2, resultA.Count);
@@ -79,9 +79,9 @@ namespace FluentGraphQL.Tests.Tests
                 {
                     x.Id,
                     x.Name,
-                    Brand = x.Brand.Name        
+                    Brand = x.Brand.Name
                 });
-         
+
             var productR = await _graphQLClient.ExecuteAsync(productQ);
 
             Assert.Equal(6, productR.Count);
@@ -188,15 +188,15 @@ namespace FluentGraphQL.Tests.Tests
 
             var orderId = await _graphQLClient.ExecuteAsync(insertOrderMutation);
 
-             var queryE = _graphQLClient.QueryBuilder<Store>()
-                .Single(x => x.Id == Context.Stores.Zadar.Id)
-                .Include(x => x.Orders.Include(y => new object[] {
+            var queryE = _graphQLClient.QueryBuilder<Store>()
+               .Single(x => x.Id == Context.Stores.Zadar.Id)
+               .Include(x => x.Orders.Include(y => new object[] {
                     y.OrderStatus,
                     y.Staff.Manager!,
                     y.OrderItems.Include(z => z.Product)
-                })).Build();
+               })).Build();
 
-            var resultE = await _graphQLClient.ExecuteAsync(queryE);            
+            var resultE = await _graphQLClient.ExecuteAsync(queryE);
 
             Assert.NotNull(resultE.Orders);
 
@@ -327,7 +327,7 @@ namespace FluentGraphQL.Tests.Tests
             Assert.NotNull(order.OrderStatus.Name);
             Assert.NotNull(order.OrderItems);
 
-            Assert.Null(order.Customer);           
+            Assert.Null(order.Customer);
 
             var orderItem = order.OrderItems.First();
 
@@ -407,13 +407,13 @@ namespace FluentGraphQL.Tests.Tests
 
             var resultH = await _graphQLClient.ExecuteAsync(queryH);
             var brand = resultH.First();
-            
+
             Assert.Equal(Guid.Empty, brand.Id);
             Assert.NotNull(brand.Name);
             Assert.NotNull(brand.Products);
 
             var product2 = brand.Products.First();
-         
+
             Assert.Equal(Guid.Empty, product2.Id);
             Assert.Null(product2.Name);
             Assert.Null(product2.OrderItems);
@@ -482,6 +482,35 @@ namespace FluentGraphQL.Tests.Tests
                 .Build();
 
             var resultD = await _graphQLClient.ExecuteAsync(queryD);
+        }             
+
+        [Fact]
+        public async Task DistinctTests()
+        {
+            var queryA = _graphQLClient.QueryBuilder<Staff>()
+                .Where(x => x.ManagerId != null)
+                .DistinctOn(x => x.ManagerId)
+                .Select(x => x.Manager!.FirstName);
+
+            var resultA = await _graphQLClient.ExecuteAsync(queryA);
+
+            Assert.Equal(2, resultA.Count);
+
+            var queryB = _graphQLClient.QueryBuilder<Store>()
+                .DistinctOn(x => x.City!)
+                .Build();
+
+            var resultB = await _graphQLClient.ExecuteAsync(queryB);
+
+            Assert.Equal(2, resultB.Count);
+
+            var queryC = _graphQLClient.QueryBuilder<Store>()
+                .DistinctOn(x => new object[] { x.City!, x.ZipCode! })
+                .Build();
+
+            var resultC = await _graphQLClient.ExecuteAsync(queryC);
+
+            Assert.Equal(3, resultC.Count);
         }
     }
 }

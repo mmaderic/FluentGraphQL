@@ -16,7 +16,7 @@
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLAggregateNode : IGraphQLNode
+    public interface IGraphQLAggregateNode
     {
         int Count { get; set; }
         IGraphQLAggregateClauseNode Sum { get; set; }

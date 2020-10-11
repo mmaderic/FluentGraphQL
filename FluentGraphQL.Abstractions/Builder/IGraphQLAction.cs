@@ -16,11 +16,7 @@
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLAction
-    {
-    }
-
-    public interface IGraphQLAction<TResponse> : IGraphQLAction
+    public interface IGraphQLAction<TResponse>
     {
     } 
 }

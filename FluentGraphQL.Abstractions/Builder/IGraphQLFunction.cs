@@ -16,10 +16,6 @@
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLFunction
-    {        
-    }
-
     public interface IGraphQLFunction<TEntity>
         where TEntity: IGraphQLEntity
     {

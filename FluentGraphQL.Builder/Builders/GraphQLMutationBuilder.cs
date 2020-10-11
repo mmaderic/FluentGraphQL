@@ -63,7 +63,7 @@ namespace FluentGraphQL.Builder.Builders
             }
             else
             {
-                _graphQLSelectNode = _graphQLSelectNodeFactory.Construct(typeof(GraphQLMutationReturningSelectNode<TEntity>));
+                _graphQLSelectNode = _graphQLSelectNodeFactory.Construct(typeof(GraphQLMutationSelectNode<TEntity>));
                 _graphQLSelectNode.HeaderNode.Title = typeof(TEntity).Name;
 
                 var collectionValue = (GraphQLCollectionValue)graphQLValue;
@@ -123,21 +123,24 @@ namespace FluentGraphQL.Builder.Builders
             return (IGraphQLSelectedReturnMultipleMutation<TEntity, TReturn>)BuildMutation(returnExpression);
         }
 
-        IGraphQLReturnSingleMutation<TEntity> IGraphQLReturnSingleMutationBuilder<TEntity>.Build()
+        IGraphQLObjectMutation<TEntity> IGraphQLReturnSingleMutationBuilder<TEntity>.Build()
         {
             var mutation = BuildMutation<TEntity>(); 
             mutation.IsSingle = true;
 
-            return (IGraphQLReturnSingleMutation<TEntity>)mutation;
+            return (IGraphQLObjectMutation<TEntity>)mutation;
         }
 
-        IGraphQLReturnMultipleMutation<TEntity> IGraphQLReturnMultipleMutationBuilder<TEntity>.Build()
+        IGraphQLArrayMutation<TEntity> IGraphQLReturnMultipleMutationBuilder<TEntity>.Build()
         {
-            return (IGraphQLReturnMultipleMutation<TEntity>)BuildMutation<TEntity>();
+            return (IGraphQLArrayMutation<TEntity>)BuildMutation<TEntity>();
         }
 
-        private void RemoveNullValues(IGraphQLValue graphQLValue)
+        private void RemoveNullValues(IGraphQLStatement graphQLStatement)
         {
+            if (!(graphQLStatement is IGraphQLValue graphQLValue))
+                return;
+
             var objectValue = (GraphQLObjectValue)graphQLValue;
             objectValue.PropertyValues = objectValue.PropertyValues.Where(x => !x.Value.IsNull()).ToArray();
             foreach (var property in objectValue.PropertyValues)
@@ -203,7 +206,7 @@ namespace FluentGraphQL.Builder.Builders
 
         private void InitializeMultipleReturnBuilder(string keyword)
         {
-            _graphQLSelectNode = _graphQLSelectNodeFactory.Construct(typeof(GraphQLMutationReturningSelectNode<TEntity>));
+            _graphQLSelectNode = _graphQLSelectNodeFactory.Construct(typeof(GraphQLMutationSelectNode<TEntity>));
             _graphQLSelectNode.HeaderNode.Title = typeof(TEntity).Name;
             _graphQLSelectNode.HeaderNode.Prefix = keyword;
         }

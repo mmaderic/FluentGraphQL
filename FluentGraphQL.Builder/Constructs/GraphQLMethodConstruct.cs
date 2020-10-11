@@ -19,7 +19,7 @@ using FluentGraphQL.Builder.Abstractions;
 
 namespace FluentGraphQL.Builder.Constructs
 {
-    internal abstract class GraphQLMethodConstruct : IGraphQLQuery, IGraphQLMutation
+    internal abstract class GraphQLMethodConstruct : IGraphQLNodeConstruct
     {
         public IGraphQLHeaderNode HeaderNode { get; set; }
         public IGraphQLSelectNode SelectNode { get; set; }
@@ -40,13 +40,8 @@ namespace FluentGraphQL.Builder.Constructs
 
         public IGraphQLSelectNode GetSelectNode<TEntity>()
         {
-            return SelectNode.EntityType.Equals(typeof(TEntity)) ? SelectNode : SelectNode.GetChildNode<TEntity>();
-        }
-
-        public bool HasAggregateContainer()
-        {
-            return SelectNode.HasAggregateContainer();
-        }        
+            return SelectNode.EntityType.Equals(typeof(TEntity)) ? SelectNode : SelectNode.FindNode<TEntity>();
+        }      
 
         public string KeyString(IGraphQLStringFactory graphQLStringFactory)
         {
@@ -62,8 +57,8 @@ namespace FluentGraphQL.Builder.Constructs
     }
 
     internal class GraphQLMethodConstruct<TEntity> : GraphQLMethodConstruct, 
-        IGraphQLStandardQuery<TEntity>, IGraphQLSingleQuery<TEntity>,
-        IGraphQLReturnSingleMutation<TEntity>, IGraphQLReturnMultipleMutation<TEntity>,
+        IGraphQLArrayQuery<TEntity>, IGraphQLObjectQuery<TEntity>,
+        IGraphQLObjectMutation<TEntity>, IGraphQLArrayMutation<TEntity>,
         IGraphQLQueryExtension<TEntity>, IGraphQLMutationExtension<TEntity>
     {
         private GraphQLMethodConstruct(GraphQLMethodConstruct copy)

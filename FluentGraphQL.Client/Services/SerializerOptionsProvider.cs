@@ -50,12 +50,9 @@ namespace FluentGraphQL.Client.Services
             if (graphQLMethodConstruct is null)
                 return options;
 
-            if (ShouldIncludeAggregateContainerConverters(graphQLMethodConstruct))
-            {
-                converters = _graphQLAggregateJsonConverterProvider.Provide();
-                foreach (var converter in converters)
-                    options.Converters.Add((JsonConverter)converter);
-            }
+            converters = _graphQLAggregateJsonConverterProvider.Provide();
+            foreach (var converter in converters)
+                options.Converters.Add((JsonConverter)converter);            
 
             return options;
         }
@@ -69,19 +66,6 @@ namespace FluentGraphQL.Client.Services
                 default:
                     throw new NotImplementedException(_graphQLStringFactoryOptions.NamingStrategy.ToString());
             }
-        }
-
-        private bool ShouldIncludeAggregateContainerConverters(IGraphQLMethodConstruct graphQLMethodConstruct)
-        {
-            if (graphQLMethodConstruct is IGraphQLQuery graphQLQuery)
-            {
-                var responseType = graphQLQuery.GetType().GenericTypeArguments.First();
-                return
-                    typeof(IGraphQLAggregateContainerNode).IsAssignableFrom(responseType) ||
-                    graphQLQuery.HasAggregateContainer();
-            }
-
-            return false;
-        }
+        }        
     }
 }

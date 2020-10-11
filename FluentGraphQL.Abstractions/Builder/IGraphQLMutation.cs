@@ -16,15 +16,11 @@
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLMutation : IGraphQLNodeConstruct
+    public interface IGraphQLObjectMutation<TEntity> : IGraphQLNodeConstruct
     {
     }
 
-    public interface IGraphQLReturnSingleMutation<TEntity> : IGraphQLMutation
-    {
-    }
-
-    public interface IGraphQLReturnMultipleMutation<TEntity> : IGraphQLMutation
+    public interface IGraphQLArrayMutation<TEntity> : IGraphQLNodeConstruct
     {
     }
 }

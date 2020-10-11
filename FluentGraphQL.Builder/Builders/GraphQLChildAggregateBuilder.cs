@@ -33,9 +33,9 @@ namespace FluentGraphQL.Builder.Builders
         private readonly IGraphQLQueryBuilder _parentBuilder;
 
         public GraphQLChildAggregateBuilder(
-            IGraphQLQuery graphQLQuery, IGraphQLSelectNode graphQLSelectNode, 
+            IGraphQLNodeConstruct graphQLNodeConstruct, IGraphQLSelectNode graphQLSelectNode, 
             IGraphQLExpressionConverter graphQLExpressionConverter, IGraphQLValueFactory graphQLValuefactory,  IGraphQLQueryBuilder parentBuilder) 
-            : base(graphQLQuery, graphQLSelectNode, graphQLExpressionConverter, graphQLValuefactory)
+            : base(graphQLNodeConstruct, graphQLSelectNode, graphQLExpressionConverter, graphQLValuefactory)
         {
             _parentBuilder = parentBuilder;
         }

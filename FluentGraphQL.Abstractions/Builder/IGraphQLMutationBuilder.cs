@@ -42,13 +42,13 @@ namespace FluentGraphQL.Builder.Abstractions
     public interface IGraphQLReturnSingleMutationBuilder<TEntity>
     {
         IGraphQLSelectedReturnSingleMutation<TEntity, TReturn> Return<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression);
-        IGraphQLReturnSingleMutation<TEntity> Build();
+        IGraphQLObjectMutation<TEntity> Build();
     }
 
     public interface IGraphQLReturnMultipleMutationBuilder<TEntity>
     {
         IGraphQLSelectedReturnMultipleMutation<TEntity, TReturn> Return<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression);
-        IGraphQLReturnMultipleMutation<TEntity> Build();
+        IGraphQLArrayMutation<TEntity> Build();
     }
 
     public interface IGraphQLInsertSingleMutationBuilder<TEntity> : IGraphQLReturnSingleMutationBuilder<TEntity>

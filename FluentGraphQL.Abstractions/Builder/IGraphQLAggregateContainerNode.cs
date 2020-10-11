@@ -20,7 +20,7 @@ using System.Linq.Expressions;
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLAggregateContainerNode : IGraphQLNode
+    public interface IGraphQLAggregateContainerNode
     {
         IGraphQLAggregateNode Aggregate { get; set; }
     }

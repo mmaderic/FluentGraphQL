@@ -22,14 +22,14 @@ namespace FluentGraphQL.Builder.Atoms
 {
     internal class GraphQLCollectionValue : IGraphQLCollectionValue
     {
-        public IEnumerable<IGraphQLValue> CollectionItems { get; set; }
+        public IEnumerable<IGraphQLStatement> CollectionItems { get; set; }
 
         private GraphQLCollectionValue(GraphQLCollectionValue copy)
         {
             CollectionItems = copy.CollectionItems.Select(x => (IGraphQLValue) x.DeepCopy()).ToArray();
         }
 
-        public GraphQLCollectionValue(IEnumerable<IGraphQLValue> collectionItems)
+        public GraphQLCollectionValue(IEnumerable<IGraphQLStatement> collectionItems)
         {
             CollectionItems = collectionItems;
         }

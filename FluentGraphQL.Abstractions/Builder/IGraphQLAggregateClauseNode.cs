@@ -18,7 +18,7 @@ using System.Collections.Generic;
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLAggregateClauseNode : IGraphQLNode
+    public interface IGraphQLAggregateClauseNode
     {
         Dictionary<string, object> PropertyValues { get; set; }
     }

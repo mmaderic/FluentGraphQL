@@ -42,9 +42,9 @@ namespace FluentGraphQL.Builder.Builders
         private Dictionary<RuntimeTypeHandle, IGraphQLQueryBuilder> _childAggregateBuilders;
 
         public GraphQLAggregateBuilder(
-            IGraphQLQuery graphQLQuery, IGraphQLSelectNode graphQLSelectNode, 
+            IGraphQLNodeConstruct graphQLNodeConstruct, IGraphQLSelectNode graphQLSelectNode, 
             IGraphQLExpressionConverter graphQLExpressionConverter, IGraphQLValueFactory graphQLValuefactory) 
-            : base(graphQLQuery, graphQLSelectNode, graphQLExpressionConverter, graphQLValuefactory)
+            : base(graphQLNodeConstruct, graphQLSelectNode, graphQLExpressionConverter, graphQLValuefactory)
         {
         }
 
@@ -52,7 +52,7 @@ namespace FluentGraphQL.Builder.Builders
         {
             _graphQLSelectNode.IsActive = true;
 
-            var aggregateNode = _graphQLSelectNode.GetChildNode<IGraphQLAggregateNode>();
+            var aggregateNode = _graphQLSelectNode.FindNode<IGraphQLAggregateNode>();
             aggregateNode.IsActive = true;
             aggregateNode.ActivateProperty(Constant.AggregateMethodCalls.Count);
 
@@ -300,7 +300,7 @@ namespace FluentGraphQL.Builder.Builders
         {
             _graphQLSelectNode.IsActive = true;
 
-            var aggregateNode = _graphQLSelectNode.GetChildNode<IGraphQLAggregateNode>();
+            var aggregateNode = _graphQLSelectNode.FindNode<IGraphQLAggregateNode>();
             var methodNode = aggregateNode.GetChildNode(aggregateMethod);
             aggregateNode.IsActive = true;
             methodNode.IsActive = true;
@@ -394,7 +394,7 @@ namespace FluentGraphQL.Builder.Builders
                     throw new InvalidOperationException("Selected aggregate is not part of the current aggregate node.");
 
                 var childAggregateBuilder = new GraphQLChildAggregateBuilder<TRoot, TEntity, TAggregate, TChildAggregate>(
-                    _graphQLQuery, childAggregateNode, _graphQLExpressionConverter, _graphQLValueFactory, this);
+                    _graphQLNodeConstruct, childAggregateNode, _graphQLExpressionConverter, _graphQLValueFactory, this);
 
                 _childAggregateBuilders.Add(key, childAggregateBuilder);
                 builder = childAggregateBuilder;
@@ -432,14 +432,14 @@ namespace FluentGraphQL.Builder.Builders
             };
         }
 
-        IGraphQLSingleQuery<IGraphQLAggregateContainerNode<TRoot>> IGraphQLRootAggregateBuilder<TRoot>.Build()
+        IGraphQLObjectQuery<IGraphQLAggregateContainerNode<TRoot>> IGraphQLRootAggregateBuilder<TRoot>.Build()
         {
-            return (IGraphQLSingleQuery<IGraphQLAggregateContainerNode<TRoot>>)Build();
+            return (IGraphQLObjectQuery<IGraphQLAggregateContainerNode<TRoot>>)Build();
         }
 
-        IGraphQLSingleQuery<IGraphQLAggregateContainerNode<TRoot>> IGraphQLRootAggregateNodesBuilder<TRoot>.Build()
+        IGraphQLObjectQuery<IGraphQLAggregateContainerNode<TRoot>> IGraphQLRootAggregateNodesBuilder<TRoot>.Build()
         {
-            return (IGraphQLSingleQuery<IGraphQLAggregateContainerNode<TRoot>>)Build();
+            return (IGraphQLObjectQuery<IGraphQLAggregateContainerNode<TRoot>>)Build();
         }
 
         IGraphQLSingleSelectedQuery<IGraphQLAggregateContainerNode<TRoot>, IGraphQLAggregateContainerNode<TResult>> IGraphQLRootAggregateNodesBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)

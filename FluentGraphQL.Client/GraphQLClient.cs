@@ -89,12 +89,12 @@ namespace FluentGraphQL.Client
             return _graphQLBuilderFactory.ActionBuilder();
         }
 
-        public Task<TEntity> ExecuteAsync<TEntity>(IGraphQLSingleQuery<TEntity> graphQLQuery)
+        public Task<TEntity> ExecuteAsync<TEntity>(IGraphQLObjectQuery<TEntity> graphQLQuery)
         {
             return ExecuteConstructAsync<TEntity>(graphQLQuery);
         }
 
-        public Task<List<TEntity>> ExecuteAsync<TEntity>(IGraphQLStandardQuery<TEntity> graphQLQuery)
+        public Task<List<TEntity>> ExecuteAsync<TEntity>(IGraphQLArrayQuery<TEntity> graphQLQuery)
         {
             return ExecuteConstructAsync<List<TEntity>>(graphQLQuery);
         }
@@ -114,12 +114,12 @@ namespace FluentGraphQL.Client
             return result.Select(x => graphQLQuery.Selector.Invoke(x)).ToList();
         }
 
-        public Task<TEntity> ExecuteAsync<TEntity>(IGraphQLReturnSingleMutation<TEntity> graphQLReturnSingleMutation)
+        public Task<TEntity> ExecuteAsync<TEntity>(IGraphQLObjectMutation<TEntity> graphQLReturnSingleMutation)
         {
             return ExecuteConstructAsync<TEntity>(graphQLReturnSingleMutation);
         }
 
-        public Task<IGraphQLMutationReturningResponse<TEntity>> ExecuteAsync<TEntity>(IGraphQLReturnMultipleMutation<TEntity> graphQLReturnMultipleMutation)
+        public Task<IGraphQLMutationReturningResponse<TEntity>> ExecuteAsync<TEntity>(IGraphQLArrayMutation<TEntity> graphQLReturnMultipleMutation)
         {
             return ExecuteConstructAsync<IGraphQLMutationReturningResponse<TEntity>>(graphQLReturnMultipleMutation);
         }
@@ -202,27 +202,30 @@ namespace FluentGraphQL.Client
         }        
 
         public Task<IGraphQLSubscription> SubscribeAsync<TEntity>(
-            IGraphQLStandardQuery<TEntity> graphQLStandardQuery, Action<List<TEntity>> subscriptionHandler, Action<Exception> exceptionHandler = null)
+            IGraphQLArrayQuery<TEntity> graphQLStandardQuery, Action<List<TEntity>> subscriptionHandler, Action<Exception> exceptionHandler = null)
         {
             return ExecuteSubscription(graphQLStandardQuery, subscriptionHandler, exceptionHandler);          
         } 
 
         public Task<IGraphQLSubscription> SubscribeAsync<TEntity>(
-            IGraphQLSingleQuery<TEntity> graphQLSingleQuery, Action<TEntity> subscriptionHandler, Action<Exception> exceptionHandler = null)
+            IGraphQLObjectQuery<TEntity> graphQLSingleQuery, Action<TEntity> subscriptionHandler, Action<Exception> exceptionHandler = null)
         {
             return ExecuteSubscription(graphQLSingleQuery, subscriptionHandler, exceptionHandler);
         }
 
-        private async Task<IGraphQLSubscription> ExecuteSubscription<TResponse>(IGraphQLQuery graphQLQuery, Action<TResponse> subscriptionHandler, Action<Exception> exceptionHandler)
+        private async Task<IGraphQLSubscription> ExecuteSubscription<TResponse>(IGraphQLNodeConstruct graphQLNodeConstruct, Action<TResponse> subscriptionHandler, Action<Exception> exceptionHandler)
         {
-            graphQLQuery.Method = GraphQLMethod.Subscription;
-            var queryString = graphQLQuery.ToString(_graphQLStringFactory);
+            if (graphQLNodeConstruct.Method != GraphQLMethod.Query)
+                throw new InvalidOperationException("Subscriptions can be established only using query method constructs.");
+
+            graphQLNodeConstruct.Method = GraphQLMethod.Subscription;
+            var queryString = graphQLNodeConstruct.ToString(_graphQLStringFactory);
             var request = new GraphQLRequest
             {
                 Query = queryString
             };
 
-            var subscription = await _graphQLWebSocketService.StartSubscriptionAsync(request, (bytes) => ProcessSubscriptionResponse(graphQLQuery, bytes, subscriptionHandler, exceptionHandler))
+            var subscription = await _graphQLWebSocketService.StartSubscriptionAsync(request, (bytes) => ProcessSubscriptionResponse(graphQLNodeConstruct, bytes, subscriptionHandler, exceptionHandler))
                 .ConfigureAwait(false);
 
             return subscription;
@@ -503,7 +506,7 @@ namespace FluentGraphQL.Client
             return enumerator.Current.Value.GetRawText();
         }
 
-        private void ProcessSubscriptionResponse<TResponse>(IGraphQLQuery graphQLQuery, byte[] bytes, Action<TResponse> subscriptionHandler, Action<Exception> exceptionHandler)
+        private void ProcessSubscriptionResponse<TResponse>(IGraphQLNodeConstruct graphQLNodeConstruct, byte[] bytes, Action<TResponse> subscriptionHandler, Action<Exception> exceptionHandler)
         {
             var content = Encoding.UTF8.GetString(bytes);
             using (var document = JsonDocument.Parse(content))
@@ -513,7 +516,7 @@ namespace FluentGraphQL.Client
                 if (!successful)
                     HandleInvalidSubscriptionState(rootElement, exceptionHandler);
 
-                var response = (TResponse)DeserializeJsonElement(graphQLQuery, element, typeof(TResponse));
+                var response = (TResponse)DeserializeJsonElement(graphQLNodeConstruct, element, typeof(TResponse));
                 subscriptionHandler.Invoke(response);
             }
         }

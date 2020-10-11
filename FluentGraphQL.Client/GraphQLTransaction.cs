@@ -32,8 +32,8 @@ namespace FluentGraphQL.Client
             List<TResponseA>,
             List<TResponseB>>
             Construct<TResponseA, TResponseB>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -45,8 +45,8 @@ namespace FluentGraphQL.Client
             List<TResponseA>,
             TResponseB>
             Construct<TResponseA, TResponseB>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -58,8 +58,8 @@ namespace FluentGraphQL.Client
             TResponseA,
             List<TResponseB>>
             Construct<TResponseA, TResponseB>(
-                IGraphQLSingleQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB)
+                IGraphQLObjectQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -71,8 +71,8 @@ namespace FluentGraphQL.Client
             TResponseA,
             TResponseB>
             Construct<TResponseA, TResponseB>(
-                IGraphQLSingleQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB)
+                IGraphQLObjectQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -87,8 +87,8 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseA>,
             IGraphQLMutationReturningResponse<TResponseB>>
             Construct<TResponseA, TResponseB>(
-                IGraphQLReturnMultipleMutation<TResponseA> mutationA,
-                IGraphQLReturnMultipleMutation<TResponseB> mutationB)
+                IGraphQLArrayMutation<TResponseA> mutationA,
+                IGraphQLArrayMutation<TResponseB> mutationB)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -100,8 +100,8 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseA>,
             TResponseB>
             Construct<TResponseA, TResponseB>(
-                IGraphQLReturnMultipleMutation<TResponseA> mutationA,
-                IGraphQLReturnSingleMutation<TResponseB> mutationB)
+                IGraphQLArrayMutation<TResponseA> mutationA,
+                IGraphQLObjectMutation<TResponseB> mutationB)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -113,8 +113,8 @@ namespace FluentGraphQL.Client
             TResponseA,
             IGraphQLMutationReturningResponse<TResponseB>>
             Construct<TResponseA, TResponseB>(
-                IGraphQLReturnSingleMutation<TResponseA> mutationA,
-                IGraphQLReturnMultipleMutation<TResponseB> mutationB)
+                IGraphQLObjectMutation<TResponseA> mutationA,
+                IGraphQLArrayMutation<TResponseB> mutationB)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -126,8 +126,8 @@ namespace FluentGraphQL.Client
             TResponseA,
             TResponseB>
             Construct<TResponseA, TResponseB>(
-                IGraphQLReturnSingleMutation<TResponseA> mutationA,
-                IGraphQLReturnSingleMutation<TResponseB> mutationB)
+                IGraphQLObjectMutation<TResponseA> mutationA,
+                IGraphQLObjectMutation<TResponseB> mutationB)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -147,9 +147,9 @@ namespace FluentGraphQL.Client
             List<TResponseB>,
             List<TResponseC>>
             Construct<TResponseA, TResponseB, TResponseC>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -163,9 +163,9 @@ namespace FluentGraphQL.Client
             List<TResponseB>,
             TResponseC> 
             Construct<TResponseA, TResponseB, TResponseC>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -179,9 +179,9 @@ namespace FluentGraphQL.Client
             TResponseB,
             List<TResponseC>>
             Construct<TResponseA, TResponseB, TResponseC>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -195,9 +195,9 @@ namespace FluentGraphQL.Client
             List<TResponseB>,
             List<TResponseC>>
             Construct<TResponseA, TResponseB, TResponseC>(
-                IGraphQLSingleQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC)
+                IGraphQLObjectQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -211,9 +211,9 @@ namespace FluentGraphQL.Client
             TResponseB,
             TResponseC> 
             Construct<TResponseA, TResponseB, TResponseC>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -227,9 +227,9 @@ namespace FluentGraphQL.Client
             TResponseB,
             List<TResponseC>>
             Construct<TResponseA, TResponseB, TResponseC>(
-                IGraphQLSingleQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC)
+                IGraphQLObjectQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -243,9 +243,9 @@ namespace FluentGraphQL.Client
             List<TResponseB>,
             TResponseC>
             Construct<TResponseA, TResponseB, TResponseC>(
-                IGraphQLSingleQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC)
+                IGraphQLObjectQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -259,9 +259,9 @@ namespace FluentGraphQL.Client
             TResponseB,
             TResponseC> 
             Construct<TResponseA, TResponseB, TResponseC>(
-                IGraphQLSingleQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC)
+                IGraphQLObjectQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -275,9 +275,9 @@ namespace FluentGraphQL.Client
         public static IGraphQLMultiConstruct<
             IGraphQLMutationReturningResponse<TResponseA>, IGraphQLMutationReturningResponse<TResponseB>, IGraphQLMutationReturningResponse<TResponseC>>
             Construct<TResponseA, TResponseB, TResponseC>(
-                IGraphQLReturnMultipleMutation<TResponseA> mutationA,
-                IGraphQLReturnMultipleMutation<TResponseB> mutationB,
-                IGraphQLReturnMultipleMutation<TResponseC> mutationC)
+                IGraphQLArrayMutation<TResponseA> mutationA,
+                IGraphQLArrayMutation<TResponseB> mutationB,
+                IGraphQLArrayMutation<TResponseC> mutationC)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -291,9 +291,9 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseB>,
             TResponseC>
             Construct<TResponseA, TResponseB, TResponseC>(
-                IGraphQLReturnMultipleMutation<TResponseA> mutationA,
-                IGraphQLReturnMultipleMutation<TResponseB> mutationB,
-                IGraphQLReturnSingleMutation<TResponseC> mutationC)
+                IGraphQLArrayMutation<TResponseA> mutationA,
+                IGraphQLArrayMutation<TResponseB> mutationB,
+                IGraphQLObjectMutation<TResponseC> mutationC)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -307,9 +307,9 @@ namespace FluentGraphQL.Client
             TResponseB,
             IGraphQLMutationReturningResponse<TResponseC>> 
             Construct<TResponseA, TResponseB, TResponseC>(
-                IGraphQLReturnMultipleMutation<TResponseA> mutationA,
-                IGraphQLReturnSingleMutation<TResponseB> mutationB,
-                IGraphQLReturnMultipleMutation<TResponseC> mutationC)
+                IGraphQLArrayMutation<TResponseA> mutationA,
+                IGraphQLObjectMutation<TResponseB> mutationB,
+                IGraphQLArrayMutation<TResponseC> mutationC)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -323,9 +323,9 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseB>,
             IGraphQLMutationReturningResponse<TResponseC>>
             Construct<TResponseA, TResponseB, TResponseC>(
-                IGraphQLReturnSingleMutation<TResponseA> mutationA,
-                IGraphQLReturnMultipleMutation<TResponseB> mutationB,
-                IGraphQLReturnMultipleMutation<TResponseC> mutationC)
+                IGraphQLObjectMutation<TResponseA> mutationA,
+                IGraphQLArrayMutation<TResponseB> mutationB,
+                IGraphQLArrayMutation<TResponseC> mutationC)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -339,9 +339,9 @@ namespace FluentGraphQL.Client
             TResponseB,
             TResponseC> 
             Construct<TResponseA, TResponseB, TResponseC>(
-                IGraphQLReturnMultipleMutation<TResponseA> mutationA,
-                IGraphQLReturnSingleMutation<TResponseB> mutationB,
-                IGraphQLReturnSingleMutation<TResponseC> mutationC)
+                IGraphQLArrayMutation<TResponseA> mutationA,
+                IGraphQLObjectMutation<TResponseB> mutationB,
+                IGraphQLObjectMutation<TResponseC> mutationC)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -355,9 +355,9 @@ namespace FluentGraphQL.Client
             TResponseB,
             IGraphQLMutationReturningResponse<TResponseC>>
             Construct<TResponseA, TResponseB, TResponseC>(
-                IGraphQLReturnSingleMutation<TResponseA> mutationA,
-                IGraphQLReturnSingleMutation<TResponseB> mutationB,
-                IGraphQLReturnMultipleMutation<TResponseC> mutationC)
+                IGraphQLObjectMutation<TResponseA> mutationA,
+                IGraphQLObjectMutation<TResponseB> mutationB,
+                IGraphQLArrayMutation<TResponseC> mutationC)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -371,9 +371,9 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseB>,
             TResponseC>
             Construct<TResponseA, TResponseB, TResponseC>(
-                IGraphQLReturnSingleMutation<TResponseA> mutationA,
-                IGraphQLReturnMultipleMutation<TResponseB> mutationB,
-                IGraphQLReturnSingleMutation<TResponseC> mutationC)
+                IGraphQLObjectMutation<TResponseA> mutationA,
+                IGraphQLArrayMutation<TResponseB> mutationB,
+                IGraphQLObjectMutation<TResponseC> mutationC)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -387,9 +387,9 @@ namespace FluentGraphQL.Client
             TResponseB, 
             TResponseC> 
             Construct<TResponseA, TResponseB, TResponseC>(
-                IGraphQLReturnSingleMutation<TResponseA> mutationA,
-                IGraphQLReturnSingleMutation<TResponseB> mutationB,
-                IGraphQLReturnSingleMutation<TResponseC> mutationC)
+                IGraphQLObjectMutation<TResponseA> mutationA,
+                IGraphQLObjectMutation<TResponseB> mutationB,
+                IGraphQLObjectMutation<TResponseC> mutationC)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -411,10 +411,10 @@ namespace FluentGraphQL.Client
             List<TResponseC>,
             List<TResponseD>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -430,10 +430,10 @@ namespace FluentGraphQL.Client
             List<TResponseC>,
             TResponseD> 
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLSingleQuery<TResponseD> queryD)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLObjectQuery<TResponseD> queryD)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -449,10 +449,10 @@ namespace FluentGraphQL.Client
             TResponseC,
             List<TResponseD>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -468,10 +468,10 @@ namespace FluentGraphQL.Client
             List<TResponseC>,
             List<TResponseD>> 
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -487,10 +487,10 @@ namespace FluentGraphQL.Client
             List<TResponseC>, 
             List<TResponseD>> 
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLSingleQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD)
+                IGraphQLObjectQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -506,10 +506,10 @@ namespace FluentGraphQL.Client
             List<TResponseC>,
             List<TResponseD>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLSingleQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD)
+                IGraphQLObjectQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -525,10 +525,10 @@ namespace FluentGraphQL.Client
             TResponseC,
             List<TResponseD>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -544,10 +544,10 @@ namespace FluentGraphQL.Client
             TResponseC,
             TResponseD>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC,
-                IGraphQLSingleQuery<TResponseD> queryD)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC,
+                IGraphQLObjectQuery<TResponseD> queryD)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -563,10 +563,10 @@ namespace FluentGraphQL.Client
             List<TResponseC>,
             TResponseD> 
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLSingleQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC, 
-                IGraphQLSingleQuery<TResponseD> queryD)
+                IGraphQLObjectQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC, 
+                IGraphQLObjectQuery<TResponseD> queryD)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -582,10 +582,10 @@ namespace FluentGraphQL.Client
             TResponseC,
             List<TResponseD>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLSingleQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD)
+                IGraphQLObjectQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -601,10 +601,10 @@ namespace FluentGraphQL.Client
             List<TResponseC>,
             TResponseD>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLSingleQuery<TResponseD> queryD)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLObjectQuery<TResponseD> queryD)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -620,10 +620,10 @@ namespace FluentGraphQL.Client
             TResponseC, 
             TResponseD> 
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLStandardQuery<TResponseA> queryA, 
-                IGraphQLSingleQuery<TResponseB> queryB, 
-                IGraphQLSingleQuery<TResponseC> queryC,
-                IGraphQLSingleQuery<TResponseD> queryD)
+                IGraphQLArrayQuery<TResponseA> queryA, 
+                IGraphQLObjectQuery<TResponseB> queryB, 
+                IGraphQLObjectQuery<TResponseC> queryC,
+                IGraphQLObjectQuery<TResponseD> queryD)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -639,10 +639,10 @@ namespace FluentGraphQL.Client
             TResponseC,
             TResponseD> 
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLSingleQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB, 
-                IGraphQLSingleQuery<TResponseC> queryC, 
-                IGraphQLSingleQuery<TResponseD> queryD)
+                IGraphQLObjectQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB, 
+                IGraphQLObjectQuery<TResponseC> queryC, 
+                IGraphQLObjectQuery<TResponseD> queryD)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -658,10 +658,10 @@ namespace FluentGraphQL.Client
             List<TResponseC>, 
             TResponseD>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLSingleQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLSingleQuery<TResponseD> queryD)
+                IGraphQLObjectQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLObjectQuery<TResponseD> queryD)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -677,10 +677,10 @@ namespace FluentGraphQL.Client
             TResponseC, 
             List<TResponseD>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLSingleQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD)
+                IGraphQLObjectQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -696,10 +696,10 @@ namespace FluentGraphQL.Client
             TResponseC,
             TResponseD> 
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLSingleQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC,
-                IGraphQLSingleQuery<TResponseD> queryD)
+                IGraphQLObjectQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC,
+                IGraphQLObjectQuery<TResponseD> queryD)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -718,10 +718,10 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseC>,
             IGraphQLMutationReturningResponse<TResponseD>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLReturnMultipleMutation<TResponseA> mutationA,
-                IGraphQLReturnMultipleMutation<TResponseB> mutationB,
-                IGraphQLReturnMultipleMutation<TResponseC> mutationC,
-                IGraphQLReturnMultipleMutation<TResponseD> mutationD)
+                IGraphQLArrayMutation<TResponseA> mutationA,
+                IGraphQLArrayMutation<TResponseB> mutationB,
+                IGraphQLArrayMutation<TResponseC> mutationC,
+                IGraphQLArrayMutation<TResponseD> mutationD)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -737,10 +737,10 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseC>,
             TResponseD>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLReturnMultipleMutation<TResponseA> mutationA,
-                IGraphQLReturnMultipleMutation<TResponseB> mutationB,
-                IGraphQLReturnMultipleMutation<TResponseC> mutationC,
-                IGraphQLReturnSingleMutation<TResponseD> mutationD)
+                IGraphQLArrayMutation<TResponseA> mutationA,
+                IGraphQLArrayMutation<TResponseB> mutationB,
+                IGraphQLArrayMutation<TResponseC> mutationC,
+                IGraphQLObjectMutation<TResponseD> mutationD)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -756,10 +756,10 @@ namespace FluentGraphQL.Client
             TResponseC,
             IGraphQLMutationReturningResponse<TResponseD>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLReturnMultipleMutation<TResponseA> mutationA,
-                IGraphQLReturnMultipleMutation<TResponseB> mutationB,
-                IGraphQLReturnSingleMutation<TResponseC> mutationC,
-                IGraphQLReturnMultipleMutation<TResponseD> mutationD)
+                IGraphQLArrayMutation<TResponseA> mutationA,
+                IGraphQLArrayMutation<TResponseB> mutationB,
+                IGraphQLObjectMutation<TResponseC> mutationC,
+                IGraphQLArrayMutation<TResponseD> mutationD)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -775,10 +775,10 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseC>,
             IGraphQLMutationReturningResponse<TResponseD>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLReturnMultipleMutation<TResponseA> mutationA,
-                IGraphQLReturnSingleMutation<TResponseB> mutationB,
-                IGraphQLReturnMultipleMutation<TResponseC> mutationC,
-                IGraphQLReturnMultipleMutation<TResponseD> mutationD)
+                IGraphQLArrayMutation<TResponseA> mutationA,
+                IGraphQLObjectMutation<TResponseB> mutationB,
+                IGraphQLArrayMutation<TResponseC> mutationC,
+                IGraphQLArrayMutation<TResponseD> mutationD)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -794,10 +794,10 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseC>,
             IGraphQLMutationReturningResponse<TResponseD>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLReturnSingleMutation<TResponseA> mutationA,
-                IGraphQLReturnMultipleMutation<TResponseB> mutationB,
-                IGraphQLReturnMultipleMutation<TResponseC> mutationC,
-                IGraphQLReturnMultipleMutation<TResponseD> mutationD)
+                IGraphQLObjectMutation<TResponseA> mutationA,
+                IGraphQLArrayMutation<TResponseB> mutationB,
+                IGraphQLArrayMutation<TResponseC> mutationC,
+                IGraphQLArrayMutation<TResponseD> mutationD)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -813,10 +813,10 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseC>,
             IGraphQLMutationReturningResponse<TResponseD>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLReturnSingleMutation<TResponseA> mutationA,
-                IGraphQLReturnSingleMutation<TResponseB> mutationB,
-                IGraphQLReturnMultipleMutation<TResponseC> mutationC,
-                IGraphQLReturnMultipleMutation<TResponseD> mutationD)
+                IGraphQLObjectMutation<TResponseA> mutationA,
+                IGraphQLObjectMutation<TResponseB> mutationB,
+                IGraphQLArrayMutation<TResponseC> mutationC,
+                IGraphQLArrayMutation<TResponseD> mutationD)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -832,10 +832,10 @@ namespace FluentGraphQL.Client
             TResponseC,
             IGraphQLMutationReturningResponse<TResponseD>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLReturnMultipleMutation<TResponseA> mutationA,
-                IGraphQLReturnSingleMutation<TResponseB> mutationB,
-                IGraphQLReturnSingleMutation<TResponseC> mutationC,
-                IGraphQLReturnMultipleMutation<TResponseD> mutationD)
+                IGraphQLArrayMutation<TResponseA> mutationA,
+                IGraphQLObjectMutation<TResponseB> mutationB,
+                IGraphQLObjectMutation<TResponseC> mutationC,
+                IGraphQLArrayMutation<TResponseD> mutationD)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -851,10 +851,10 @@ namespace FluentGraphQL.Client
             TResponseC,
             TResponseD>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLReturnMultipleMutation<TResponseA> mutationA,
-                IGraphQLReturnMultipleMutation<TResponseB> mutationB,
-                IGraphQLReturnSingleMutation<TResponseC> mutationC,
-                IGraphQLReturnSingleMutation<TResponseD> mutationD)
+                IGraphQLArrayMutation<TResponseA> mutationA,
+                IGraphQLArrayMutation<TResponseB> mutationB,
+                IGraphQLObjectMutation<TResponseC> mutationC,
+                IGraphQLObjectMutation<TResponseD> mutationD)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -870,10 +870,10 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseC>,
             TResponseD>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLReturnSingleMutation<TResponseA> mutationA,
-                IGraphQLReturnMultipleMutation<TResponseB> mutationB,
-                IGraphQLReturnMultipleMutation<TResponseC> mutationC,
-                IGraphQLReturnSingleMutation<TResponseD> mutationD)
+                IGraphQLObjectMutation<TResponseA> mutationA,
+                IGraphQLArrayMutation<TResponseB> mutationB,
+                IGraphQLArrayMutation<TResponseC> mutationC,
+                IGraphQLObjectMutation<TResponseD> mutationD)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -889,10 +889,10 @@ namespace FluentGraphQL.Client
             TResponseC,
             IGraphQLMutationReturningResponse<TResponseD>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLReturnSingleMutation<TResponseA> mutationA,
-                IGraphQLReturnMultipleMutation<TResponseB> mutationB,
-                IGraphQLReturnSingleMutation<TResponseC> mutationC,
-                IGraphQLReturnMultipleMutation<TResponseD> mutationD)
+                IGraphQLObjectMutation<TResponseA> mutationA,
+                IGraphQLArrayMutation<TResponseB> mutationB,
+                IGraphQLObjectMutation<TResponseC> mutationC,
+                IGraphQLArrayMutation<TResponseD> mutationD)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -908,10 +908,10 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseC>,
             TResponseD>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLReturnMultipleMutation<TResponseA> mutationA,
-                IGraphQLReturnSingleMutation<TResponseB> mutationB,
-                IGraphQLReturnMultipleMutation<TResponseC> mutationC,
-                IGraphQLReturnSingleMutation<TResponseD> mutationD)
+                IGraphQLArrayMutation<TResponseA> mutationA,
+                IGraphQLObjectMutation<TResponseB> mutationB,
+                IGraphQLArrayMutation<TResponseC> mutationC,
+                IGraphQLObjectMutation<TResponseD> mutationD)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -927,10 +927,10 @@ namespace FluentGraphQL.Client
             TResponseC,
             TResponseD>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLReturnMultipleMutation<TResponseA> mutationA,
-                IGraphQLReturnSingleMutation<TResponseB> mutationB,
-                IGraphQLReturnSingleMutation<TResponseC> mutationC,
-                IGraphQLReturnSingleMutation<TResponseD> mutationD)
+                IGraphQLArrayMutation<TResponseA> mutationA,
+                IGraphQLObjectMutation<TResponseB> mutationB,
+                IGraphQLObjectMutation<TResponseC> mutationC,
+                IGraphQLObjectMutation<TResponseD> mutationD)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -946,10 +946,10 @@ namespace FluentGraphQL.Client
             TResponseC,
             TResponseD>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLReturnSingleMutation<TResponseA> mutationA,
-                IGraphQLReturnMultipleMutation<TResponseB> mutationB,
-                IGraphQLReturnSingleMutation<TResponseC> mutationC,
-                IGraphQLReturnSingleMutation<TResponseD> mutationD)
+                IGraphQLObjectMutation<TResponseA> mutationA,
+                IGraphQLArrayMutation<TResponseB> mutationB,
+                IGraphQLObjectMutation<TResponseC> mutationC,
+                IGraphQLObjectMutation<TResponseD> mutationD)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -965,10 +965,10 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseC>,
             TResponseD>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLReturnSingleMutation<TResponseA> mutationA,
-                IGraphQLReturnSingleMutation<TResponseB> mutationB,
-                IGraphQLReturnMultipleMutation<TResponseC> mutationC,
-                IGraphQLReturnSingleMutation<TResponseD> mutationD)
+                IGraphQLObjectMutation<TResponseA> mutationA,
+                IGraphQLObjectMutation<TResponseB> mutationB,
+                IGraphQLArrayMutation<TResponseC> mutationC,
+                IGraphQLObjectMutation<TResponseD> mutationD)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -984,10 +984,10 @@ namespace FluentGraphQL.Client
             TResponseC,
             IGraphQLMutationReturningResponse<TResponseD>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLReturnSingleMutation<TResponseA> mutationA,
-                IGraphQLReturnSingleMutation<TResponseB> mutationB,
-                IGraphQLReturnSingleMutation<TResponseC> mutationC,
-                IGraphQLReturnMultipleMutation<TResponseD> mutationD)
+                IGraphQLObjectMutation<TResponseA> mutationA,
+                IGraphQLObjectMutation<TResponseB> mutationB,
+                IGraphQLObjectMutation<TResponseC> mutationC,
+                IGraphQLArrayMutation<TResponseD> mutationD)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1003,10 +1003,10 @@ namespace FluentGraphQL.Client
             TResponseC,
             TResponseD>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD>(
-                IGraphQLReturnSingleMutation<TResponseA> mutationA,
-                IGraphQLReturnSingleMutation<TResponseB> mutationB,
-                IGraphQLReturnSingleMutation<TResponseC> mutationC,
-                IGraphQLReturnSingleMutation<TResponseD> mutationD)
+                IGraphQLObjectMutation<TResponseA> mutationA,
+                IGraphQLObjectMutation<TResponseB> mutationB,
+                IGraphQLObjectMutation<TResponseC> mutationC,
+                IGraphQLObjectMutation<TResponseD> mutationD)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1029,11 +1029,11 @@ namespace FluentGraphQL.Client
             List<TResponseD>,
             List<TResponseE>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD,
-                IGraphQLStandardQuery<TResponseE> queryE)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD,
+                IGraphQLArrayQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -1051,11 +1051,11 @@ namespace FluentGraphQL.Client
             List<TResponseD>,
             TResponseE>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD,
-                IGraphQLSingleQuery<TResponseE> queryE)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD,
+                IGraphQLObjectQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -1073,11 +1073,11 @@ namespace FluentGraphQL.Client
             TResponseE,
             List<TResponseD>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLSingleQuery<TResponseD> queryD,
-                IGraphQLStandardQuery<TResponseE> queryE)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLObjectQuery<TResponseD> queryD,
+                IGraphQLArrayQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -1095,11 +1095,11 @@ namespace FluentGraphQL.Client
             TResponseE,
             TResponseD>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLSingleQuery<TResponseD> queryD,
-                IGraphQLSingleQuery<TResponseE> queryE)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLObjectQuery<TResponseD> queryD,
+                IGraphQLObjectQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -1117,11 +1117,11 @@ namespace FluentGraphQL.Client
             List<TResponseD>,
             List<TResponseE>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD,
-                IGraphQLStandardQuery<TResponseE> queryE)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD,
+                IGraphQLArrayQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -1139,11 +1139,11 @@ namespace FluentGraphQL.Client
             List<TResponseD>,
             TResponseE>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD,
-                IGraphQLSingleQuery<TResponseE> queryE)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD,
+                IGraphQLObjectQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -1161,11 +1161,11 @@ namespace FluentGraphQL.Client
             TResponseD,
             List<TResponseE>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC,
-                IGraphQLSingleQuery<TResponseD> queryD,
-                IGraphQLStandardQuery<TResponseE> queryE)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC,
+                IGraphQLObjectQuery<TResponseD> queryD,
+                IGraphQLArrayQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -1183,11 +1183,11 @@ namespace FluentGraphQL.Client
             TResponseD,
             TResponseE>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC,
-                IGraphQLSingleQuery<TResponseD> queryD,
-                IGraphQLSingleQuery<TResponseE> queryE)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC,
+                IGraphQLObjectQuery<TResponseD> queryD,
+                IGraphQLObjectQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -1205,11 +1205,11 @@ namespace FluentGraphQL.Client
             List<TResponseD>,
             List<TResponseE>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD,
-                IGraphQLStandardQuery<TResponseE> queryE)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD,
+                IGraphQLArrayQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -1227,11 +1227,11 @@ namespace FluentGraphQL.Client
             List<TResponseD>,
             TResponseE>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD,
-                IGraphQLSingleQuery<TResponseE> queryE)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD,
+                IGraphQLObjectQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -1249,11 +1249,11 @@ namespace FluentGraphQL.Client
             TResponseD,
             List<TResponseE>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLSingleQuery<TResponseD> queryD,
-                IGraphQLStandardQuery<TResponseE> queryE)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLObjectQuery<TResponseD> queryD,
+                IGraphQLArrayQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -1271,11 +1271,11 @@ namespace FluentGraphQL.Client
             TResponseD,
             TResponseE>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLSingleQuery<TResponseD> queryD,
-                IGraphQLSingleQuery<TResponseE> queryE)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLObjectQuery<TResponseD> queryD,
+                IGraphQLObjectQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -1293,11 +1293,11 @@ namespace FluentGraphQL.Client
             List<TResponseD>,
             List<TResponseE>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD,
-                IGraphQLStandardQuery<TResponseE> queryE)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD,
+                IGraphQLArrayQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -1315,11 +1315,11 @@ namespace FluentGraphQL.Client
             List<TResponseD>,
             TResponseE>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD,
-                IGraphQLSingleQuery<TResponseE> queryE)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD,
+                IGraphQLObjectQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -1337,11 +1337,11 @@ namespace FluentGraphQL.Client
             TResponseD,
             List<TResponseE>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC,
-                IGraphQLSingleQuery<TResponseD> queryD,
-                IGraphQLStandardQuery<TResponseE> queryE)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC,
+                IGraphQLObjectQuery<TResponseD> queryD,
+                IGraphQLArrayQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -1359,11 +1359,11 @@ namespace FluentGraphQL.Client
             TResponseD,
             TResponseE>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLStandardQuery<TResponseA> queryA,
-                IGraphQLSingleQuery<TResponseB> queryB,
-                IGraphQLSingleQuery<TResponseC> queryC,
-                IGraphQLSingleQuery<TResponseD> queryD,
-                IGraphQLSingleQuery<TResponseE> queryE)
+                IGraphQLArrayQuery<TResponseA> queryA,
+                IGraphQLObjectQuery<TResponseB> queryB,
+                IGraphQLObjectQuery<TResponseC> queryC,
+                IGraphQLObjectQuery<TResponseD> queryD,
+                IGraphQLObjectQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 List<TResponseA>,
@@ -1381,11 +1381,11 @@ namespace FluentGraphQL.Client
             List<TResponseD>,
             List<TResponseE>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLSingleQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD,
-                IGraphQLStandardQuery<TResponseE> queryE)
+                IGraphQLObjectQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD,
+                IGraphQLArrayQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1403,11 +1403,11 @@ namespace FluentGraphQL.Client
             List<TResponseD>,
             TResponseE>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLSingleQuery<TResponseA> queryA,
-                IGraphQLStandardQuery<TResponseB> queryB,
-                IGraphQLStandardQuery<TResponseC> queryC,
-                IGraphQLStandardQuery<TResponseD> queryD,
-                IGraphQLSingleQuery<TResponseE> queryE)
+                IGraphQLObjectQuery<TResponseA> queryA,
+                IGraphQLArrayQuery<TResponseB> queryB,
+                IGraphQLArrayQuery<TResponseC> queryC,
+                IGraphQLArrayQuery<TResponseD> queryD,
+                IGraphQLObjectQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1425,11 +1425,11 @@ namespace FluentGraphQL.Client
            TResponseD,
            List<TResponseE>>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLSingleQuery<TResponseA> queryA,
-               IGraphQLStandardQuery<TResponseB> queryB,
-               IGraphQLStandardQuery<TResponseC> queryC,
-               IGraphQLSingleQuery<TResponseD> queryD,
-               IGraphQLStandardQuery<TResponseE> queryE)
+               IGraphQLObjectQuery<TResponseA> queryA,
+               IGraphQLArrayQuery<TResponseB> queryB,
+               IGraphQLArrayQuery<TResponseC> queryC,
+               IGraphQLObjectQuery<TResponseD> queryD,
+               IGraphQLArrayQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1447,11 +1447,11 @@ namespace FluentGraphQL.Client
            TResponseD,
            TResponseE>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLSingleQuery<TResponseA> queryA,
-               IGraphQLStandardQuery<TResponseB> queryB,
-               IGraphQLStandardQuery<TResponseC> queryC,
-               IGraphQLSingleQuery<TResponseD> queryD,
-               IGraphQLSingleQuery<TResponseE> queryE)
+               IGraphQLObjectQuery<TResponseA> queryA,
+               IGraphQLArrayQuery<TResponseB> queryB,
+               IGraphQLArrayQuery<TResponseC> queryC,
+               IGraphQLObjectQuery<TResponseD> queryD,
+               IGraphQLObjectQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1469,11 +1469,11 @@ namespace FluentGraphQL.Client
            List<TResponseD>,
            List<TResponseE>>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLSingleQuery<TResponseA> queryA,
-               IGraphQLStandardQuery<TResponseB> queryB,
-               IGraphQLSingleQuery<TResponseC> queryC,
-               IGraphQLStandardQuery<TResponseD> queryD,
-               IGraphQLStandardQuery<TResponseE> queryE)
+               IGraphQLObjectQuery<TResponseA> queryA,
+               IGraphQLArrayQuery<TResponseB> queryB,
+               IGraphQLObjectQuery<TResponseC> queryC,
+               IGraphQLArrayQuery<TResponseD> queryD,
+               IGraphQLArrayQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1491,11 +1491,11 @@ namespace FluentGraphQL.Client
            List<TResponseD>,
            TResponseE>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLSingleQuery<TResponseA> queryA,
-               IGraphQLStandardQuery<TResponseB> queryB,
-               IGraphQLSingleQuery<TResponseC> queryC,
-               IGraphQLStandardQuery<TResponseD> queryD,
-               IGraphQLSingleQuery<TResponseE> queryE)
+               IGraphQLObjectQuery<TResponseA> queryA,
+               IGraphQLArrayQuery<TResponseB> queryB,
+               IGraphQLObjectQuery<TResponseC> queryC,
+               IGraphQLArrayQuery<TResponseD> queryD,
+               IGraphQLObjectQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1513,11 +1513,11 @@ namespace FluentGraphQL.Client
            TResponseD,
            List<TResponseE>>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLSingleQuery<TResponseA> queryA,
-               IGraphQLStandardQuery<TResponseB> queryB,
-               IGraphQLSingleQuery<TResponseC> queryC,
-               IGraphQLSingleQuery<TResponseD> queryD,
-               IGraphQLStandardQuery<TResponseE> queryE)
+               IGraphQLObjectQuery<TResponseA> queryA,
+               IGraphQLArrayQuery<TResponseB> queryB,
+               IGraphQLObjectQuery<TResponseC> queryC,
+               IGraphQLObjectQuery<TResponseD> queryD,
+               IGraphQLArrayQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1535,11 +1535,11 @@ namespace FluentGraphQL.Client
            TResponseD,
            TResponseE>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLSingleQuery<TResponseA> queryA,
-               IGraphQLStandardQuery<TResponseB> queryB,
-               IGraphQLSingleQuery<TResponseC> queryC,
-               IGraphQLSingleQuery<TResponseD> queryD,
-               IGraphQLSingleQuery<TResponseE> queryE)
+               IGraphQLObjectQuery<TResponseA> queryA,
+               IGraphQLArrayQuery<TResponseB> queryB,
+               IGraphQLObjectQuery<TResponseC> queryC,
+               IGraphQLObjectQuery<TResponseD> queryD,
+               IGraphQLObjectQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1557,11 +1557,11 @@ namespace FluentGraphQL.Client
            List<TResponseD>,
            List<TResponseE>>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLSingleQuery<TResponseA> queryA,
-               IGraphQLSingleQuery<TResponseB> queryB,
-               IGraphQLStandardQuery<TResponseC> queryC,
-               IGraphQLStandardQuery<TResponseD> queryD,
-               IGraphQLStandardQuery<TResponseE> queryE)
+               IGraphQLObjectQuery<TResponseA> queryA,
+               IGraphQLObjectQuery<TResponseB> queryB,
+               IGraphQLArrayQuery<TResponseC> queryC,
+               IGraphQLArrayQuery<TResponseD> queryD,
+               IGraphQLArrayQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1579,11 +1579,11 @@ namespace FluentGraphQL.Client
            List<TResponseD>,
            TResponseE>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLSingleQuery<TResponseA> queryA,
-               IGraphQLSingleQuery<TResponseB> queryB,
-               IGraphQLStandardQuery<TResponseC> queryC,
-               IGraphQLStandardQuery<TResponseD> queryD,
-               IGraphQLSingleQuery<TResponseE> queryE)
+               IGraphQLObjectQuery<TResponseA> queryA,
+               IGraphQLObjectQuery<TResponseB> queryB,
+               IGraphQLArrayQuery<TResponseC> queryC,
+               IGraphQLArrayQuery<TResponseD> queryD,
+               IGraphQLObjectQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1601,11 +1601,11 @@ namespace FluentGraphQL.Client
            TResponseD,
            List<TResponseE>>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLSingleQuery<TResponseA> queryA,
-               IGraphQLSingleQuery<TResponseB> queryB,
-               IGraphQLStandardQuery<TResponseC> queryC,
-               IGraphQLSingleQuery<TResponseD> queryD,
-               IGraphQLStandardQuery<TResponseE> queryE)
+               IGraphQLObjectQuery<TResponseA> queryA,
+               IGraphQLObjectQuery<TResponseB> queryB,
+               IGraphQLArrayQuery<TResponseC> queryC,
+               IGraphQLObjectQuery<TResponseD> queryD,
+               IGraphQLArrayQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1623,11 +1623,11 @@ namespace FluentGraphQL.Client
            TResponseD,
            TResponseE>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLSingleQuery<TResponseA> queryA,
-               IGraphQLSingleQuery<TResponseB> queryB,
-               IGraphQLStandardQuery<TResponseC> queryC,
-               IGraphQLSingleQuery<TResponseD> queryD,
-               IGraphQLSingleQuery<TResponseE> queryE)
+               IGraphQLObjectQuery<TResponseA> queryA,
+               IGraphQLObjectQuery<TResponseB> queryB,
+               IGraphQLArrayQuery<TResponseC> queryC,
+               IGraphQLObjectQuery<TResponseD> queryD,
+               IGraphQLObjectQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1645,11 +1645,11 @@ namespace FluentGraphQL.Client
            List<TResponseD>,
            List<TResponseE>>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLSingleQuery<TResponseA> queryA,
-               IGraphQLSingleQuery<TResponseB> queryB,
-               IGraphQLSingleQuery<TResponseC> queryC,
-               IGraphQLStandardQuery<TResponseD> queryD,
-               IGraphQLStandardQuery<TResponseE> queryE)
+               IGraphQLObjectQuery<TResponseA> queryA,
+               IGraphQLObjectQuery<TResponseB> queryB,
+               IGraphQLObjectQuery<TResponseC> queryC,
+               IGraphQLArrayQuery<TResponseD> queryD,
+               IGraphQLArrayQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1667,11 +1667,11 @@ namespace FluentGraphQL.Client
            List<TResponseD>,
            TResponseE>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLSingleQuery<TResponseA> queryA,
-               IGraphQLSingleQuery<TResponseB> queryB,
-               IGraphQLSingleQuery<TResponseC> queryC,
-               IGraphQLStandardQuery<TResponseD> queryD,
-               IGraphQLSingleQuery<TResponseE> queryE)
+               IGraphQLObjectQuery<TResponseA> queryA,
+               IGraphQLObjectQuery<TResponseB> queryB,
+               IGraphQLObjectQuery<TResponseC> queryC,
+               IGraphQLArrayQuery<TResponseD> queryD,
+               IGraphQLObjectQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1689,11 +1689,11 @@ namespace FluentGraphQL.Client
            TResponseD,
            List<TResponseE>>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLSingleQuery<TResponseA> queryA,
-               IGraphQLSingleQuery<TResponseB> queryB,
-               IGraphQLSingleQuery<TResponseC> queryC,
-               IGraphQLSingleQuery<TResponseD> queryD,
-               IGraphQLStandardQuery<TResponseE> queryE)
+               IGraphQLObjectQuery<TResponseA> queryA,
+               IGraphQLObjectQuery<TResponseB> queryB,
+               IGraphQLObjectQuery<TResponseC> queryC,
+               IGraphQLObjectQuery<TResponseD> queryD,
+               IGraphQLArrayQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1711,11 +1711,11 @@ namespace FluentGraphQL.Client
            TResponseD,
            TResponseE>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLSingleQuery<TResponseA> queryA,
-               IGraphQLSingleQuery<TResponseB> queryB,
-               IGraphQLSingleQuery<TResponseC> queryC,
-               IGraphQLSingleQuery<TResponseD> queryD,
-               IGraphQLSingleQuery<TResponseE> queryE)
+               IGraphQLObjectQuery<TResponseA> queryA,
+               IGraphQLObjectQuery<TResponseB> queryB,
+               IGraphQLObjectQuery<TResponseC> queryC,
+               IGraphQLObjectQuery<TResponseD> queryD,
+               IGraphQLObjectQuery<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -1736,11 +1736,11 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseD>,
             IGraphQLMutationReturningResponse<TResponseE>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnMultipleMutation<TResponseA> queryA,
-                IGraphQLReturnMultipleMutation<TResponseB> queryB,
-                IGraphQLReturnMultipleMutation<TResponseC> queryC,
-                IGraphQLReturnMultipleMutation<TResponseD> queryD,
-                IGraphQLReturnMultipleMutation<TResponseE> queryE)
+                IGraphQLArrayMutation<TResponseA> queryA,
+                IGraphQLArrayMutation<TResponseB> queryB,
+                IGraphQLArrayMutation<TResponseC> queryC,
+                IGraphQLArrayMutation<TResponseD> queryD,
+                IGraphQLArrayMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -1758,11 +1758,11 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseD>,
             TResponseE>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnMultipleMutation<TResponseA> queryA,
-                IGraphQLReturnMultipleMutation<TResponseB> queryB,
-                IGraphQLReturnMultipleMutation<TResponseC> queryC,
-                IGraphQLReturnMultipleMutation<TResponseD> queryD,
-                IGraphQLReturnSingleMutation<TResponseE> queryE)
+                IGraphQLArrayMutation<TResponseA> queryA,
+                IGraphQLArrayMutation<TResponseB> queryB,
+                IGraphQLArrayMutation<TResponseC> queryC,
+                IGraphQLArrayMutation<TResponseD> queryD,
+                IGraphQLObjectMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -1780,11 +1780,11 @@ namespace FluentGraphQL.Client
             TResponseE,
             IGraphQLMutationReturningResponse<TResponseD>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnMultipleMutation<TResponseA> queryA,
-                IGraphQLReturnMultipleMutation<TResponseB> queryB,
-                IGraphQLReturnMultipleMutation<TResponseC> queryC,
-                IGraphQLReturnSingleMutation<TResponseD> queryD,
-                IGraphQLReturnMultipleMutation<TResponseE> queryE)
+                IGraphQLArrayMutation<TResponseA> queryA,
+                IGraphQLArrayMutation<TResponseB> queryB,
+                IGraphQLArrayMutation<TResponseC> queryC,
+                IGraphQLObjectMutation<TResponseD> queryD,
+                IGraphQLArrayMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -1802,11 +1802,11 @@ namespace FluentGraphQL.Client
             TResponseE,
             TResponseD>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnMultipleMutation<TResponseA> queryA,
-                IGraphQLReturnMultipleMutation<TResponseB> queryB,
-                IGraphQLReturnMultipleMutation<TResponseC> queryC,
-                IGraphQLReturnSingleMutation<TResponseD> queryD,
-                IGraphQLReturnSingleMutation<TResponseE> queryE)
+                IGraphQLArrayMutation<TResponseA> queryA,
+                IGraphQLArrayMutation<TResponseB> queryB,
+                IGraphQLArrayMutation<TResponseC> queryC,
+                IGraphQLObjectMutation<TResponseD> queryD,
+                IGraphQLObjectMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -1824,11 +1824,11 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseD>,
             IGraphQLMutationReturningResponse<TResponseE>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnMultipleMutation<TResponseA> queryA,
-                IGraphQLReturnMultipleMutation<TResponseB> queryB,
-                IGraphQLReturnSingleMutation<TResponseC> queryC,
-                IGraphQLReturnMultipleMutation<TResponseD> queryD,
-                IGraphQLReturnMultipleMutation<TResponseE> queryE)
+                IGraphQLArrayMutation<TResponseA> queryA,
+                IGraphQLArrayMutation<TResponseB> queryB,
+                IGraphQLObjectMutation<TResponseC> queryC,
+                IGraphQLArrayMutation<TResponseD> queryD,
+                IGraphQLArrayMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -1846,11 +1846,11 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseD>,
             TResponseE>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnMultipleMutation<TResponseA> queryA,
-                IGraphQLReturnMultipleMutation<TResponseB> queryB,
-                IGraphQLReturnSingleMutation<TResponseC> queryC,
-                IGraphQLReturnMultipleMutation<TResponseD> queryD,
-                IGraphQLReturnSingleMutation<TResponseE> queryE)
+                IGraphQLArrayMutation<TResponseA> queryA,
+                IGraphQLArrayMutation<TResponseB> queryB,
+                IGraphQLObjectMutation<TResponseC> queryC,
+                IGraphQLArrayMutation<TResponseD> queryD,
+                IGraphQLObjectMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -1868,11 +1868,11 @@ namespace FluentGraphQL.Client
             TResponseD,
             IGraphQLMutationReturningResponse<TResponseE>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnMultipleMutation<TResponseA> queryA,
-                IGraphQLReturnMultipleMutation<TResponseB> queryB,
-                IGraphQLReturnSingleMutation<TResponseC> queryC,
-                IGraphQLReturnSingleMutation<TResponseD> queryD,
-                IGraphQLReturnMultipleMutation<TResponseE> queryE)
+                IGraphQLArrayMutation<TResponseA> queryA,
+                IGraphQLArrayMutation<TResponseB> queryB,
+                IGraphQLObjectMutation<TResponseC> queryC,
+                IGraphQLObjectMutation<TResponseD> queryD,
+                IGraphQLArrayMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -1890,11 +1890,11 @@ namespace FluentGraphQL.Client
             TResponseD,
             TResponseE>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnMultipleMutation<TResponseA> queryA,
-                IGraphQLReturnMultipleMutation<TResponseB> queryB,
-                IGraphQLReturnSingleMutation<TResponseC> queryC,
-                IGraphQLReturnSingleMutation<TResponseD> queryD,
-                IGraphQLReturnSingleMutation<TResponseE> queryE)
+                IGraphQLArrayMutation<TResponseA> queryA,
+                IGraphQLArrayMutation<TResponseB> queryB,
+                IGraphQLObjectMutation<TResponseC> queryC,
+                IGraphQLObjectMutation<TResponseD> queryD,
+                IGraphQLObjectMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -1912,11 +1912,11 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseD>,
             IGraphQLMutationReturningResponse<TResponseE>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnMultipleMutation<TResponseA> queryA,
-                IGraphQLReturnSingleMutation<TResponseB> queryB,
-                IGraphQLReturnMultipleMutation<TResponseC> queryC,
-                IGraphQLReturnMultipleMutation<TResponseD> queryD,
-                IGraphQLReturnMultipleMutation<TResponseE> queryE)
+                IGraphQLArrayMutation<TResponseA> queryA,
+                IGraphQLObjectMutation<TResponseB> queryB,
+                IGraphQLArrayMutation<TResponseC> queryC,
+                IGraphQLArrayMutation<TResponseD> queryD,
+                IGraphQLArrayMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -1934,11 +1934,11 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseD>,
             TResponseE>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnMultipleMutation<TResponseA> queryA,
-                IGraphQLReturnSingleMutation<TResponseB> queryB,
-                IGraphQLReturnMultipleMutation<TResponseC> queryC,
-                IGraphQLReturnMultipleMutation<TResponseD> queryD,
-                IGraphQLReturnSingleMutation<TResponseE> queryE)
+                IGraphQLArrayMutation<TResponseA> queryA,
+                IGraphQLObjectMutation<TResponseB> queryB,
+                IGraphQLArrayMutation<TResponseC> queryC,
+                IGraphQLArrayMutation<TResponseD> queryD,
+                IGraphQLObjectMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -1956,11 +1956,11 @@ namespace FluentGraphQL.Client
             TResponseD,
             IGraphQLMutationReturningResponse<TResponseE>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnMultipleMutation<TResponseA> queryA,
-                IGraphQLReturnSingleMutation<TResponseB> queryB,
-                IGraphQLReturnMultipleMutation<TResponseC> queryC,
-                IGraphQLReturnSingleMutation<TResponseD> queryD,
-                IGraphQLReturnMultipleMutation<TResponseE> queryE)
+                IGraphQLArrayMutation<TResponseA> queryA,
+                IGraphQLObjectMutation<TResponseB> queryB,
+                IGraphQLArrayMutation<TResponseC> queryC,
+                IGraphQLObjectMutation<TResponseD> queryD,
+                IGraphQLArrayMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -1978,11 +1978,11 @@ namespace FluentGraphQL.Client
             TResponseD,
             TResponseE>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnMultipleMutation<TResponseA> queryA,
-                IGraphQLReturnSingleMutation<TResponseB> queryB,
-                IGraphQLReturnMultipleMutation<TResponseC> queryC,
-                IGraphQLReturnSingleMutation<TResponseD> queryD,
-                IGraphQLReturnSingleMutation<TResponseE> queryE)
+                IGraphQLArrayMutation<TResponseA> queryA,
+                IGraphQLObjectMutation<TResponseB> queryB,
+                IGraphQLArrayMutation<TResponseC> queryC,
+                IGraphQLObjectMutation<TResponseD> queryD,
+                IGraphQLObjectMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -2000,11 +2000,11 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseD>,
             IGraphQLMutationReturningResponse<TResponseE>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnMultipleMutation<TResponseA> queryA,
-                IGraphQLReturnSingleMutation<TResponseB> queryB,
-                IGraphQLReturnSingleMutation<TResponseC> queryC,
-                IGraphQLReturnMultipleMutation<TResponseD> queryD,
-                IGraphQLReturnMultipleMutation<TResponseE> queryE)
+                IGraphQLArrayMutation<TResponseA> queryA,
+                IGraphQLObjectMutation<TResponseB> queryB,
+                IGraphQLObjectMutation<TResponseC> queryC,
+                IGraphQLArrayMutation<TResponseD> queryD,
+                IGraphQLArrayMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -2022,11 +2022,11 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseD>,
             TResponseE>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnMultipleMutation<TResponseA> queryA,
-                IGraphQLReturnSingleMutation<TResponseB> queryB,
-                IGraphQLReturnSingleMutation<TResponseC> queryC,
-                IGraphQLReturnMultipleMutation<TResponseD> queryD,
-                IGraphQLReturnSingleMutation<TResponseE> queryE)
+                IGraphQLArrayMutation<TResponseA> queryA,
+                IGraphQLObjectMutation<TResponseB> queryB,
+                IGraphQLObjectMutation<TResponseC> queryC,
+                IGraphQLArrayMutation<TResponseD> queryD,
+                IGraphQLObjectMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -2044,11 +2044,11 @@ namespace FluentGraphQL.Client
             TResponseD,
             IGraphQLMutationReturningResponse<TResponseE>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnMultipleMutation<TResponseA> queryA,
-                IGraphQLReturnSingleMutation<TResponseB> queryB,
-                IGraphQLReturnSingleMutation<TResponseC> queryC,
-                IGraphQLReturnSingleMutation<TResponseD> queryD,
-                IGraphQLReturnMultipleMutation<TResponseE> queryE)
+                IGraphQLArrayMutation<TResponseA> queryA,
+                IGraphQLObjectMutation<TResponseB> queryB,
+                IGraphQLObjectMutation<TResponseC> queryC,
+                IGraphQLObjectMutation<TResponseD> queryD,
+                IGraphQLArrayMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -2066,11 +2066,11 @@ namespace FluentGraphQL.Client
             TResponseD,
             TResponseE>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnMultipleMutation<TResponseA> queryA,
-                IGraphQLReturnSingleMutation<TResponseB> queryB,
-                IGraphQLReturnSingleMutation<TResponseC> queryC,
-                IGraphQLReturnSingleMutation<TResponseD> queryD,
-                IGraphQLReturnSingleMutation<TResponseE> queryE)
+                IGraphQLArrayMutation<TResponseA> queryA,
+                IGraphQLObjectMutation<TResponseB> queryB,
+                IGraphQLObjectMutation<TResponseC> queryC,
+                IGraphQLObjectMutation<TResponseD> queryD,
+                IGraphQLObjectMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 IGraphQLMutationReturningResponse<TResponseA>,
@@ -2088,11 +2088,11 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseD>,
             IGraphQLMutationReturningResponse<TResponseE>>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnSingleMutation<TResponseA> queryA,
-                IGraphQLReturnMultipleMutation<TResponseB> queryB,
-                IGraphQLReturnMultipleMutation<TResponseC> queryC,
-                IGraphQLReturnMultipleMutation<TResponseD> queryD,
-                IGraphQLReturnMultipleMutation<TResponseE> queryE)
+                IGraphQLObjectMutation<TResponseA> queryA,
+                IGraphQLArrayMutation<TResponseB> queryB,
+                IGraphQLArrayMutation<TResponseC> queryC,
+                IGraphQLArrayMutation<TResponseD> queryD,
+                IGraphQLArrayMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -2110,11 +2110,11 @@ namespace FluentGraphQL.Client
             IGraphQLMutationReturningResponse<TResponseD>,
             TResponseE>
             Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-                IGraphQLReturnSingleMutation<TResponseA> queryA,
-                IGraphQLReturnMultipleMutation<TResponseB> queryB,
-                IGraphQLReturnMultipleMutation<TResponseC> queryC,
-                IGraphQLReturnMultipleMutation<TResponseD> queryD,
-                IGraphQLReturnSingleMutation<TResponseE> queryE)
+                IGraphQLObjectMutation<TResponseA> queryA,
+                IGraphQLArrayMutation<TResponseB> queryB,
+                IGraphQLArrayMutation<TResponseC> queryC,
+                IGraphQLArrayMutation<TResponseD> queryD,
+                IGraphQLObjectMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -2132,11 +2132,11 @@ namespace FluentGraphQL.Client
            TResponseD,
            IGraphQLMutationReturningResponse<TResponseE>>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLReturnSingleMutation<TResponseA> queryA,
-               IGraphQLReturnMultipleMutation<TResponseB> queryB,
-               IGraphQLReturnMultipleMutation<TResponseC> queryC,
-               IGraphQLReturnSingleMutation<TResponseD> queryD,
-               IGraphQLReturnMultipleMutation<TResponseE> queryE)
+               IGraphQLObjectMutation<TResponseA> queryA,
+               IGraphQLArrayMutation<TResponseB> queryB,
+               IGraphQLArrayMutation<TResponseC> queryC,
+               IGraphQLObjectMutation<TResponseD> queryD,
+               IGraphQLArrayMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -2154,11 +2154,11 @@ namespace FluentGraphQL.Client
            TResponseD,
            TResponseE>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLReturnSingleMutation<TResponseA> queryA,
-               IGraphQLReturnMultipleMutation<TResponseB> queryB,
-               IGraphQLReturnMultipleMutation<TResponseC> queryC,
-               IGraphQLReturnSingleMutation<TResponseD> queryD,
-               IGraphQLReturnSingleMutation<TResponseE> queryE)
+               IGraphQLObjectMutation<TResponseA> queryA,
+               IGraphQLArrayMutation<TResponseB> queryB,
+               IGraphQLArrayMutation<TResponseC> queryC,
+               IGraphQLObjectMutation<TResponseD> queryD,
+               IGraphQLObjectMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -2176,11 +2176,11 @@ namespace FluentGraphQL.Client
            IGraphQLMutationReturningResponse<TResponseD>,
            IGraphQLMutationReturningResponse<TResponseE>>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLReturnSingleMutation<TResponseA> queryA,
-               IGraphQLReturnMultipleMutation<TResponseB> queryB,
-               IGraphQLReturnSingleMutation<TResponseC> queryC,
-               IGraphQLReturnMultipleMutation<TResponseD> queryD,
-               IGraphQLReturnMultipleMutation<TResponseE> queryE)
+               IGraphQLObjectMutation<TResponseA> queryA,
+               IGraphQLArrayMutation<TResponseB> queryB,
+               IGraphQLObjectMutation<TResponseC> queryC,
+               IGraphQLArrayMutation<TResponseD> queryD,
+               IGraphQLArrayMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -2198,11 +2198,11 @@ namespace FluentGraphQL.Client
            IGraphQLMutationReturningResponse<TResponseD>,
            TResponseE>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLReturnSingleMutation<TResponseA> queryA,
-               IGraphQLReturnMultipleMutation<TResponseB> queryB,
-               IGraphQLReturnSingleMutation<TResponseC> queryC,
-               IGraphQLReturnMultipleMutation<TResponseD> queryD,
-               IGraphQLReturnSingleMutation<TResponseE> queryE)
+               IGraphQLObjectMutation<TResponseA> queryA,
+               IGraphQLArrayMutation<TResponseB> queryB,
+               IGraphQLObjectMutation<TResponseC> queryC,
+               IGraphQLArrayMutation<TResponseD> queryD,
+               IGraphQLObjectMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -2220,11 +2220,11 @@ namespace FluentGraphQL.Client
            TResponseD,
            IGraphQLMutationReturningResponse<TResponseE>>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLReturnSingleMutation<TResponseA> queryA,
-               IGraphQLReturnMultipleMutation<TResponseB> queryB,
-               IGraphQLReturnSingleMutation<TResponseC> queryC,
-               IGraphQLReturnSingleMutation<TResponseD> queryD,
-               IGraphQLReturnMultipleMutation<TResponseE> queryE)
+               IGraphQLObjectMutation<TResponseA> queryA,
+               IGraphQLArrayMutation<TResponseB> queryB,
+               IGraphQLObjectMutation<TResponseC> queryC,
+               IGraphQLObjectMutation<TResponseD> queryD,
+               IGraphQLArrayMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -2242,11 +2242,11 @@ namespace FluentGraphQL.Client
            TResponseD,
            TResponseE>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLReturnSingleMutation<TResponseA> queryA,
-               IGraphQLReturnMultipleMutation<TResponseB> queryB,
-               IGraphQLReturnSingleMutation<TResponseC> queryC,
-               IGraphQLReturnSingleMutation<TResponseD> queryD,
-               IGraphQLReturnSingleMutation<TResponseE> queryE)
+               IGraphQLObjectMutation<TResponseA> queryA,
+               IGraphQLArrayMutation<TResponseB> queryB,
+               IGraphQLObjectMutation<TResponseC> queryC,
+               IGraphQLObjectMutation<TResponseD> queryD,
+               IGraphQLObjectMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -2264,11 +2264,11 @@ namespace FluentGraphQL.Client
            IGraphQLMutationReturningResponse<TResponseD>,
            IGraphQLMutationReturningResponse<TResponseE>>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLReturnSingleMutation<TResponseA> queryA,
-               IGraphQLReturnSingleMutation<TResponseB> queryB,
-               IGraphQLReturnMultipleMutation<TResponseC> queryC,
-               IGraphQLReturnMultipleMutation<TResponseD> queryD,
-               IGraphQLReturnMultipleMutation<TResponseE> queryE)
+               IGraphQLObjectMutation<TResponseA> queryA,
+               IGraphQLObjectMutation<TResponseB> queryB,
+               IGraphQLArrayMutation<TResponseC> queryC,
+               IGraphQLArrayMutation<TResponseD> queryD,
+               IGraphQLArrayMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -2286,11 +2286,11 @@ namespace FluentGraphQL.Client
            IGraphQLMutationReturningResponse<TResponseD>,
            TResponseE>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLReturnSingleMutation<TResponseA> queryA,
-               IGraphQLReturnSingleMutation<TResponseB> queryB,
-               IGraphQLReturnMultipleMutation<TResponseC> queryC,
-               IGraphQLReturnMultipleMutation<TResponseD> queryD,
-               IGraphQLReturnSingleMutation<TResponseE> queryE)
+               IGraphQLObjectMutation<TResponseA> queryA,
+               IGraphQLObjectMutation<TResponseB> queryB,
+               IGraphQLArrayMutation<TResponseC> queryC,
+               IGraphQLArrayMutation<TResponseD> queryD,
+               IGraphQLObjectMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -2308,11 +2308,11 @@ namespace FluentGraphQL.Client
            TResponseD,
            IGraphQLMutationReturningResponse<TResponseE>>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLReturnSingleMutation<TResponseA> queryA,
-               IGraphQLReturnSingleMutation<TResponseB> queryB,
-               IGraphQLReturnMultipleMutation<TResponseC> queryC,
-               IGraphQLReturnSingleMutation<TResponseD> queryD,
-               IGraphQLReturnMultipleMutation<TResponseE> queryE)
+               IGraphQLObjectMutation<TResponseA> queryA,
+               IGraphQLObjectMutation<TResponseB> queryB,
+               IGraphQLArrayMutation<TResponseC> queryC,
+               IGraphQLObjectMutation<TResponseD> queryD,
+               IGraphQLArrayMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -2330,11 +2330,11 @@ namespace FluentGraphQL.Client
            TResponseD,
            TResponseE>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLReturnSingleMutation<TResponseA> queryA,
-               IGraphQLReturnSingleMutation<TResponseB> queryB,
-               IGraphQLReturnMultipleMutation<TResponseC> queryC,
-               IGraphQLReturnSingleMutation<TResponseD> queryD,
-               IGraphQLReturnSingleMutation<TResponseE> queryE)
+               IGraphQLObjectMutation<TResponseA> queryA,
+               IGraphQLObjectMutation<TResponseB> queryB,
+               IGraphQLArrayMutation<TResponseC> queryC,
+               IGraphQLObjectMutation<TResponseD> queryD,
+               IGraphQLObjectMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -2352,11 +2352,11 @@ namespace FluentGraphQL.Client
            IGraphQLMutationReturningResponse<TResponseD>,
            IGraphQLMutationReturningResponse<TResponseE>>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLReturnSingleMutation<TResponseA> queryA,
-               IGraphQLReturnSingleMutation<TResponseB> queryB,
-               IGraphQLReturnSingleMutation<TResponseC> queryC,
-               IGraphQLReturnMultipleMutation<TResponseD> queryD,
-               IGraphQLReturnMultipleMutation<TResponseE> queryE)
+               IGraphQLObjectMutation<TResponseA> queryA,
+               IGraphQLObjectMutation<TResponseB> queryB,
+               IGraphQLObjectMutation<TResponseC> queryC,
+               IGraphQLArrayMutation<TResponseD> queryD,
+               IGraphQLArrayMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -2374,11 +2374,11 @@ namespace FluentGraphQL.Client
            IGraphQLMutationReturningResponse<TResponseD>,
            TResponseE>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLReturnSingleMutation<TResponseA> queryA,
-               IGraphQLReturnSingleMutation<TResponseB> queryB,
-               IGraphQLReturnSingleMutation<TResponseC> queryC,
-               IGraphQLReturnMultipleMutation<TResponseD> queryD,
-               IGraphQLReturnSingleMutation<TResponseE> queryE)
+               IGraphQLObjectMutation<TResponseA> queryA,
+               IGraphQLObjectMutation<TResponseB> queryB,
+               IGraphQLObjectMutation<TResponseC> queryC,
+               IGraphQLArrayMutation<TResponseD> queryD,
+               IGraphQLObjectMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -2396,11 +2396,11 @@ namespace FluentGraphQL.Client
            TResponseD,
            IGraphQLMutationReturningResponse<TResponseE>>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLReturnSingleMutation<TResponseA> queryA,
-               IGraphQLReturnSingleMutation<TResponseB> queryB,
-               IGraphQLReturnSingleMutation<TResponseC> queryC,
-               IGraphQLReturnSingleMutation<TResponseD> queryD,
-               IGraphQLReturnMultipleMutation<TResponseE> queryE)
+               IGraphQLObjectMutation<TResponseA> queryA,
+               IGraphQLObjectMutation<TResponseB> queryB,
+               IGraphQLObjectMutation<TResponseC> queryC,
+               IGraphQLObjectMutation<TResponseD> queryD,
+               IGraphQLArrayMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,
@@ -2418,11 +2418,11 @@ namespace FluentGraphQL.Client
            TResponseD,
            TResponseE>
            Construct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(
-               IGraphQLReturnSingleMutation<TResponseA> queryA,
-               IGraphQLReturnSingleMutation<TResponseB> queryB,
-               IGraphQLReturnSingleMutation<TResponseC> queryC,
-               IGraphQLReturnSingleMutation<TResponseD> queryD,
-               IGraphQLReturnSingleMutation<TResponseE> queryE)
+               IGraphQLObjectMutation<TResponseA> queryA,
+               IGraphQLObjectMutation<TResponseB> queryB,
+               IGraphQLObjectMutation<TResponseC> queryC,
+               IGraphQLObjectMutation<TResponseD> queryD,
+               IGraphQLObjectMutation<TResponseE> queryE)
         {
             return new GraphQLMultiConstruct<
                 TResponseA,

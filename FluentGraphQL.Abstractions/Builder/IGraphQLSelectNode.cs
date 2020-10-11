@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLSelectNode : IGraphQLNode, IGraphQLSelectStatement, IGraphQLStatement
+    public interface IGraphQLSelectNode : IGraphQLSelectStatement, IGraphQLStatement
     {
         IGraphQLHeaderNode HeaderNode { get; set; }
         IEnumerable<IGraphQLPropertyStatement> PropertyStatements { get; set; }
@@ -29,13 +29,12 @@ namespace FluentGraphQL.Builder.Abstractions
         Type EntityType { get; set; }
         bool IsActive { get; set; }
 
-        IGraphQLSelectNode GetChildNode<TEntity>();
+        IGraphQLSelectNode FindNode<TEntity>();
         IGraphQLSelectNode GetChildNode(string name);
         IGraphQLSelectStatement Get(string statementName);
 
         void ActivateNode<TNode>();
         void ActivateProperty(string propertyName);
         void SetHierarchyLevel(int parentLevel);
-        bool HasAggregateContainer();
     }
 }

@@ -16,7 +16,7 @@
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLMutationExtension<TResponse> : IGraphQLReturnSingleMutation<TResponse>
+    public interface IGraphQLMutationExtension<TResponse> : IGraphQLObjectMutation<TResponse>
     {
     }
 }

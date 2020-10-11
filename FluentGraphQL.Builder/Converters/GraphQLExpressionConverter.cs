@@ -64,6 +64,9 @@ namespace FluentGraphQL.Builder.Converters
             if (expression is NewExpression newExpression)
                 return EvaluateSelectNewExpression(newExpression);
 
+            if (expression is MemberInitExpression memberInitExpression)
+                return EvaluateSelectMemberInitExpression(memberInitExpression);
+
             throw new NotImplementedException();
         }
 
@@ -332,10 +335,16 @@ namespace FluentGraphQL.Builder.Converters
                     return ProcessStatement(methodStatement);
                 }
 
-                if(expression is UnaryExpression unaryExpression)
+                if (expression is UnaryExpression unaryExpression)
                 {
                     var unaryStatement = EvaluateUnaryExpression(unaryExpression);
                     return ProcessStatement(unaryStatement);
+                }
+
+                if (expression is MemberInitExpression memberInitExpression)
+                {
+                    var memberInitStatement = EvaluateSelectMemberInitExpression(memberInitExpression);
+                    return ProcessStatement(memberInitStatement);
                 }
             }
 
@@ -603,6 +612,12 @@ namespace FluentGraphQL.Builder.Converters
             }
 
             return new GraphQLValueStatement(null, new GraphQLObjectValue(memberExpressionStatements));
+        }
+
+        private IGraphQLValueStatement EvaluateSelectMemberInitExpression(MemberInitExpression memberInitExpression)
+        {
+            var memberAssignments = memberInitExpression.Bindings.Select(x => (MemberAssignment)x);
+            return EvaluateSelectExpressionArguments(memberAssignments.Select(x => x.Expression));
         }
     }
 }

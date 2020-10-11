@@ -61,6 +61,7 @@ namespace FluentGraphQL.Tests.Infrastructure
         public static class Stores
         {
             public static Store Zagreb { get; set; } = null!;
+            public static Store Zagreb2 { get; set; } = null!;
             public static Store Zadar { get; set; } = null!;
         }
 
@@ -253,12 +254,21 @@ namespace FluentGraphQL.Tests.Infrastructure
                 Email = "zadar-store@bike-sport.com",
                 Name = "Bike Sport #2",
                 ZipCode = "23000"
-            };            
+            };
+
+            Stores.Zagreb2 = new Store
+            {
+                City = "Zagreb",
+                Email = "zagreb-store@bike-sport.com",
+                Name = "Bike Sport #3",
+                ZipCode = "10010"
+            };
 
             var stores = new Store[]
             {
                 Stores.Zagreb,
-                Stores.Zadar
+                Stores.Zadar,
+                Stores.Zagreb2
             };
 
             var insertStoresMutation = GraphQLClient.MutationBuilder<Store>()

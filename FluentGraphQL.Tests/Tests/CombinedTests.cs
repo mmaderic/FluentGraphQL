@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FluentGraphQL.Tests.Tests
+namespace FluentGraphQL.Tests
 {
     [Collection("Context collection")]
     public class CombinedTests

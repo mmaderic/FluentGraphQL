@@ -36,7 +36,7 @@ namespace FluentGraphQL.Builder.Builders
         where TRoot : IGraphQLEntity
         where TEntity : IGraphQLEntity
     {
-        protected readonly IGraphQLQuery _graphQLQuery;
+        protected readonly IGraphQLNodeConstruct _graphQLNodeConstruct;
         protected readonly IGraphQLSelectNode _graphQLSelectNode;
         protected readonly IGraphQLExpressionConverter _graphQLExpressionConverter;
         protected readonly IGraphQLValueFactory _graphQLValueFactory;
@@ -51,16 +51,16 @@ namespace FluentGraphQL.Builder.Builders
         {
             var selectNode = graphQLSelectNodeFactory.Construct(typeof(TEntity));
             _graphQLSelectNodeFactory = graphQLSelectNodeFactory;
-            _graphQLQuery = new GraphQLMethodConstruct<TEntity>(GraphQLMethod.Query, selectNode.HeaderNode, selectNode);
+            _graphQLNodeConstruct = new GraphQLMethodConstruct<TEntity>(GraphQLMethod.Query, selectNode.HeaderNode, selectNode);
             _graphQLSelectNode = selectNode;
         }
 
         public GraphQLQueryBuilder(
-            IGraphQLQuery graphQLQuery, IGraphQLSelectNode graphQLSelectNode,
+            IGraphQLNodeConstruct graphQLNodeConstruct, IGraphQLSelectNode graphQLSelectNode,
             IGraphQLExpressionConverter graphQLExpressionConverter, IGraphQLValueFactory graphQLValuefactory)
             : this(graphQLExpressionConverter, graphQLValuefactory)
         {
-            _graphQLQuery = graphQLQuery;
+            _graphQLNodeConstruct = graphQLNodeConstruct;
             _graphQLSelectNode = graphQLSelectNode;
         } 
         
@@ -78,8 +78,8 @@ namespace FluentGraphQL.Builder.Builders
             var argumentStatements = arguments.Select(x => new GraphQLValueStatement(x.Name, _graphQLValueFactory.Construct(x.GetValue(graphQLFunction))));
             var argumentStatementObject = new GraphQLValueStatement(Constant.GraphQLKeyords.Args, new GraphQLObjectValue(argumentStatements));
 
-            _graphQLQuery.HeaderNode.Title = functionType.Name;
-            _graphQLQuery.HeaderNode.Statements.Add(argumentStatementObject);
+            _graphQLNodeConstruct.HeaderNode.Title = functionType.Name;
+            _graphQLNodeConstruct.HeaderNode.Statements.Add(argumentStatementObject);
 
             return this;
         }
@@ -109,15 +109,57 @@ namespace FluentGraphQL.Builder.Builders
             return ByPrimaryKey(expressionStatement.PropertyName, value);
         }
 
-        private GraphQLQueryBuilder<TRoot, TEntity> Where<TNode>(Expression<Func<TNode, bool>> expressionPredicate)
+        private GraphQLQueryBuilder<TRoot, TEntity> Where(Expression expression)
         {
-            var expressionStatement = _graphQLExpressionConverter.Convert(expressionPredicate);
+            var expressionStatement = _graphQLExpressionConverter.Convert(expression);
+            return Where(expressionStatement);
+        }      
+
+        private GraphQLQueryBuilder<TRoot, TEntity> Where(IGraphQLValueStatement expressionStatement)
+        {
             var expressionStatementObject = new GraphQLObjectValue(expressionStatement);
             var whereStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.Where, expressionStatementObject);
 
             _graphQLSelectNode.HeaderNode.Statements.Add(whereStatement);
 
             return this;
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot> IGraphQLStandardQueryBuilder<TRoot>.Single()
+        {
+            return this;
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot> IGraphQLStandardQueryBuilder<TRoot>.Single(Expression expression)
+        {
+            Node<TRoot>().Where(expression);
+            return this;
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot> IGraphQLStandardQueryBuilder<TRoot>.Single(Expression<Func<TRoot, bool>> expressionPredicate)
+        {
+            Node<TRoot>().Where(expressionPredicate);
+            return this;
+        }
+
+        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.Where(Expression expression)
+        {
+            return Where(expression);
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot> IGraphQLSingleNodeBuilder<TRoot>.Where(Expression expression)
+        {
+            return Where(expression);
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot, TEntity> IGraphQLSingleNodeBuilder<TRoot, TEntity>.Where(Expression expression)
+        {
+            return Where(expression);
+        }
+
+        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.Where(Expression expression)
+        {
+            return Where(expression);
         }
 
         IGraphQLSingleNodeBuilder<TRoot> IGraphQLSingleNodeBuilder<TRoot>.Where(Expression<Func<TRoot, bool>> expressionPredicate)
@@ -300,31 +342,58 @@ namespace FluentGraphQL.Builder.Builders
         private GraphQLQueryBuilder<TRoot, TEntity> DistinctOn<TNode, TKey>(Expression<Func<TNode, TKey>> keySelector)
         {
             var distinctSelector = _graphQLExpressionConverter.Convert(keySelector);
-            var distinctStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.DistinctOn, new GraphQLObjectValue(distinctSelector));
-            var orderByStatement = _graphQLSelectNode.HeaderNode.Statements.Find<GraphQLValueStatement>(Constant.GraphQLKeyords.OrderBy);
-            var oderByIndex = _graphQLSelectNode.HeaderNode.Statements.IndexOf(orderByStatement);
 
-            _graphQLSelectNode.HeaderNode.Statements.Insert(oderByIndex, distinctStatement);
+            GraphQLCollectionValue collectionValue;
+            if (!(distinctSelector.PropertyName is null))            
+                collectionValue = new GraphQLCollectionValue(new[] { new GraphQLPropertyStatement(distinctSelector.PropertyName) });
+            else
+            {
+                var propertyStatements = ((GraphQLObjectValue)distinctSelector.Value).PropertyValues.Select(x => new GraphQLPropertyStatement(x.PropertyName));
+                collectionValue = new GraphQLCollectionValue(propertyStatements);
+            }
+            
+            var distinctStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.DistinctOn, collectionValue);
+            _graphQLSelectNode.HeaderNode.Statements.Add(distinctStatement);
 
             return this;
         }
 
-        IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.DistinctOn<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        IGraphQLSingleNodeBuilder<TRoot> IGraphQLSingleNodeBuilder<TRoot>.DistinctOn<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
             return DistinctOn(keySelector);
         }
 
-        IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        IGraphQLSingleNodeBuilder<TRoot, TEntity> IGraphQLSingleNodeBuilder<TRoot, TEntity>.DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
             return DistinctOn(keySelector);
         }
 
-        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.DistinctOn<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.DistinctOn<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
             return DistinctOn(keySelector);
         }
 
-        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        {
+            return DistinctOn(keySelector);
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.DistinctOn<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        {
+            return DistinctOn(keySelector);
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        {
+            return DistinctOn(keySelector);
+        }
+
+        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.DistinctOn<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        {
+            return DistinctOn(keySelector);
+        }
+
+        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
             return DistinctOn(keySelector);
         }
@@ -434,7 +503,7 @@ namespace FluentGraphQL.Builder.Builders
                 if (aggregateNode.EntityType.Equals(_graphQLSelectNode.EntityType))
                     aggregateNode.HeaderNode.Statements = _graphQLSelectNode.HeaderNode.Statements;
 
-                var aggregateBuilder = new GraphQLAggregateBuilder<TRoot, TEntity, TAggregate>(_graphQLQuery, aggregateNode, _graphQLExpressionConverter, _graphQLValueFactory)
+                var aggregateBuilder = new GraphQLAggregateBuilder<TRoot, TEntity, TAggregate>(_graphQLNodeConstruct, aggregateNode, _graphQLExpressionConverter, _graphQLValueFactory)
                 {
                     _nodeBuilders = _nodeBuilders
                 };
@@ -511,11 +580,11 @@ namespace FluentGraphQL.Builder.Builders
             var success = _nodeBuilders.TryGetValue(key, out IGraphQLQueryBuilder builder);
             if (!success)
             {
-                var node = _graphQLQuery.GetSelectNode<TNode>();
+                var node = _graphQLSelectNode.FindNode<TNode>();
                 if (node is null)
                     throw new InvalidOperationException("Selected node is not part of the query.");
 
-                var queryBuilder = new GraphQLQueryBuilder<TRoot, TNode>(_graphQLQuery, node, _graphQLExpressionConverter, _graphQLValueFactory)
+                var queryBuilder = new GraphQLQueryBuilder<TRoot, TNode>(_graphQLNodeConstruct, node, _graphQLExpressionConverter, _graphQLValueFactory)
                 {
                     _nodeBuilders = _nodeBuilders
                 };
@@ -537,34 +606,24 @@ namespace FluentGraphQL.Builder.Builders
             return Node<TNode>();
         }
 
-        IGraphQLStandardQuery<TRoot> IGraphQLStandardQueryBuilderBase<TRoot>.Build()
+        IGraphQLArrayQuery<TRoot> IGraphQLStandardQueryBuilderBase<TRoot>.Build()
         {
-            return (IGraphQLStandardQuery<TRoot>)_graphQLQuery;
+            return (IGraphQLArrayQuery<TRoot>)_graphQLNodeConstruct;
         }
 
-        IGraphQLSingleQuery<TRoot> IGraphQLSingleQueryBuilder<TRoot>.Build()
+        IGraphQLObjectQuery<TRoot> IGraphQLSingleQueryBuilder<TRoot>.Build()
         {
-            _graphQLQuery.IsSingle = true;
-            return (IGraphQLSingleQuery<TRoot>)_graphQLQuery;
-        }
-
-        IGraphQLSingleNodeBuilder<TRoot> IGraphQLStandardQueryBuilder<TRoot>.Single(Expression<Func<TRoot, bool>> expressionPredicate)
-        {
-            if (expressionPredicate is null)
-                return this;
-
-            Node<TRoot>().Where(expressionPredicate);
-
-            return this;
+            _graphQLNodeConstruct.IsSingle = true;
+            return (IGraphQLObjectQuery<TRoot>)_graphQLNodeConstruct;
         }
 
         private GraphQLSelectedMethodConstruct<TRoot, TResult> Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             var expressionStatement = _graphQLExpressionConverter.ConvertSelectExpression(selector); 
-            expressionStatement.ApplySelectStatement(_graphQLQuery.SelectNode, _graphQLSelectNodeFactory);
+            expressionStatement.ApplySelectStatement(_graphQLNodeConstruct.SelectNode, _graphQLSelectNodeFactory);
             
             var selectorFunc = selector.Compile();
-            var query = new GraphQLSelectedMethodConstruct<TRoot, TResult>(GraphQLMethod.Query, _graphQLQuery.HeaderNode, _graphQLQuery.SelectNode, selectorFunc);
+            var query = new GraphQLSelectedMethodConstruct<TRoot, TResult>(GraphQLMethod.Query, _graphQLNodeConstruct.HeaderNode, _graphQLNodeConstruct.SelectNode, selectorFunc);
 
             return query;
         }
@@ -632,6 +691,6 @@ namespace FluentGraphQL.Builder.Builders
         IGraphQLStandardQueryBuilder<TRoot> IGraphQLStandardQueryBuilder<TRoot>.Include<TNode>(Expression<Func<TRoot, IEnumerable<TNode>>> node)
         {
             return Include(node);
-        }
+        }        
     }
 }

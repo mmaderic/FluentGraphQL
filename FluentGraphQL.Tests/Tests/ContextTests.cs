@@ -2,10 +2,11 @@
 using FluentGraphQL.Tests.Entities;
 using FluentGraphQL.Tests.Infrastructure;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FluentGraphQL.Tests.Tests
+namespace FluentGraphQL.Tests
 {
     [Collection("Context collection")]
     public class ContextTests
@@ -120,13 +121,15 @@ namespace FluentGraphQL.Tests.Tests
 
             var storeR = await _graphQLClient.ExecuteAsync(storeQ);
 
-            Assert.Equal(2, storeR.Count);
+            Assert.Equal(3, storeR.Count);
 
             var zadar = storeR.First(y => y.Id == Context.Stores.Zadar.Id);
             var zagreb = storeR.First(y => y.Id == Context.Stores.Zagreb.Id);
+            var zagreb2 = storeR.First(y => y.Id == Context.Stores.Zagreb2.Id);
 
             Assert.Equal(Context.Stores.Zadar.Name, zadar.Name);
             Assert.Equal(Context.Stores.Zagreb.Name, zagreb.Name);
+            Assert.Equal(Context.Stores.Zagreb2.Name, zagreb2.Name);
         }
 
         [Fact]

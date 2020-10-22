@@ -22,14 +22,14 @@ using System.Text.Json.Serialization;
 
 namespace FluentGraphQL.Client.Converters
 {
-    internal class GraphQLMutationReturningResponseJsonConverterFactory : JsonConverterFactory, IGraphQLJsonConverter
+    internal class GraphQLMutationResponseJsonConverterFactory : JsonConverterFactory, IGraphQLJsonConverter
     {
         public override bool CanConvert(Type typeToConvert)
         {
             if (!typeToConvert.IsGenericType)
                 return false;
 
-            if (!typeToConvert.GetGenericTypeDefinition().Equals(typeof(IGraphQLMutationReturningResponse<>)))
+            if (!typeToConvert.GetGenericTypeDefinition().Equals(typeof(IGraphQLMutationResponse<>)))
                 return false;
 
             return true;
@@ -38,7 +38,7 @@ namespace FluentGraphQL.Client.Converters
         public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
         {
             var returnType = typeToConvert.GetGenericArguments().First();
-            var type = typeof(GraphQLMutationReturningResponseJsonConverter<>).MakeGenericType(returnType);
+            var type = typeof(GraphQLMutationResponseJsonConverter<>).MakeGenericType(returnType);
 
             return (JsonConverter)Activator.CreateInstance(type);
         }

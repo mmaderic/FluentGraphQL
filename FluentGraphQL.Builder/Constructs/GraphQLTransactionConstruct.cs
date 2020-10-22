@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 namespace FluentGraphQL.Builder.Constructs
 {
-    public abstract class GraphQLMultiConstruct : IGraphQLMultiConstruct
+    public abstract class GraphQLTransactionConstruct : IGraphQLTransaction
     {
         public string QueryString { get; set; }
         public GraphQLMethod Method { get; set; }
@@ -41,23 +41,23 @@ namespace FluentGraphQL.Builder.Constructs
         public abstract IGraphQLStatement DeepCopy();
     }
 
-    public class GraphQLMultiConstruct<TResponseA, TResponseB> : GraphQLMultiConstruct,
-        IGraphQLMultiConstruct<TResponseA, TResponseB>
+    public class GraphQLTransactionConstruct<TResponseA, TResponseB> : GraphQLTransactionConstruct,
+        IGraphQLTransaction<TResponseA, TResponseB>
     {
         public IGraphQLNodeConstruct ConstructA { get; set; }
         public IGraphQLNodeConstruct ConstructB { get; set; }
 
-        private GraphQLMultiConstruct(GraphQLMultiConstruct<TResponseA, TResponseB> copy)
+        private GraphQLTransactionConstruct(GraphQLTransactionConstruct<TResponseA, TResponseB> copy)
         {
             ConstructA = (IGraphQLNodeConstruct) copy.ConstructA.DeepCopy();
             ConstructB = (IGraphQLNodeConstruct) copy.ConstructB.DeepCopy();
         }
 
-        protected GraphQLMultiConstruct()
+        protected GraphQLTransactionConstruct()
         {
         }
 
-        public GraphQLMultiConstruct(IGraphQLNodeConstruct queryA, IGraphQLNodeConstruct queryB, GraphQLMethod graphQLMethod)
+        public GraphQLTransactionConstruct(IGraphQLNodeConstruct queryA, IGraphQLNodeConstruct queryB, GraphQLMethod graphQLMethod)
         {
             Method = graphQLMethod;
 
@@ -73,27 +73,27 @@ namespace FluentGraphQL.Builder.Constructs
 
         public override IGraphQLStatement DeepCopy()
         {
-            return new GraphQLMultiConstruct<TResponseA, TResponseB>(this);
+            return new GraphQLTransactionConstruct<TResponseA, TResponseB>(this);
         }
     }
 
-    public class GraphQLMultiConstruct<TResponseA, TResponseB, TResponseC> : GraphQLMultiConstruct<TResponseA, TResponseB>,
-        IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC>
+    public class GraphQLTransactionConstruct<TResponseA, TResponseB, TResponseC> : GraphQLTransactionConstruct<TResponseA, TResponseB>,
+        IGraphQLTransaction<TResponseA, TResponseB, TResponseC>
     {
         public IGraphQLNodeConstruct ConstructC { get; set; }
 
-        private GraphQLMultiConstruct(GraphQLMultiConstruct<TResponseA, TResponseB, TResponseC> copy)
+        private GraphQLTransactionConstruct(GraphQLTransactionConstruct<TResponseA, TResponseB, TResponseC> copy)
         {
             ConstructA = (IGraphQLNodeConstruct) copy.ConstructA.DeepCopy();
             ConstructB = (IGraphQLNodeConstruct) copy.ConstructB.DeepCopy();
             ConstructC = (IGraphQLNodeConstruct) copy.ConstructC.DeepCopy();
         }
 
-        protected GraphQLMultiConstruct()
+        protected GraphQLTransactionConstruct()
         {
         }
 
-        public GraphQLMultiConstruct(IGraphQLNodeConstruct queryA, IGraphQLNodeConstruct queryB, IGraphQLNodeConstruct queryC, GraphQLMethod graphQLMethod) 
+        public GraphQLTransactionConstruct(IGraphQLNodeConstruct queryA, IGraphQLNodeConstruct queryB, IGraphQLNodeConstruct queryC, GraphQLMethod graphQLMethod) 
             : base(queryA, queryB, graphQLMethod)
         {
             ConstructC = queryC;
@@ -108,16 +108,16 @@ namespace FluentGraphQL.Builder.Constructs
 
         public override IGraphQLStatement DeepCopy()
         {
-            return new GraphQLMultiConstruct<TResponseA, TResponseB, TResponseC>(this);
+            return new GraphQLTransactionConstruct<TResponseA, TResponseB, TResponseC>(this);
         }
     }
 
-    public class GraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD> : GraphQLMultiConstruct<TResponseA, TResponseB, TResponseC>,
-        IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD>
+    public class GraphQLTransactionConstruct<TResponseA, TResponseB, TResponseC, TResponseD> : GraphQLTransactionConstruct<TResponseA, TResponseB, TResponseC>,
+        IGraphQLTransaction<TResponseA, TResponseB, TResponseC, TResponseD>
     {
         public IGraphQLNodeConstruct ConstructD { get; set; }
 
-        private GraphQLMultiConstruct(GraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD> copy)
+        private GraphQLTransactionConstruct(GraphQLTransactionConstruct<TResponseA, TResponseB, TResponseC, TResponseD> copy)
         {
             ConstructA = (IGraphQLNodeConstruct) copy.ConstructA.DeepCopy();
             ConstructB = (IGraphQLNodeConstruct) copy.ConstructB.DeepCopy();
@@ -125,11 +125,11 @@ namespace FluentGraphQL.Builder.Constructs
             ConstructD = (IGraphQLNodeConstruct) copy.ConstructD.DeepCopy();
         }
 
-        protected GraphQLMultiConstruct()
+        protected GraphQLTransactionConstruct()
         {
         }
 
-        public GraphQLMultiConstruct(
+        public GraphQLTransactionConstruct(
             IGraphQLNodeConstruct queryA, IGraphQLNodeConstruct queryB, IGraphQLNodeConstruct queryC, IGraphQLNodeConstruct queryD, GraphQLMethod graphQLMethod)
             : base(queryA, queryB, queryC, graphQLMethod)
         {
@@ -146,16 +146,16 @@ namespace FluentGraphQL.Builder.Constructs
 
         public override IGraphQLStatement DeepCopy()
         {
-            return new GraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD>(this);
+            return new GraphQLTransactionConstruct<TResponseA, TResponseB, TResponseC, TResponseD>(this);
         }
     }
 
-    public class GraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> : GraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD>,
-        IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>
+    public class GraphQLTransactionConstruct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> : GraphQLTransactionConstruct<TResponseA, TResponseB, TResponseC, TResponseD>,
+        IGraphQLTransaction<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>
     {     
         public IGraphQLNodeConstruct ConstructE { get; set; }
 
-        private GraphQLMultiConstruct(GraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> copy)
+        private GraphQLTransactionConstruct(GraphQLTransactionConstruct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> copy)
         {
             ConstructA = (IGraphQLNodeConstruct) copy.ConstructA.DeepCopy();
             ConstructB = (IGraphQLNodeConstruct) copy.ConstructB.DeepCopy();
@@ -164,7 +164,7 @@ namespace FluentGraphQL.Builder.Constructs
             ConstructE = (IGraphQLNodeConstruct) copy.ConstructE.DeepCopy();
         }
 
-        public GraphQLMultiConstruct(
+        public GraphQLTransactionConstruct(
             IGraphQLNodeConstruct queryA, IGraphQLNodeConstruct queryB, IGraphQLNodeConstruct queryC, IGraphQLNodeConstruct queryD, IGraphQLNodeConstruct queryE, GraphQLMethod graphQLMethod)
             : base(queryA, queryB, queryC, queryD, graphQLMethod)
         {
@@ -182,7 +182,7 @@ namespace FluentGraphQL.Builder.Constructs
 
         public override IGraphQLStatement DeepCopy()
         {
-            return new GraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(this);
+            return new GraphQLTransactionConstruct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(this);
         }
     }
 }

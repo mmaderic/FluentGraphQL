@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace FluentGraphQL.Client.Responses
 {
-    public class GraphQLMultiResponse<TResponseA, TResponseB> : IGraphQLMultiResponse<TResponseA, TResponseB>
+    public class GraphQLTransactionResponse<TResponseA, TResponseB> : IGraphQLTransactionResponse<TResponseA, TResponseB>
     {
         protected List<object> Elements { get; set; }
 
@@ -28,7 +28,7 @@ namespace FluentGraphQL.Client.Responses
 
         public object this[int index] => Elements[index]; 
 
-        public GraphQLMultiResponse(TResponseA first, TResponseB second)
+        public GraphQLTransactionResponse(TResponseA first, TResponseB second)
         {
             First = first;
             Second = second;
@@ -41,12 +41,12 @@ namespace FluentGraphQL.Client.Responses
         }
     }
 
-    public class GraphQLMultiResponse<TResponseA, TResponseB, TResponseC> : GraphQLMultiResponse<TResponseA, TResponseB>,
-        IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC>
+    public class GraphQLTransactionResponse<TResponseA, TResponseB, TResponseC> : GraphQLTransactionResponse<TResponseA, TResponseB>,
+        IGraphQLTransactionResponse<TResponseA, TResponseB, TResponseC>
     {
         public TResponseC Third { get; }
 
-        public GraphQLMultiResponse(TResponseA first, TResponseB second, TResponseC third) 
+        public GraphQLTransactionResponse(TResponseA first, TResponseB second, TResponseC third) 
             : base(first, second)
         {
             Third = third;
@@ -54,12 +54,12 @@ namespace FluentGraphQL.Client.Responses
         }
     }
 
-    public class GraphQLMultiResponse<TResponseA, TResponseB, TResponseC, TResponseD> : GraphQLMultiResponse<TResponseA, TResponseB, TResponseC>,
-        IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC, TResponseD>
+    public class GraphQLTransactionResponse<TResponseA, TResponseB, TResponseC, TResponseD> : GraphQLTransactionResponse<TResponseA, TResponseB, TResponseC>,
+        IGraphQLTransactionResponse<TResponseA, TResponseB, TResponseC, TResponseD>
     {
         public TResponseD Fourth { get; }
 
-        public GraphQLMultiResponse(TResponseA first, TResponseB second, TResponseC third, TResponseD fourth)
+        public GraphQLTransactionResponse(TResponseA first, TResponseB second, TResponseC third, TResponseD fourth)
             : base(first, second, third)
         {
             Fourth = fourth;
@@ -67,12 +67,12 @@ namespace FluentGraphQL.Client.Responses
         }
     }
 
-    public class GraphQLMultiResponse<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> : GraphQLMultiResponse<TResponseA, TResponseB, TResponseC, TResponseD>,
-        IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>
+    public class GraphQLTransactionResponse<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> : GraphQLTransactionResponse<TResponseA, TResponseB, TResponseC, TResponseD>,
+        IGraphQLTransactionResponse<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>
     {
         public TResponseE Fifth { get; }
 
-        public GraphQLMultiResponse(TResponseA first, TResponseB second, TResponseC third, TResponseD fourth, TResponseE fifth)
+        public GraphQLTransactionResponse(TResponseA first, TResponseB second, TResponseC third, TResponseD fourth, TResponseE fifth)
             : base(first, second, third, fourth)
         {
             Fifth = fifth;

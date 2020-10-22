@@ -22,12 +22,12 @@ namespace FluentGraphQL.Client.Services
 {
     internal class GraphQLCustomResponseJsonConverterProvider : IGraphQLCustomResponseJsonConverterProvider
     {
-        private readonly GraphQLMutationReturningResponseJsonConverterFactory _graphQLMultipleInsertResponseJsonConverterFactory;
+        private readonly GraphQLMutationResponseJsonConverterFactory _graphQLMultipleInsertResponseJsonConverterFactory;
         private readonly GraphQLActionResponseJsonConverterFactory _graphQLActionResponseJsonConverterFactory;
 
         public GraphQLCustomResponseJsonConverterProvider()
         {
-            _graphQLMultipleInsertResponseJsonConverterFactory = new GraphQLMutationReturningResponseJsonConverterFactory();
+            _graphQLMultipleInsertResponseJsonConverterFactory = new GraphQLMutationResponseJsonConverterFactory();
             _graphQLActionResponseJsonConverterFactory = new GraphQLActionResponseJsonConverterFactory();
         }
 

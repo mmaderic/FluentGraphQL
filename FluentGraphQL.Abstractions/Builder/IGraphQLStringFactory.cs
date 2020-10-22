@@ -21,7 +21,7 @@ namespace FluentGraphQL.Builder.Abstractions
     public interface IGraphQLStringFactory
     {
         string Construct(IGraphQLNodeConstruct graphQLMethodConstruct);
-        string Construct(IGraphQLMultiConstruct graphQLMultipleMethodConstruct);
+        string Construct(IGraphQLTransaction graphQLTransaction);
         string Construct(IGraphQLHeaderNode graphQLHeaderNode);
         string Construct(IGraphQLSelectNode graphQLSelectNode);
         string Construct(IGraphQLCollectionValue graphQLCollectionValue);

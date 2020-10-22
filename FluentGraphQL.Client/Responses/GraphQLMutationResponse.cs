@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 namespace FluentGraphQL.Client.Responses
 {
-    public class GraphQLMutationReturningResponse<TReturn> : IGraphQLMutationReturningResponse<TReturn>, IList
+    public class GraphQLMutationResponse<TReturn> : IGraphQLMutationResponse<TReturn>, IList
     {   
         public int AffectedRows { get; set; }
         public List<TReturn> Returning { get; set; }
@@ -43,7 +43,7 @@ namespace FluentGraphQL.Client.Responses
             set => Returning[index] = value;               
         }
 
-        public GraphQLMutationReturningResponse()
+        public GraphQLMutationResponse()
         {
             Returning = new List<TReturn>();
         }

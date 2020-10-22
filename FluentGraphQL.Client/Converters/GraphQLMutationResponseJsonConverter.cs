@@ -23,11 +23,11 @@ using System.Text.Json.Serialization;
 
 namespace FluentGraphQL.Client.Converters
 {
-    internal class GraphQLMutationReturningResponseJsonConverter<TReturn> : JsonConverter<IGraphQLMutationReturningResponse<TReturn>>, IGraphQLJsonConverter
+    internal class GraphQLMutationResponseJsonConverter<TReturn> : JsonConverter<IGraphQLMutationResponse<TReturn>>, IGraphQLJsonConverter
     {
-        public override IGraphQLMutationReturningResponse<TReturn> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override IGraphQLMutationResponse<TReturn> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            var response = new GraphQLMutationReturningResponse<TReturn>();
+            var response = new GraphQLMutationResponse<TReturn>();
 
             while (reader.Read())
             {
@@ -50,7 +50,7 @@ namespace FluentGraphQL.Client.Converters
             throw new JsonException();
         }
 
-        public override void Write(Utf8JsonWriter writer, IGraphQLMutationReturningResponse<TReturn> value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, IGraphQLMutationResponse<TReturn> value, JsonSerializerOptions options)
         {
             throw new NotImplementedException();
         }

@@ -89,14 +89,14 @@ namespace FluentGraphQL.Client
             return _graphQLBuilderFactory.ActionBuilder();
         }
 
-        public Task<TEntity> ExecuteAsync<TEntity>(IGraphQLObjectQuery<TEntity> graphQLQuery)
+        public Task<TEntity> ExecuteAsync<TEntity>(IGraphQLObjectQuery<TEntity> graphQLObjectQuery)
         {
-            return ExecuteConstructAsync<TEntity>(graphQLQuery);
+            return ExecuteConstructAsync<TEntity>(graphQLObjectQuery);
         }
 
-        public Task<List<TEntity>> ExecuteAsync<TEntity>(IGraphQLArrayQuery<TEntity> graphQLQuery)
+        public Task<List<TEntity>> ExecuteAsync<TEntity>(IGraphQLArrayQuery<TEntity> graphQLArrayQuery)
         {
-            return ExecuteConstructAsync<List<TEntity>>(graphQLQuery);
+            return ExecuteConstructAsync<List<TEntity>>(graphQLArrayQuery);
         }
 
         public async Task<TResult> ExecuteAsync<TEntity, TResult>(IGraphQLSingleSelectedQuery<TEntity, TResult> graphQLQuery)
@@ -114,14 +114,14 @@ namespace FluentGraphQL.Client
             return result.Select(x => graphQLQuery.Selector.Invoke(x)).ToList();
         }
 
-        public Task<TEntity> ExecuteAsync<TEntity>(IGraphQLObjectMutation<TEntity> graphQLReturnSingleMutation)
+        public Task<TEntity> ExecuteAsync<TEntity>(IGraphQLObjectMutation<TEntity> graphQLObjectMutation)
         {
-            return ExecuteConstructAsync<TEntity>(graphQLReturnSingleMutation);
+            return ExecuteConstructAsync<TEntity>(graphQLObjectMutation);
         }
 
-        public Task<IGraphQLMutationReturningResponse<TEntity>> ExecuteAsync<TEntity>(IGraphQLArrayMutation<TEntity> graphQLReturnMultipleMutation)
+        public Task<IGraphQLMutationResponse<TEntity>> ExecuteAsync<TEntity>(IGraphQLArrayMutation<TEntity> graphQLArrayMutation)
         {
-            return ExecuteConstructAsync<IGraphQLMutationReturningResponse<TEntity>>(graphQLReturnMultipleMutation);
+            return ExecuteConstructAsync<IGraphQLMutationResponse<TEntity>>(graphQLArrayMutation);
         }
 
         public async Task<TReturn> ExecuteAsync<TEntity, TReturn>(IGraphQLSelectedReturnSingleMutation<TEntity, TReturn> graphQLSelectedReturnSingleMutation)
@@ -130,10 +130,10 @@ namespace FluentGraphQL.Client
             return graphQLSelectedReturnSingleMutation.Selector.Invoke(result);
         }
 
-        public async Task<IGraphQLMutationReturningResponse<TReturn>> ExecuteAsync<TEntity, TReturn>(IGraphQLSelectedReturnMultipleMutation<TEntity, TReturn> graphQLSelectedReturnMultipleMutation)
+        public async Task<IGraphQLMutationResponse<TReturn>> ExecuteAsync<TEntity, TReturn>(IGraphQLSelectedReturnMultipleMutation<TEntity, TReturn> graphQLSelectedReturnMultipleMutation)
         {
-            var result = await ExecuteConstructAsync<IGraphQLMutationReturningResponse<TEntity>>(graphQLSelectedReturnMultipleMutation).ConfigureAwait(false);
-            var response = new GraphQLMutationReturningResponse<TReturn>()
+            var result = await ExecuteConstructAsync<IGraphQLMutationResponse<TEntity>>(graphQLSelectedReturnMultipleMutation).ConfigureAwait(false);
+            var response = new GraphQLMutationResponse<TReturn>()
             {
                 AffectedRows = result.AffectedRows,
                 Returning = new List<TReturn>()
@@ -155,50 +155,50 @@ namespace FluentGraphQL.Client
             return ExecuteConstructAsync<IGraphQLActionResponse<TResult>>(graphQLMutationExtension);
         }
 
-        public async Task<IGraphQLMultiResponse<TResponseA, TResponseB>> ExecuteAsync<TResponseA, TResponseB>(IGraphQLMultiConstruct<TResponseA, TResponseB> graphQLMultiConstruct)
+        public async Task<IGraphQLTransactionResponse<TResponseA, TResponseB>> ExecuteAsync<TResponseA, TResponseB>(IGraphQLTransaction<TResponseA, TResponseB> graphQLTransaction)
         {
-            var dictionary = await ExecuteMultipleQueryAsync(graphQLMultiConstruct).ConfigureAwait(false);
+            var dictionary = await ExecuteMultipleQueryAsync(graphQLTransaction).ConfigureAwait(false);
 
-            var valueA = ProcessMultiConstructResponseValue<TResponseA>(graphQLMultiConstruct.ConstructA, dictionary);
-            var valueB = ProcessMultiConstructResponseValue<TResponseB>(graphQLMultiConstruct.ConstructB, dictionary);
+            var valueA = ProcessTransactionResponseValue<TResponseA>(graphQLTransaction.ConstructA, dictionary);
+            var valueB = ProcessTransactionResponseValue<TResponseB>(graphQLTransaction.ConstructB, dictionary);
 
-            return new GraphQLMultiResponse<TResponseA, TResponseB>(valueA, valueB);
+            return new GraphQLTransactionResponse<TResponseA, TResponseB>(valueA, valueB);
         }
 
-        public async Task<IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC>> ExecuteAsync<TResponseA, TResponseB, TResponseC>(IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC> graphQLMultiConstruct)
+        public async Task<IGraphQLTransactionResponse<TResponseA, TResponseB, TResponseC>> ExecuteAsync<TResponseA, TResponseB, TResponseC>(IGraphQLTransaction<TResponseA, TResponseB, TResponseC> graphQLTransaction)
         {
-            var dictionary = await ExecuteMultipleQueryAsync(graphQLMultiConstruct).ConfigureAwait(false);
+            var dictionary = await ExecuteMultipleQueryAsync(graphQLTransaction).ConfigureAwait(false);
 
-            var valueA = ProcessMultiConstructResponseValue<TResponseA>(graphQLMultiConstruct.ConstructA, dictionary);
-            var valueB = ProcessMultiConstructResponseValue<TResponseB>(graphQLMultiConstruct.ConstructB, dictionary);
-            var valueC = ProcessMultiConstructResponseValue<TResponseC>(graphQLMultiConstruct.ConstructC, dictionary);
+            var valueA = ProcessTransactionResponseValue<TResponseA>(graphQLTransaction.ConstructA, dictionary);
+            var valueB = ProcessTransactionResponseValue<TResponseB>(graphQLTransaction.ConstructB, dictionary);
+            var valueC = ProcessTransactionResponseValue<TResponseC>(graphQLTransaction.ConstructC, dictionary);
 
-            return new GraphQLMultiResponse<TResponseA, TResponseB, TResponseC>(valueA, valueB, valueC);
+            return new GraphQLTransactionResponse<TResponseA, TResponseB, TResponseC>(valueA, valueB, valueC);
         }
 
-        public async Task<IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC, TResponseD>> ExecuteAsync<TResponseA, TResponseB, TResponseC, TResponseD>(IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD> graphQLMultiConstruct)
+        public async Task<IGraphQLTransactionResponse<TResponseA, TResponseB, TResponseC, TResponseD>> ExecuteAsync<TResponseA, TResponseB, TResponseC, TResponseD>(IGraphQLTransaction<TResponseA, TResponseB, TResponseC, TResponseD> graphQLTransaction)
         {
-            var dictionary = await ExecuteMultipleQueryAsync(graphQLMultiConstruct).ConfigureAwait(false);
+            var dictionary = await ExecuteMultipleQueryAsync(graphQLTransaction).ConfigureAwait(false);
 
-            var valueA = ProcessMultiConstructResponseValue<TResponseA>(graphQLMultiConstruct.ConstructA, dictionary);
-            var valueB = ProcessMultiConstructResponseValue<TResponseB>(graphQLMultiConstruct.ConstructB, dictionary);
-            var valueC = ProcessMultiConstructResponseValue<TResponseC>(graphQLMultiConstruct.ConstructC, dictionary);
-            var valueD = ProcessMultiConstructResponseValue<TResponseD>(graphQLMultiConstruct.ConstructD, dictionary);
+            var valueA = ProcessTransactionResponseValue<TResponseA>(graphQLTransaction.ConstructA, dictionary);
+            var valueB = ProcessTransactionResponseValue<TResponseB>(graphQLTransaction.ConstructB, dictionary);
+            var valueC = ProcessTransactionResponseValue<TResponseC>(graphQLTransaction.ConstructC, dictionary);
+            var valueD = ProcessTransactionResponseValue<TResponseD>(graphQLTransaction.ConstructD, dictionary);
 
-            return new GraphQLMultiResponse<TResponseA, TResponseB, TResponseC, TResponseD>(valueA, valueB, valueC, valueD);
+            return new GraphQLTransactionResponse<TResponseA, TResponseB, TResponseC, TResponseD>(valueA, valueB, valueC, valueD);
         }
 
-        public async Task<IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>> ExecuteAsync<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> graphQLMultiConstruct)
+        public async Task<IGraphQLTransactionResponse<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>> ExecuteAsync<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(IGraphQLTransaction<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> graphQLTransaction)
         {
-            var dictionary = await ExecuteMultipleQueryAsync(graphQLMultiConstruct).ConfigureAwait(false);
+            var dictionary = await ExecuteMultipleQueryAsync(graphQLTransaction).ConfigureAwait(false);
 
-            var valueA = ProcessMultiConstructResponseValue<TResponseA>(graphQLMultiConstruct.ConstructA, dictionary);
-            var valueB = ProcessMultiConstructResponseValue<TResponseB>(graphQLMultiConstruct.ConstructB, dictionary);
-            var valueC = ProcessMultiConstructResponseValue<TResponseC>(graphQLMultiConstruct.ConstructC, dictionary);
-            var valueD = ProcessMultiConstructResponseValue<TResponseD>(graphQLMultiConstruct.ConstructD, dictionary);
-            var valueE = ProcessMultiConstructResponseValue<TResponseE>(graphQLMultiConstruct.ConstructE, dictionary);
+            var valueA = ProcessTransactionResponseValue<TResponseA>(graphQLTransaction.ConstructA, dictionary);
+            var valueB = ProcessTransactionResponseValue<TResponseB>(graphQLTransaction.ConstructB, dictionary);
+            var valueC = ProcessTransactionResponseValue<TResponseC>(graphQLTransaction.ConstructC, dictionary);
+            var valueD = ProcessTransactionResponseValue<TResponseD>(graphQLTransaction.ConstructD, dictionary);
+            var valueE = ProcessTransactionResponseValue<TResponseE>(graphQLTransaction.ConstructE, dictionary);
 
-            return new GraphQLMultiResponse<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(valueA, valueB, valueC, valueD, valueE);
+            return new GraphQLTransactionResponse<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE>(valueA, valueB, valueC, valueD, valueE);
         }        
 
         public Task<IGraphQLSubscription> SubscribeAsync<TEntity>(
@@ -247,21 +247,21 @@ namespace FluentGraphQL.Client
             }
         }
 
-        private async Task<ConcurrentDictionary<RuntimeTypeHandle, object>> ExecuteMultipleQueryAsync(IGraphQLMultiConstruct graphQLMultiConstruct)
+        private async Task<ConcurrentDictionary<RuntimeTypeHandle, object>> ExecuteMultipleQueryAsync(IGraphQLTransaction graphQLTransaction)
         {
-            var queryString = graphQLMultiConstruct.ToString(_graphQLStringFactory);
+            var queryString = graphQLTransaction.ToString(_graphQLStringFactory);
             var request = new GraphQLRequest { Query = queryString };
             var resultDictionary = new ConcurrentDictionary<RuntimeTypeHandle, object>();
             var content = await ExecuteRequestAsync(request, GraphQLMethod.Query).ConfigureAwait(false);
 
             using (var document = JsonDocument.Parse(content))
             {
-                var options = _graphQLSerializerOptionsProvider.Provide(graphQLMultiConstruct);
+                var options = _graphQLSerializerOptionsProvider.Provide(graphQLTransaction);
                 var errors = ReadErrors(document.RootElement, options);
                 if (!(errors is null))
                     throw new GraphQLException(errors, queryString);
 
-                Parallel.ForEach(graphQLMultiConstruct, (construct) =>
+                Parallel.ForEach(graphQLTransaction, (construct) =>
                 {
                     var responseType = ResolveContentType(construct);
                     var result = DeserializeJsonElement(construct, document.RootElement, responseType);
@@ -361,7 +361,7 @@ namespace FluentGraphQL.Client
             return enumerator.Current.GetRawText();    
         }
 
-        private TResponse ProcessMultiConstructResponseValue<TResponse>(IGraphQLNodeConstruct graphQLNodeConstruct, ConcurrentDictionary<RuntimeTypeHandle, object> dictionary)
+        private TResponse ProcessTransactionResponseValue<TResponse>(IGraphQLNodeConstruct graphQLNodeConstruct, ConcurrentDictionary<RuntimeTypeHandle, object> dictionary)
         {
             var contentType = ResolveContentType(graphQLNodeConstruct);
             var key = contentType.TypeHandle;
@@ -388,8 +388,8 @@ namespace FluentGraphQL.Client
                 foreach (var item in list)
                     listInstance.Add(selectableConstruct.InvokeSelector(item));
 
-                if (value is IGraphQLMutationReturningResponse mutationResponse)
-                    ((IGraphQLMutationReturningResponse)listInstance).AffectedRows = mutationResponse.AffectedRows;
+                if (value is IGraphQLMutationResponse mutationResponse)
+                    ((IGraphQLMutationResponse)listInstance).AffectedRows = mutationResponse.AffectedRows;
 
                 return (TResponse)listInstance;
             }
@@ -474,7 +474,7 @@ namespace FluentGraphQL.Client
                 return typeof(List<>).MakeGenericType(graphQLNodeConstruct.SelectNode.EntityType);
 
             if (graphQLNodeConstruct.Method.Equals(GraphQLMethod.Mutation))
-                return typeof(IGraphQLMutationReturningResponse<>).MakeGenericType(graphQLNodeConstruct.SelectNode.EntityType.GenericTypeArguments.First());
+                return typeof(IGraphQLMutationResponse<>).MakeGenericType(graphQLNodeConstruct.SelectNode.EntityType.GenericTypeArguments.First());
 
             throw new NotImplementedException(GraphQLMethod.Mutation.ToString());
         }        

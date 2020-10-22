@@ -16,28 +16,28 @@
 
 namespace FluentGraphQL.Client.Abstractions
 {
-    public interface IGraphQLMultiResponse
+    public interface IGraphQLTransactionResponse
     {
         object this[int index] { get; }
     }
 
-    public interface IGraphQLMultiResponse<TResponseA, TResponseB> : IGraphQLMultiResponse
+    public interface IGraphQLTransactionResponse<TResponseA, TResponseB> : IGraphQLTransactionResponse
     {
         TResponseA First { get; }
         TResponseB Second { get; }
     }
 
-    public interface IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC> : IGraphQLMultiResponse<TResponseA, TResponseB>
+    public interface IGraphQLTransactionResponse<TResponseA, TResponseB, TResponseC> : IGraphQLTransactionResponse<TResponseA, TResponseB>
     {
         TResponseC Third { get; }
     }
 
-    public interface IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC, TResponseD> : IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC>
+    public interface IGraphQLTransactionResponse<TResponseA, TResponseB, TResponseC, TResponseD> : IGraphQLTransactionResponse<TResponseA, TResponseB, TResponseC>
     {
         TResponseD Fourth { get; }
     }
 
-    public interface IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> : IGraphQLMultiResponse<TResponseA, TResponseB, TResponseC, TResponseD>
+    public interface IGraphQLTransactionResponse<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> : IGraphQLTransactionResponse<TResponseA, TResponseB, TResponseC, TResponseD>
     {
         TResponseE Fifth { get; }
     }

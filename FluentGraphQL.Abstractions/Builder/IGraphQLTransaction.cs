@@ -18,27 +18,27 @@ using System.Collections.Generic;
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLMultiConstruct : IGraphQLMethodConstruct, IEnumerable<IGraphQLNodeConstruct>
+    public interface IGraphQLTransaction : IGraphQLMethodConstruct, IEnumerable<IGraphQLNodeConstruct>
     {
     }
 
-    public interface IGraphQLMultiConstruct<TResponseA, TResponseB> : IGraphQLMultiConstruct
+    public interface IGraphQLTransaction<TResponseA, TResponseB> : IGraphQLTransaction
     {
         IGraphQLNodeConstruct ConstructA { get; set; }
         IGraphQLNodeConstruct ConstructB { get; set; }
     }
 
-    public interface IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC> : IGraphQLMultiConstruct<TResponseA, TResponseB>
+    public interface IGraphQLTransaction<TResponseA, TResponseB, TResponseC> : IGraphQLTransaction<TResponseA, TResponseB>
     {
         IGraphQLNodeConstruct ConstructC { get; set; }
     }
 
-    public interface IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD> : IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC>
+    public interface IGraphQLTransaction<TResponseA, TResponseB, TResponseC, TResponseD> : IGraphQLTransaction<TResponseA, TResponseB, TResponseC>
     {
         IGraphQLNodeConstruct ConstructD { get; set; }
     }
 
-    public interface IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> : IGraphQLMultiConstruct<TResponseA, TResponseB, TResponseC, TResponseD>
+    public interface IGraphQLTransaction<TResponseA, TResponseB, TResponseC, TResponseD, TResponseE> : IGraphQLTransaction<TResponseA, TResponseB, TResponseC, TResponseD>
     {
         IGraphQLNodeConstruct ConstructE { get; set; }
     }

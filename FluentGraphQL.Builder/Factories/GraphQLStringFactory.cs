@@ -34,13 +34,13 @@ namespace FluentGraphQL.Builder.Factories
             Options = graphQLStringFactoryOptions;
         }
 
-        public virtual string Construct(IGraphQLNodeConstruct graphQLMethodConstruct)
+        public virtual string Construct(IGraphQLNodeConstruct graphQLNodeConstruct)
         {
             var builder = new StringBuilder();
-            var selectNodeString = graphQLMethodConstruct.SelectNode.ToString(this);
-            var methodString = graphQLMethodConstruct.Method.Equals(GraphQLMethod.Query)
+            var selectNodeString = graphQLNodeConstruct.SelectNode.ToString(this);
+            var methodString = graphQLNodeConstruct.Method.Equals(GraphQLMethod.Query)
                 ? "query {"
-                : graphQLMethodConstruct.Method.Equals(GraphQLMethod.Mutation) 
+                : graphQLNodeConstruct.Method.Equals(GraphQLMethod.Mutation) 
                     ? "mutation {"
                     : "subscription {";
 
@@ -52,18 +52,18 @@ namespace FluentGraphQL.Builder.Factories
             var result = builder.ToString();
             var namingStrategy = GetNamingStrategyFunction();
 
-            return graphQLMethodConstruct.QueryString = namingStrategy.Invoke(result);
+            return graphQLNodeConstruct.QueryString = namingStrategy.Invoke(result);
         }
 
-        public virtual string Construct(IGraphQLMultiConstruct graphQLMultipleMethodConstruct)
+        public virtual string Construct(IGraphQLTransaction graphQLTransaction)
         {
             var builder = new StringBuilder();
-            var methodString = graphQLMultipleMethodConstruct.Method.Equals(GraphQLMethod.Query)
+            var methodString = graphQLTransaction.Method.Equals(GraphQLMethod.Query)
                 ? "query {"
                 : "mutation {";
 
             builder.AppendLine(methodString);
-            foreach (var construct in graphQLMultipleMethodConstruct)
+            foreach (var construct in graphQLTransaction)
             {
                 var queryString = construct.SelectNode.ToString(this);
                 builder.Append(queryString);
@@ -73,13 +73,13 @@ namespace FluentGraphQL.Builder.Factories
             var result = builder.ToString();
             var namingStrategy = GetNamingStrategyFunction();
 
-            Parallel.ForEach(graphQLMultipleMethodConstruct, (construct) =>
+            Parallel.ForEach(graphQLTransaction, (construct) =>
             {
                 var queryString = construct.SelectNode.ToString(this);
                 construct.QueryString = namingStrategy.Invoke(queryString);
             });
 
-            return graphQLMultipleMethodConstruct.QueryString = namingStrategy.Invoke(result);
+            return graphQLTransaction.QueryString = namingStrategy.Invoke(result);
         }
 
         public virtual string Construct(IGraphQLHeaderNode graphQLHeaderNode)

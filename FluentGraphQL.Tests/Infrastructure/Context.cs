@@ -142,13 +142,16 @@ namespace FluentGraphQL.Tests.Infrastructure
             var task2 = GraphQLClient.ExecuteAsync(deleteOrdersMutation);
             var task3 = GraphQLClient.ExecuteAsync(deleteStocksMutation);
             var task4 = GraphQLClient.ExecuteAsync(deleteProductsMutation);
+
+            await Task.WhenAll(task1, task2, task3, task4);
+
             var task5 = GraphQLClient.ExecuteAsync(deleteStaffMutation);
             var task6 = GraphQLClient.ExecuteAsync(deleteStoresMutation);
             var task7 = GraphQLClient.ExecuteAsync(deleteOrderStatusesMutation);
             var task8 = GraphQLClient.ExecuteAsync(deleteCategoriesMutation);
             var task9 = GraphQLClient.ExecuteAsync(deleteBrandsMutation);
 
-            await Task.WhenAll(task1, task2, task3, task4, task5, task6, task7, task8, task9);
+            await Task.WhenAll(task5, task6, task7, task8, task9);
         }
 
         private Guid MapId(Guid id, string name, IEnumerable<dynamic> collection)

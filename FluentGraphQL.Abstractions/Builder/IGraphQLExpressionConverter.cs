@@ -24,7 +24,7 @@ namespace FluentGraphQL.Builder.Abstractions
     public interface IGraphQLExpressionConverter
     {
         IGraphQLValueStatement Convert(Expression expression);
-        IGraphQLValueStatement Convert<TEntity, TKey>(Expression<Func<TEntity, TKey>> keySelector, OrderByDirection orderByDirection);
+        IGraphQLValueStatement Convert(Expression expression, OrderByDirection orderByDirection);
         IGraphQLValueStatement ConvertSelectExpression<TEntity, TKey>(Expression<Func<TEntity, TKey>> selector);
         IEnumerable<IGraphQLValueStatement> Convert<TEntity, TKey>(Expression<Func<TEntity, IEnumerable<TKey>>> keySelectors);
     }

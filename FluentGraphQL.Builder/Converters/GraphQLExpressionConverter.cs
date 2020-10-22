@@ -40,6 +40,9 @@ namespace FluentGraphQL.Builder.Converters
 
         public IGraphQLValueStatement Convert(Expression expression)
         {
+            if (expression is null)
+                throw new ArgumentNullException("expression");
+
             if (expression is LambdaExpression lambdaExpression)
                 return Convert(lambdaExpression.Body);
 
@@ -70,14 +73,14 @@ namespace FluentGraphQL.Builder.Converters
             throw new NotImplementedException();
         }
 
-        public virtual IGraphQLValueStatement Convert<TEntity, TKey>(Expression<Func<TEntity, TKey>> keySelector, OrderByDirection orderByDirection)
+        public virtual IGraphQLValueStatement Convert(Expression expression, OrderByDirection orderByDirection)
         {
-            var expression = keySelector.Body;
+            var expressionBody = ((LambdaExpression)expression).Body;
 
-            if (expression is MemberExpression memberExpression)
+            if (expressionBody is MemberExpression memberExpression)
                 return EvaluateOrderByExpression(memberExpression, orderByDirection);
 
-            if (expression is MethodCallExpression methodCallExpression)
+            if (expressionBody is MethodCallExpression methodCallExpression)
                 return EvaluateOrderByExpression(methodCallExpression, orderByDirection);
 
             throw new NotImplementedException();

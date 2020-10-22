@@ -482,35 +482,6 @@ namespace FluentGraphQL.Tests
                 .Build();
 
             var resultD = await _graphQLClient.ExecuteAsync(queryD);
-        }             
-
-        [Fact]
-        public async Task DistinctTests()
-        {
-            var queryA = _graphQLClient.QueryBuilder<Staff>()
-                .Where(x => x.ManagerId != null)
-                .DistinctOn(x => x.ManagerId)
-                .Select(x => x.Manager!.FirstName);
-
-            var resultA = await _graphQLClient.ExecuteAsync(queryA);
-
-            Assert.Equal(2, resultA.Count);
-
-            var queryB = _graphQLClient.QueryBuilder<Store>()
-                .DistinctOn(x => x.City!)
-                .Build();
-
-            var resultB = await _graphQLClient.ExecuteAsync(queryB);
-
-            Assert.Equal(2, resultB.Count);
-
-            var queryC = _graphQLClient.QueryBuilder<Store>()
-                .DistinctOn(x => new object[] { x.City!, x.ZipCode! })
-                .Build();
-
-            var resultC = await _graphQLClient.ExecuteAsync(queryC);
-
-            Assert.Equal(3, resultC.Count);
-        }
+        }   
     }
 }

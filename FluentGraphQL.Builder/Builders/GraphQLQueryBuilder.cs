@@ -233,11 +233,120 @@ namespace FluentGraphQL.Builder.Builders
             return Limit(number, offset);
         }
 
-        private GraphQLQueryBuilder<TRoot, TEntity> ResolveOrderByStatement<TNode, TKey>(Expression<Func<TNode, TKey>> keySelector, OrderByDirection orderByDirection)
+        private GraphQLQueryBuilder<TRoot, TEntity> DistinctOn(IGraphQLValueStatement distinctSelector)
         {
-            var expressionStatement = _graphQLExpressionConverter.Convert(keySelector, orderByDirection);
-            var expressionStatementObject = new GraphQLObjectValue(expressionStatement);
+            GraphQLCollectionValue collectionValue;
+            if (!(distinctSelector.PropertyName is null))
+                collectionValue = new GraphQLCollectionValue(new[] { new GraphQLPropertyStatement(distinctSelector.PropertyName) });
+            else
+            {
+                var propertyStatements = ((GraphQLObjectValue)distinctSelector.Value).PropertyValues.Select(x => new GraphQLPropertyStatement(x.PropertyName));
+                collectionValue = new GraphQLCollectionValue(propertyStatements);
+            }
 
+            var distinctStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.DistinctOn, collectionValue);
+            _graphQLSelectNode.HeaderNode.Statements.Add(distinctStatement);
+
+            return this;
+        }
+
+        private GraphQLQueryBuilder<TRoot, TEntity> DistinctOn(Expression keySelector)
+        {
+            var distinctSelector = _graphQLExpressionConverter.Convert(keySelector);
+            return DistinctOn(distinctSelector);
+        }
+
+        private GraphQLQueryBuilder<TRoot, TEntity> DistinctOn(string[] propertyNames)
+        {
+            var propertyValues = propertyNames.Select(x => new GraphQLValueStatement(x, null));
+            var valueStatement = new GraphQLValueStatement(null, new GraphQLObjectValue(propertyValues));
+          
+            return DistinctOn(valueStatement);
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot> IGraphQLSingleNodeBuilder<TRoot>.DistinctOn(params string[] propertyNames)
+        {
+            return DistinctOn(propertyNames);
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot, TEntity> IGraphQLSingleNodeBuilder<TRoot, TEntity>.DistinctOn(params string[] propertyNames)
+        {
+            return DistinctOn(propertyNames);
+        }
+
+        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.DistinctOn(params string[] propertyNames)
+        {
+            return DistinctOn(propertyNames);
+        }
+
+        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.DistinctOn(params string[] propertyNames)
+        {
+            return DistinctOn(propertyNames);
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.DistinctOn(params string[] propertyNames)
+        {
+            return DistinctOn(propertyNames);
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.DistinctOn(params string[] propertyNames)
+        {
+            return DistinctOn(propertyNames);
+        }
+
+        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.DistinctOn(params string[] propertyNames)
+        {
+            return DistinctOn(propertyNames);
+        }
+
+        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.DistinctOn(params string[] propertyNames)
+        {
+            return DistinctOn(propertyNames);
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot> IGraphQLSingleNodeBuilder<TRoot>.DistinctOn<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        {
+            return DistinctOn(keySelector);
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot, TEntity> IGraphQLSingleNodeBuilder<TRoot, TEntity>.DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        {
+            return DistinctOn(keySelector);
+        }
+
+        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.DistinctOn<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        {
+            return DistinctOn(keySelector);
+        }
+
+        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        {
+            return DistinctOn(keySelector);
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.DistinctOn<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        {
+            return DistinctOn(keySelector);
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        {
+            return DistinctOn(keySelector);
+        }
+
+        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.DistinctOn<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        {
+            return DistinctOn(keySelector);
+        }
+
+        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        {
+            return DistinctOn(keySelector);
+        }
+
+        private GraphQLQueryBuilder<TRoot, TEntity> ResolveOrderByStatement(IGraphQLValueStatement expressionStatement)
+        {
+            var expressionStatementObject = new GraphQLObjectValue(expressionStatement);
             var existingOrderByStatement = _graphQLSelectNode.HeaderNode.Statements.Find<GraphQLValueStatement>(Constant.GraphQLKeyords.OrderBy);
             if (existingOrderByStatement is null)
             {
@@ -257,6 +366,139 @@ namespace FluentGraphQL.Builder.Builders
             }
 
             return this;
+        }
+
+        private GraphQLQueryBuilder<TRoot, TEntity> ResolveOrderByStatement(string propertyName, OrderByDirection orderByDirection)
+        {
+            var splits = propertyName.Split('.');
+            var orderByStatement = _graphQLValueFactory.Construct(orderByDirection);
+            var rootStatement = new GraphQLValueStatement(splits[0], null);
+            IGraphQLValueStatement nestedStatement = rootStatement;
+
+            for (int i = 1; i < splits.Length; i++)
+            {
+                nestedStatement.Value = new GraphQLObjectValue(new GraphQLValueStatement(splits[i], null));
+                nestedStatement = ((GraphQLObjectValue)nestedStatement.Value).PropertyValues.First();
+            }
+
+            nestedStatement.Value = orderByStatement;
+            return ResolveOrderByStatement(rootStatement);
+        }
+
+        private GraphQLQueryBuilder<TRoot, TEntity> ResolveOrderByStatement(Expression expression, OrderByDirection orderByDirection)
+        {
+            var expressionStatement = _graphQLExpressionConverter.Convert(expression, orderByDirection);
+            return ResolveOrderByStatement(expressionStatement);
+        }
+
+        IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleNodeBuilder<TRoot>.OrderBy(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.Asc);
+        }
+
+        IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity> IGraphQLSingleNodeBuilder<TRoot, TEntity>.OrderBy(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.Asc);
+        }
+
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.OrderBy(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.Asc);
+        }
+
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.OrderBy(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.Asc);
+        }
+
+        IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleNodeBuilder<TRoot>.OrderByDescending(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.Desc);
+        }
+
+        IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity> IGraphQLSingleNodeBuilder<TRoot, TEntity>.OrderByDescending(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.Desc);
+        }
+
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.OrderByDescending(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.Desc);
+        }
+
+        IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.ThenByDescending(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.Desc);
+        }
+
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.OrderByDescending(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.Desc);
+        }
+
+        IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.ThenByDescending(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.Desc);
+        }
+
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.ThenByDescending(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.Desc);
+        }
+
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.ThenByDescending(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.Desc);
+        }
+
+        IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleNodeBuilder<TRoot>.OrderByNullsFirst(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.AscNullsFirst);
+        }
+
+        IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity> IGraphQLSingleNodeBuilder<TRoot, TEntity>.OrderByNullsFirst(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.AscNullsFirst);
+        }
+
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.OrderByNullsFirst(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.AscNullsFirst);
+        }
+
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.OrderByNullsFirst(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.AscNullsFirst);
+        }
+
+        IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleNodeBuilder<TRoot>.OrderByDescendingNullsLast(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.DescNullsLast);
+        }
+
+        IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity> IGraphQLSingleNodeBuilder<TRoot, TEntity>.OrderByDescendingNullsLast(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.DescNullsLast);
+        }
+
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.OrderByDescendingNullsLast(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.DescNullsLast);
+        }
+
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.OrderByDescendingNullsLast(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.DescNullsLast);
+        }
+
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.ThenByDescendingNullsLast(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.DescNullsLast);
+        }
+
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.ThenByDescendingNullsLast(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.DescNullsLast);
         }
 
         IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleNodeBuilder<TRoot>.OrderBy<TKey>(Expression<Func<TRoot, TKey>> keySelector)
@@ -339,143 +581,134 @@ namespace FluentGraphQL.Builder.Builders
             return ResolveOrderByStatement(keySelector, OrderByDirection.AscNullsFirst);
         }
 
-        private GraphQLQueryBuilder<TRoot, TEntity> DistinctOn<TNode, TKey>(Expression<Func<TNode, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.ThenBy(string propertyName)
         {
-            var distinctSelector = _graphQLExpressionConverter.Convert(keySelector);
-
-            GraphQLCollectionValue collectionValue;
-            if (!(distinctSelector.PropertyName is null))            
-                collectionValue = new GraphQLCollectionValue(new[] { new GraphQLPropertyStatement(distinctSelector.PropertyName) });
-            else
-            {
-                var propertyStatements = ((GraphQLObjectValue)distinctSelector.Value).PropertyValues.Select(x => new GraphQLPropertyStatement(x.PropertyName));
-                collectionValue = new GraphQLCollectionValue(propertyStatements);
-            }
-            
-            var distinctStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.DistinctOn, collectionValue);
-            _graphQLSelectNode.HeaderNode.Statements.Add(distinctStatement);
-
-            return this;
+            return ResolveOrderByStatement(propertyName, OrderByDirection.Asc);
         }
 
-        IGraphQLSingleNodeBuilder<TRoot> IGraphQLSingleNodeBuilder<TRoot>.DistinctOn<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.ThenBy(string propertyName)
         {
-            return DistinctOn(keySelector);
+            return ResolveOrderByStatement(propertyName, OrderByDirection.Asc);
         }
 
-        IGraphQLSingleNodeBuilder<TRoot, TEntity> IGraphQLSingleNodeBuilder<TRoot, TEntity>.DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.ThenBy(string propertyName)
         {
-            return DistinctOn(keySelector);
+            return ResolveOrderByStatement(propertyName, OrderByDirection.Asc);
         }
 
-        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.DistinctOn<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.ThenBy(string propertyName)
         {
-            return DistinctOn(keySelector);
+            return ResolveOrderByStatement(propertyName, OrderByDirection.Asc);
         }
 
-        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.ThenByNullsFirst(string propertyName)
         {
-            return DistinctOn(keySelector);
+            return ResolveOrderByStatement(propertyName, OrderByDirection.AscNullsFirst);
         }
 
-        IGraphQLSingleNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.DistinctOn<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.ThenByNullsFirst(string propertyName)
         {
-            return DistinctOn(keySelector);
+            return ResolveOrderByStatement(propertyName, OrderByDirection.AscNullsFirst);
         }
 
-        IGraphQLSingleNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.ThenByNullsFirst(string propertyName)
         {
-            return DistinctOn(keySelector);
+            return ResolveOrderByStatement(propertyName, OrderByDirection.AscNullsFirst);
         }
 
-        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.DistinctOn<TKey>(Expression<Func<TRoot, TKey>> keySelector)
+        IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.ThenByNullsFirst(string propertyName)
         {
-            return DistinctOn(keySelector);
+            return ResolveOrderByStatement(propertyName, OrderByDirection.AscNullsFirst);
         }
 
-        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.ThenByDescendingNullsLast(string propertyName)
         {
-            return DistinctOn(keySelector);
+            return ResolveOrderByStatement(propertyName, OrderByDirection.DescNullsLast);
+        }
+
+        IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.ThenByDescendingNullsLast(string propertyName)
+        {
+            return ResolveOrderByStatement(propertyName, OrderByDirection.DescNullsLast);
         }
 
         IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.ThenBy<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
-            return ((IGraphQLSingleNodeBuilder<TRoot>)this).OrderBy(keySelector);
+            return ResolveOrderByStatement(keySelector, OrderByDirection.Asc);
         }
 
         IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.ThenBy<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            return ((IGraphQLSingleNodeBuilder<TRoot, TEntity>)this).OrderBy(keySelector);
+            return ResolveOrderByStatement(keySelector, OrderByDirection.Asc);
         }
 
         IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.ThenBy<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
-            return ((IGraphQLStandardNodeBuilder<TRoot>)this).OrderBy(keySelector);
+            return ResolveOrderByStatement(keySelector, OrderByDirection.Asc);
         }
 
         IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.ThenBy<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            return ((IGraphQLStandardNodeBuilder<TRoot, TEntity>)this).OrderBy(keySelector);
+            return ResolveOrderByStatement(keySelector, OrderByDirection.Asc);
         }
 
         IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.ThenByDescending<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
-            return ((IGraphQLSingleNodeBuilder<TRoot>)this).OrderByDescending(keySelector);
+            return ResolveOrderByStatement(keySelector, OrderByDirection.Desc);
         }
 
         IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.ThenByDescending<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            return ((IGraphQLSingleNodeBuilder<TRoot, TEntity>)this).OrderByDescending(keySelector);
+            return ResolveOrderByStatement(keySelector, OrderByDirection.Desc);
         }
 
         IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.ThenByDescending<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
-            return ((IGraphQLStandardNodeBuilder<TRoot>)this).OrderByDescending(keySelector);
+            return ResolveOrderByStatement(keySelector, OrderByDirection.Desc);
         }
 
         IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.ThenByDescending<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            return ((IGraphQLStandardNodeBuilder<TRoot, TEntity>)this).OrderByDescending(keySelector);
+            return ResolveOrderByStatement(keySelector, OrderByDirection.Desc);
         }
 
         IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.ThenByNullsFirst<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
-            return ((IGraphQLSingleNodeBuilder<TRoot>)this).OrderByNullsFirst(keySelector);
+            return ResolveOrderByStatement(keySelector, OrderByDirection.AscNullsFirst);
         }
 
         IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.ThenByNullsFirst<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            return ((IGraphQLSingleNodeBuilder<TRoot, TEntity>)this).OrderByNullsFirst(keySelector);
+            return ResolveOrderByStatement(keySelector, OrderByDirection.AscNullsFirst);
         }
 
         IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.ThenByNullsFirst<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
-            return ((IGraphQLStandardNodeBuilder<TRoot>)this).OrderByNullsFirst(keySelector);
+            return ResolveOrderByStatement(keySelector, OrderByDirection.AscNullsFirst);
         }
 
         IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.ThenByNullsFirst<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            return ((IGraphQLStandardNodeBuilder<TRoot, TEntity>)this).OrderByNullsFirst(keySelector);
+            return ResolveOrderByStatement(keySelector, OrderByDirection.AscNullsFirst);
         }
 
         IGraphQLSingleOrderedNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.ThenByDescendingNullsLast<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
-            return ((IGraphQLSingleNodeBuilder<TRoot>)this).OrderByDescendingNullsLast(keySelector);
+            return ResolveOrderByStatement(keySelector, OrderByDirection.DescNullsLast);
         }
 
         IGraphQLStandardOrderedNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.ThenByDescendingNullsLast<TKey>(Expression<Func<TRoot, TKey>> keySelector)
         {
-            return ((IGraphQLStandardNodeBuilder<TRoot>)this).OrderByDescendingNullsLast(keySelector);
+            return ResolveOrderByStatement(keySelector, OrderByDirection.DescNullsLast);
         }
 
         IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.ThenByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            return ((IGraphQLStandardNodeBuilder<TRoot, TEntity>)this).OrderByDescendingNullsLast(keySelector);
+            return ResolveOrderByStatement(keySelector, OrderByDirection.DescNullsLast);
         }
 
         IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.ThenByDescendingNullsLast<TKey>(Expression<Func<TEntity, TKey>> keySelector)
         {
-            return ((IGraphQLSingleNodeBuilder<TRoot, TEntity>)this).OrderByDescendingNullsLast(keySelector);
+            return ResolveOrderByStatement(keySelector, OrderByDirection.DescNullsLast);
         }
 
         private GraphQLAggregateBuilder<TRoot, TEntity, TAggregate> Aggregate<TAggregate>()
@@ -691,6 +924,6 @@ namespace FluentGraphQL.Builder.Builders
         IGraphQLStandardQueryBuilder<TRoot> IGraphQLStandardQueryBuilder<TRoot>.Include<TNode>(Expression<Func<TRoot, IEnumerable<TNode>>> node)
         {
             return Include(node);
-        }        
+        }
     }
 }

@@ -21,8 +21,8 @@ using System;
 namespace FluentGraphQL.Builder.Constructs
 {
     internal class GraphQLSelectedMethodConstruct<TEntity, TResult> : GraphQLMethodConstruct<TEntity>, 
-        IGraphQLStandardSelectedQuery<TEntity, TResult>, IGraphQLSingleSelectedQuery<TEntity, TResult>,
-        IGraphQLSelectedReturnSingleMutation<TEntity, TResult>, IGraphQLSelectedReturnMultipleMutation<TEntity, TResult>
+        IGraphQLSelectedArrayQuery<TEntity, TResult>, IGraphQLSelectedObjectQuery<TEntity, TResult>,
+        IGraphQLSelectedObjectMutation<TEntity, TResult>, IGraphQLSelectedArrayMutation<TEntity, TResult>
     {
         public Func<TEntity, TResult> Selector { get; set; }
         public bool IsSelected { get; set; }
@@ -40,22 +40,22 @@ namespace FluentGraphQL.Builder.Constructs
             return this;
         }
 
-        IGraphQLArrayQuery<TEntity> IGraphQLStandardSelectedQuery<TEntity, TResult>.Cast()
+        IGraphQLArrayQuery<TEntity> IGraphQLSelectedArrayQuery<TEntity, TResult>.Cast()
         {
             return Cast();
         }
 
-        IGraphQLObjectQuery<TEntity> IGraphQLSingleSelectedQuery<TEntity, TResult>.Cast()
+        IGraphQLObjectQuery<TEntity> IGraphQLSelectedObjectQuery<TEntity, TResult>.Cast()
         {
             return Cast();
         }
 
-        IGraphQLObjectMutation<TEntity> IGraphQLSelectedReturnSingleMutation<TEntity, TResult>.Cast()
+        IGraphQLObjectMutation<TEntity> IGraphQLSelectedObjectMutation<TEntity, TResult>.Cast()
         {
             return Cast();
         }
 
-        IGraphQLArrayMutation<TEntity> IGraphQLSelectedReturnMultipleMutation<TEntity, TResult>.Cast()
+        IGraphQLArrayMutation<TEntity> IGraphQLSelectedArrayMutation<TEntity, TResult>.Cast()
         {
             return Cast();
         }

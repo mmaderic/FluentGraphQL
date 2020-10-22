@@ -29,7 +29,7 @@ namespace FluentGraphQL.Builder.Abstractions
     {
         IGraphQLObjectQuery<TEntity> Build();
         IGraphQLRootAggregateBuilder<TEntity> Aggregate();
-        IGraphQLSingleSelectedQuery<TEntity, TResult> Select<TResult>(Expression<Func<TEntity, TResult>> selector);
+        IGraphQLSelectedObjectQuery<TEntity, TResult> Select<TResult>(Expression<Func<TEntity, TResult>> selector);
 
         IGraphQLSingleQueryBuilder<TEntity> Include<TNode>(Expression<Func<TEntity, TNode>> node)
             where TNode : IGraphQLEntity;
@@ -149,7 +149,7 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLStandardAggregateBuilder<TEntity, TAggregate> Aggregate<TAggregate>() 
             where TAggregate : IGraphQLEntity;
 
-        IGraphQLStandardSelectedQuery<TEntity, TResult> Select<TResult>(Expression<Func<TEntity, TResult>> selector);
+        IGraphQLSelectedArrayQuery<TEntity, TResult> Select<TResult>(Expression<Func<TEntity, TResult>> selector);
     }
 
     public interface IGraphQLStandardNodeBuilder<TRoot, TNode> : IGraphQLStandardNodeBuilderBase<TRoot>
@@ -178,7 +178,7 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLStandardAggregateBuilder<TRoot, TNode, TAggregate> Aggregate<TAggregate>()
             where TAggregate : IGraphQLEntity;
 
-        IGraphQLStandardSelectedQuery<TRoot, TResult> Select<TResult>(Expression<Func<TRoot, TResult>> selector);
+        IGraphQLSelectedArrayQuery<TRoot, TResult> Select<TResult>(Expression<Func<TRoot, TResult>> selector);
     }
 
     public interface IGraphQLRootNodeBuilder<TEntity> : IGraphQLStandardNodeBuilder<TEntity>
@@ -237,7 +237,7 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLSingleAggregateBuilder<TRoot, TNode, TAggregate> Aggregate<TAggregate>()
             where TAggregate : IGraphQLEntity;
 
-        IGraphQLSingleSelectedQuery<TRoot, TResult> Select<TResult>(Expression<Func<TRoot, TResult>> selector);
+        IGraphQLSelectedObjectQuery<TRoot, TResult> Select<TResult>(Expression<Func<TRoot, TResult>> selector);
     }
 
     public interface IGraphQLStandardOrderedNodeBuilder<TEntity> : IGraphQLStandardNodeBuilderBase<TEntity>
@@ -263,7 +263,7 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLStandardAggregateBuilder<TEntity, TAggregate> Aggregate<TAggregate>() 
             where TAggregate : IGraphQLEntity;
 
-        IGraphQLStandardSelectedQuery<TEntity, TResult> Select<TResult>(Expression<Func<TEntity, TResult>> selector);
+        IGraphQLSelectedArrayQuery<TEntity, TResult> Select<TResult>(Expression<Func<TEntity, TResult>> selector);
     }
 
     public interface IGraphQLStandardOrderedNodeBuilder<TRoot, TNode> : IGraphQLStandardNodeBuilderBase<TRoot>
@@ -290,7 +290,7 @@ namespace FluentGraphQL.Builder.Abstractions
         IGraphQLStandardAggregateBuilder<TRoot, TNode, TAggregate> Aggregate<TAggregate>() 
             where TAggregate : IGraphQLEntity;
 
-        IGraphQLStandardSelectedQuery<TRoot, TResult> Select<TResult>(Expression<Func<TRoot, TResult>> selector);
+        IGraphQLSelectedArrayQuery<TRoot, TResult> Select<TResult>(Expression<Func<TRoot, TResult>> selector);
     }
 
     public interface IGraphQLSingleAggregateBuilder<TEntity, TAggregate> : IGraphQLSingleQueryBuilder<TEntity>
@@ -344,7 +344,7 @@ namespace FluentGraphQL.Builder.Abstractions
 
     public interface IGraphQLRootAggregateNodesBuilder<TEntity> : IGraphQLQueryBuilder
     {
-        IGraphQLSingleSelectedQuery<IGraphQLAggregateContainerNode<TEntity>, IGraphQLAggregateContainerNode<TResult>> Select<TResult>(Expression<Func<TEntity, TResult>> selector);
+        IGraphQLSelectedObjectQuery<IGraphQLAggregateContainerNode<TEntity>, IGraphQLAggregateContainerNode<TResult>> Select<TResult>(Expression<Func<TEntity, TResult>> selector);
         IGraphQLObjectQuery<IGraphQLAggregateContainerNode<TEntity>> Build();
     }
 

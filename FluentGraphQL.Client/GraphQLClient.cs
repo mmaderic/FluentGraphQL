@@ -99,19 +99,19 @@ namespace FluentGraphQL.Client
             return ExecuteConstructAsync<List<TEntity>>(graphQLArrayQuery);
         }
 
-        public async Task<TResult> ExecuteAsync<TEntity, TResult>(IGraphQLSingleSelectedQuery<TEntity, TResult> graphQLQuery)
+        public async Task<TResult> ExecuteAsync<TEntity, TResult>(IGraphQLSelectedObjectQuery<TEntity, TResult> graphQLSelectedObjectQuery)
         {
-            var result = await ExecuteConstructAsync<TEntity>(graphQLQuery).ConfigureAwait(false);
+            var result = await ExecuteConstructAsync<TEntity>(graphQLSelectedObjectQuery).ConfigureAwait(false);
             if (result == null)
                 return default;
 
-            return graphQLQuery.Selector.Invoke(result);
+            return graphQLSelectedObjectQuery.Selector.Invoke(result);
         }
 
-        public async Task<List<TResult>> ExecuteAsync<TEntity, TResult>(IGraphQLStandardSelectedQuery<TEntity, TResult> graphQLQuery)
+        public async Task<List<TResult>> ExecuteAsync<TEntity, TResult>(IGraphQLSelectedArrayQuery<TEntity, TResult> graphQLSelectedArrayQuery)
         {
-            var result = await ExecuteConstructAsync<List<TEntity>>(graphQLQuery).ConfigureAwait(false);
-            return result.Select(x => graphQLQuery.Selector.Invoke(x)).ToList();
+            var result = await ExecuteConstructAsync<List<TEntity>>(graphQLSelectedArrayQuery).ConfigureAwait(false);
+            return result.Select(x => graphQLSelectedArrayQuery.Selector.Invoke(x)).ToList();
         }
 
         public Task<TEntity> ExecuteAsync<TEntity>(IGraphQLObjectMutation<TEntity> graphQLObjectMutation)
@@ -124,15 +124,15 @@ namespace FluentGraphQL.Client
             return ExecuteConstructAsync<IGraphQLMutationResponse<TEntity>>(graphQLArrayMutation);
         }
 
-        public async Task<TReturn> ExecuteAsync<TEntity, TReturn>(IGraphQLSelectedReturnSingleMutation<TEntity, TReturn> graphQLSelectedReturnSingleMutation)
+        public async Task<TReturn> ExecuteAsync<TEntity, TReturn>(IGraphQLSelectedObjectMutation<TEntity, TReturn> graphQLSelectedObjectMutation)
         {
-            var result = await ExecuteConstructAsync<TEntity>(graphQLSelectedReturnSingleMutation).ConfigureAwait(false);
-            return graphQLSelectedReturnSingleMutation.Selector.Invoke(result);
+            var result = await ExecuteConstructAsync<TEntity>(graphQLSelectedObjectMutation).ConfigureAwait(false);
+            return graphQLSelectedObjectMutation.Selector.Invoke(result);
         }
 
-        public async Task<IGraphQLMutationResponse<TReturn>> ExecuteAsync<TEntity, TReturn>(IGraphQLSelectedReturnMultipleMutation<TEntity, TReturn> graphQLSelectedReturnMultipleMutation)
+        public async Task<IGraphQLMutationResponse<TReturn>> ExecuteAsync<TEntity, TReturn>(IGraphQLSelectedArrayMutation<TEntity, TReturn> graphQLSelectedArrayMutation)
         {
-            var result = await ExecuteConstructAsync<IGraphQLMutationResponse<TEntity>>(graphQLSelectedReturnMultipleMutation).ConfigureAwait(false);
+            var result = await ExecuteConstructAsync<IGraphQLMutationResponse<TEntity>>(graphQLSelectedArrayMutation).ConfigureAwait(false);
             var response = new GraphQLMutationResponse<TReturn>()
             {
                 AffectedRows = result.AffectedRows,
@@ -140,7 +140,7 @@ namespace FluentGraphQL.Client
             };
 
             foreach (var item in result.Returning)
-                response.Returning.Add(graphQLSelectedReturnMultipleMutation.Selector.Invoke(item));
+                response.Returning.Add(graphQLSelectedArrayMutation.Selector.Invoke(item));
 
             return response;
         }
@@ -376,7 +376,7 @@ namespace FluentGraphQL.Client
             return (TResponse)value;           
         }
 
-        private TResponse ProcessSelectedValue<TResponse>(IGraphQLSelectableConstruct selectableConstruct, object value)
+        private TResponse ProcessSelectedValue<TResponse>(IGraphQLSelectableConstruct graphQLSelectableConstruct, object value)
         {
             if (value is IList list)
             {
@@ -386,7 +386,7 @@ namespace FluentGraphQL.Client
                 var listInstance = (IList)Activator.CreateInstance(listResultType);
 
                 foreach (var item in list)
-                    listInstance.Add(selectableConstruct.InvokeSelector(item));
+                    listInstance.Add(graphQLSelectableConstruct.InvokeSelector(item));
 
                 if (value is IGraphQLMutationResponse mutationResponse)
                     ((IGraphQLMutationResponse)listInstance).AffectedRows = mutationResponse.AffectedRows;
@@ -394,10 +394,10 @@ namespace FluentGraphQL.Client
                 return (TResponse)listInstance;
             }
             else
-                return (TResponse)selectableConstruct.InvokeSelector(value);
+                return (TResponse)graphQLSelectableConstruct.InvokeSelector(value);
         }        
 
-        private TResponse ProcessSelectedValueAsNamedCast<TResponse>(IGraphQLSelectableConstruct selectableConstruct, object value)
+        private TResponse ProcessSelectedValueAsNamedCast<TResponse>(IGraphQLSelectableConstruct graphQLSelectableConstruct, object value)
         {
             void MapSelectInvokeValues(object instance, IGraphQLSelectableConstruct construct)
             {
@@ -408,10 +408,10 @@ namespace FluentGraphQL.Client
             if (value is IEnumerable enumerable)
             {
                 foreach (var item in enumerable)
-                    MapSelectInvokeValues(item, selectableConstruct);
+                    MapSelectInvokeValues(item, graphQLSelectableConstruct);
             }
             else
-                MapSelectInvokeValues(value, selectableConstruct);
+                MapSelectInvokeValues(value, graphQLSelectableConstruct);
 
             return (TResponse)value;
         }

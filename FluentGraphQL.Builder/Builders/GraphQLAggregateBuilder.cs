@@ -442,7 +442,7 @@ namespace FluentGraphQL.Builder.Builders
             return (IGraphQLObjectQuery<IGraphQLAggregateContainerNode<TRoot>>)Build();
         }
 
-        IGraphQLSingleSelectedQuery<IGraphQLAggregateContainerNode<TRoot>, IGraphQLAggregateContainerNode<TResult>> IGraphQLRootAggregateNodesBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
+        IGraphQLSelectedObjectQuery<IGraphQLAggregateContainerNode<TRoot>, IGraphQLAggregateContainerNode<TResult>> IGraphQLRootAggregateNodesBuilder<TRoot>.Select<TResult>(Expression<Func<TRoot, TResult>> selector)
         {
             var expressionStatement = _graphQLExpressionConverter.ConvertSelectExpression(selector);
             expressionStatement.ApplySelectStatement(_graphQLAggregateNodes, _graphQLSelectNodeFactory);

@@ -110,17 +110,17 @@ namespace FluentGraphQL.Builder.Builders
             return new GraphQLMethodConstruct<TEntity>(GraphQLMethod.Mutation, _graphQLSelectNode.HeaderNode, _graphQLSelectNode);            
         }
 
-        IGraphQLSelectedReturnSingleMutation<TEntity, TReturn> IGraphQLReturnSingleMutationBuilder<TEntity>.Return<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression)
+        IGraphQLSelectedObjectMutation<TEntity, TReturn> IGraphQLReturnSingleMutationBuilder<TEntity>.Return<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression)
         {
             var mutation = BuildMutation(returnExpression);
             mutation.IsSingle = true;
 
-            return (IGraphQLSelectedReturnSingleMutation<TEntity, TReturn>)mutation;
+            return (IGraphQLSelectedObjectMutation<TEntity, TReturn>)mutation;
         }
 
-        IGraphQLSelectedReturnMultipleMutation<TEntity, TReturn> IGraphQLReturnMultipleMutationBuilder<TEntity>.Return<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression)
+        IGraphQLSelectedArrayMutation<TEntity, TReturn> IGraphQLReturnMultipleMutationBuilder<TEntity>.Return<TReturn>(Expression<Func<TEntity, TReturn>> returnExpression)
         {
-            return (IGraphQLSelectedReturnMultipleMutation<TEntity, TReturn>)BuildMutation(returnExpression);
+            return (IGraphQLSelectedArrayMutation<TEntity, TReturn>)BuildMutation(returnExpression);
         }
 
         IGraphQLObjectMutation<TEntity> IGraphQLReturnSingleMutationBuilder<TEntity>.Build()

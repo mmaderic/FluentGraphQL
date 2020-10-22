@@ -16,13 +16,13 @@
 
 namespace FluentGraphQL.Builder.Abstractions
 {
-    public interface IGraphQLStandardSelectedQuery<TEntity, TResult> : IGraphQLSelectableConstruct, IGraphQLSelectableConstruct<TEntity, TResult>, IGraphQLArrayQuery<TResult>
-    {
-        IGraphQLArrayQuery<TEntity> Cast();
-    }
-
-    public interface IGraphQLSingleSelectedQuery<TEntity, TResult> : IGraphQLSelectableConstruct, IGraphQLSelectableConstruct<TEntity, TResult>, IGraphQLObjectQuery<TResult>
+    public interface IGraphQLSelectedObjectQuery<TEntity, TResult> : IGraphQLSelectableConstruct<TEntity, TResult>, IGraphQLObjectQuery<TResult>
     {
         IGraphQLObjectQuery<TEntity> Cast();
+    }
+
+    public interface IGraphQLSelectedArrayQuery<TEntity, TResult> : IGraphQLSelectableConstruct<TEntity, TResult>, IGraphQLArrayQuery<TResult>
+    {
+        IGraphQLArrayQuery<TEntity> Cast();
     }
 }

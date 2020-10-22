@@ -182,55 +182,100 @@ namespace FluentGraphQL.Builder.Builders
             return Where(expressionPredicate);
         }
 
-        private GraphQLQueryBuilder<TRoot, TEntity> Limit(int number, int offset)
+        private GraphQLQueryBuilder<TRoot, TEntity> Limit(int value)
         {
-            var limitStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.Limit, _graphQLValueFactory.Construct(number));
-            var offsetStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.Offset, _graphQLValueFactory.Construct(offset));
-
+            var limitStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.Limit, _graphQLValueFactory.Construct(value));
             _graphQLSelectNode.HeaderNode.Statements.Add(limitStatement);
+
+            return this;
+        }
+
+        private GraphQLQueryBuilder<TRoot, TEntity> Offset(int value)
+        {
+            var offsetStatement = new GraphQLValueStatement(Constant.GraphQLKeyords.Offset, _graphQLValueFactory.Construct(value));
             _graphQLSelectNode.HeaderNode.Statements.Add(offsetStatement);
 
             return this;
         }
 
-        IGraphQLSingleNodeBuilder<TRoot> IGraphQLSingleNodeBuilder<TRoot>.Limit(int number, int offset)
+        IGraphQLSingleNodeBuilder<TRoot> IGraphQLSingleNodeBuilder<TRoot>.Limit(int value)
         {
-            return Limit(number, offset);
+            return Limit(value);
         }
 
-        IGraphQLSingleNodeBuilder<TRoot, TEntity> IGraphQLSingleNodeBuilder<TRoot, TEntity>.Limit(int number, int offset)
+        IGraphQLSingleNodeBuilder<TRoot, TEntity> IGraphQLSingleNodeBuilder<TRoot, TEntity>.Limit(int value)
         {
-            return Limit(number, offset);
+            return Limit(value);
         }
 
-        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.Limit(int number, int offset)
+        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.Limit(int value)
         {
-            return Limit(number, offset);
+            return Limit(value);
         }
 
-        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.Limit(int number, int offset)
+        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.Limit(int value)
         {
-            return Limit(number, offset);
+            return Limit(value);
         }
 
-        IGraphQLSingleNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.Limit(int number, int offset)
+        IGraphQLSingleNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.Limit(int value)
         {
-            return Limit(number, offset);
+            return Limit(value);
         }
 
-        IGraphQLSingleNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.Limit(int number, int offset)
+        IGraphQLSingleNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.Limit(int value)
         {
-            return Limit(number, offset);
+            return Limit(value);
         }
 
-        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.Limit(int number, int offset)
+        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.Limit(int value)
         {
-            return Limit(number, offset);
+            return Limit(value);
         }
 
-        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.Limit(int number, int offset)
+        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.Limit(int value)
         {
-            return Limit(number, offset);
+            return Limit(value);
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot> IGraphQLSingleNodeBuilder<TRoot>.Offset(int value)
+        {
+            return Offset(value);
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot, TEntity> IGraphQLSingleNodeBuilder<TRoot, TEntity>.Offset(int value)
+        {
+            return Offset(value);
+        }
+
+        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardNodeBuilder<TRoot>.Offset(int value)
+        {
+            return Offset(value);
+        }
+
+        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardNodeBuilder<TRoot, TEntity>.Offset(int value)
+        {
+            return Offset(value);
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot> IGraphQLSingleOrderedNodeBuilder<TRoot>.Offset(int value)
+        {
+            return Offset(value);
+        }
+
+        IGraphQLSingleNodeBuilder<TRoot, TEntity> IGraphQLSingleOrderedNodeBuilder<TRoot, TEntity>.Offset(int value)
+        {
+            return Offset(value);
+        }
+
+        IGraphQLStandardNodeBuilder<TRoot> IGraphQLStandardOrderedNodeBuilder<TRoot>.Offset(int value)
+        {
+            return Offset(value);
+        }
+
+        IGraphQLStandardNodeBuilder<TRoot, TEntity> IGraphQLStandardOrderedNodeBuilder<TRoot, TEntity>.Offset(int value)
+        {
+            return Offset(value);
         }
 
         private GraphQLQueryBuilder<TRoot, TEntity> DistinctOn(IGraphQLValueStatement distinctSelector)
@@ -924,6 +969,6 @@ namespace FluentGraphQL.Builder.Builders
         IGraphQLStandardQueryBuilder<TRoot> IGraphQLStandardQueryBuilder<TRoot>.Include<TNode>(Expression<Func<TRoot, IEnumerable<TNode>>> node)
         {
             return Include(node);
-        }
+        }        
     }
 }

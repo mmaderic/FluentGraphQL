@@ -75,7 +75,9 @@ namespace FluentGraphQL.Builder.Abstractions
     {
         IGraphQLSingleNodeBuilder<TEntity> Where(Expression expression);
         IGraphQLSingleNodeBuilder<TEntity> Where(Expression<Func<TEntity, bool>> expressionPredicate);
-        IGraphQLSingleNodeBuilder<TEntity> Limit(int number, int offset = 0);
+
+        IGraphQLSingleNodeBuilder<TEntity> Limit(int value);
+        IGraphQLSingleNodeBuilder<TEntity> Offset(int value);
 
         IGraphQLSingleNodeBuilder<TEntity> DistinctOn(params string[] propertyNames);
         IGraphQLSingleNodeBuilder<TEntity> DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector);
@@ -102,7 +104,9 @@ namespace FluentGraphQL.Builder.Abstractions
     {
         IGraphQLSingleNodeBuilder<TRoot, TNode> Where(Expression expression);
         IGraphQLSingleNodeBuilder<TRoot, TNode> Where(Expression<Func<TNode, bool>> expressionPredicate);
-        IGraphQLSingleNodeBuilder<TRoot, TNode> Limit(int number, int offset = 0);
+
+        IGraphQLSingleNodeBuilder<TRoot, TNode> Limit(int value);
+        IGraphQLSingleNodeBuilder<TRoot, TNode> Offset(int value);
 
         IGraphQLSingleNodeBuilder<TRoot, TNode> DistinctOn(params string[] propertyNames);
         IGraphQLSingleNodeBuilder<TRoot, TNode> DistinctOn<TKey>(Expression<Func<TNode, TKey>> keySelector);
@@ -128,7 +132,9 @@ namespace FluentGraphQL.Builder.Abstractions
     {
         IGraphQLStandardNodeBuilder<TEntity> Where(Expression expression);
         IGraphQLStandardNodeBuilder<TEntity> Where(Expression<Func<TEntity, bool>> expressionPredicate);
-        IGraphQLStandardNodeBuilder<TEntity> Limit(int number, int offset = 0);
+
+        IGraphQLStandardNodeBuilder<TEntity> Limit(int value);
+        IGraphQLStandardNodeBuilder<TEntity> Offset(int value);
 
         IGraphQLStandardNodeBuilder<TEntity> DistinctOn(params string[] propertyNames);
         IGraphQLStandardNodeBuilder<TEntity> DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector);
@@ -158,7 +164,9 @@ namespace FluentGraphQL.Builder.Abstractions
     {
         IGraphQLStandardNodeBuilder<TRoot, TNode> Where(Expression expression);
         IGraphQLStandardNodeBuilder<TRoot, TNode> Where(Expression<Func<TNode, bool>> expressionPredicate);
-        IGraphQLStandardNodeBuilder<TRoot, TNode> Limit(int number, int offset = 0);
+
+        IGraphQLStandardNodeBuilder<TRoot, TNode> Limit(int value);
+        IGraphQLStandardNodeBuilder<TRoot, TNode> Offset(int value);
 
         IGraphQLStandardNodeBuilder<TRoot, TNode> DistinctOn(params string[] propertyNames);
         IGraphQLStandardNodeBuilder<TRoot, TNode> DistinctOn<TKey>(Expression<Func<TNode, TKey>> keySelector);
@@ -192,7 +200,8 @@ namespace FluentGraphQL.Builder.Abstractions
     public interface IGraphQLSingleOrderedNodeBuilder<TEntity> : IGraphQLSingleNodeBuilderBase<TEntity>
         where TEntity : IGraphQLEntity
     {
-        IGraphQLSingleNodeBuilder<TEntity> Limit(int number, int offset = 0);
+        IGraphQLSingleNodeBuilder<TEntity> Limit(int value);
+        IGraphQLSingleNodeBuilder<TEntity> Offset(int value);
 
         IGraphQLSingleNodeBuilder<TEntity> DistinctOn(params string[] propertyNames);
         IGraphQLSingleNodeBuilder<TEntity> DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector);
@@ -217,7 +226,8 @@ namespace FluentGraphQL.Builder.Abstractions
         where TRoot : IGraphQLEntity
         where TNode : IGraphQLEntity
     {
-        IGraphQLSingleNodeBuilder<TRoot, TNode> Limit(int number, int offset = 0);
+        IGraphQLSingleNodeBuilder<TRoot, TNode> Limit(int value);
+        IGraphQLSingleNodeBuilder<TRoot, TNode> Offset(int value);
 
         IGraphQLSingleNodeBuilder<TRoot, TNode> DistinctOn(params string[] propertyNames);
         IGraphQLSingleNodeBuilder<TRoot, TNode> DistinctOn<TKey>(Expression<Func<TNode, TKey>> keySelector);
@@ -243,7 +253,8 @@ namespace FluentGraphQL.Builder.Abstractions
     public interface IGraphQLStandardOrderedNodeBuilder<TEntity> : IGraphQLStandardNodeBuilderBase<TEntity>
         where TEntity : IGraphQLEntity
     {
-        IGraphQLStandardNodeBuilder<TEntity> Limit(int number, int offset = 0);
+        IGraphQLStandardNodeBuilder<TEntity> Limit(int value);
+        IGraphQLStandardNodeBuilder<TEntity> Offset(int value);
 
         IGraphQLStandardNodeBuilder<TEntity> DistinctOn(params string[] propertyNames);
         IGraphQLStandardNodeBuilder<TEntity> DistinctOn<TKey>(Expression<Func<TEntity, TKey>> keySelector);
@@ -270,7 +281,8 @@ namespace FluentGraphQL.Builder.Abstractions
         where TRoot : IGraphQLEntity
         where TNode : IGraphQLEntity
     {
-        IGraphQLStandardNodeBuilder<TRoot, TNode> Limit(int number, int offset = 0);
+        IGraphQLStandardNodeBuilder<TRoot, TNode> Limit(int value);
+        IGraphQLStandardNodeBuilder<TRoot, TNode> Offset(int value);
 
         IGraphQLStandardNodeBuilder<TRoot, TNode> DistinctOn(params string[] propertyNames);
         IGraphQLStandardNodeBuilder<TRoot, TNode> DistinctOn<TKey>(Expression<Func<TNode, TKey>> keySelector);

@@ -21,9 +21,4 @@ namespace FluentGraphQL.Client.Abstractions
         string Id { get; set; }
         string Type { get; set; }
     }
-
-    public interface IGraphQLWebSocketResponse<TPayload> : IGraphQLWebSocketResponse
-    {
-        TPayload Payload { get; set; }
-    }
 }

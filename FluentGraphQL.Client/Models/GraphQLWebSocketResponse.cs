@@ -22,10 +22,5 @@ namespace FluentGraphQL.Client.Models
     {
         public string Id { get; set; }
         public string Type { get; set; }
-    }
-
-    internal class GraphQLWebSocketResponse<TPayload> : GraphQLWebSocketResponse, IGraphQLWebSocketResponse<TPayload>
-    {
-        public TPayload Payload { get; set; }
-    }
+    }    
 }
